@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Reveal } from "@/components/motion/Reveal";
 import { ArrowRight, BookOpen, Users, Code2, Sparkles, Globe, Shield, ChevronRight } from "lucide-react";
 
@@ -85,13 +85,31 @@ const testimonials = [
   },
 ];
 
+const containerVariants: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
+  }),
+};
+
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen" style={{ background: "#0a0a0a" }}>
         {/* ───── Hero ───── */}
         <Reveal direction="none" duration={0.4}>
         <section className="relative overflow-hidden pb-24 md:pb-32" style={{ background: "#0a0a0a" }}>
-          {/* Gradient blob background */}
           <div
             className="absolute top-1/2 left-[50%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] pointer-events-none"
             style={{
@@ -113,96 +131,104 @@ export default function Home() {
           </div>
 
           <div className="mx-auto max-w-7xl px-6 relative z-10 flex flex-col lg:flex-row items-center gap-12">
-            <div className="flex-1 max-w-4xl text-left">
-              {/* H1 - fundtracer sizes, lyqn style */}
-              <h1
+            <motion.div
+              className="flex-1 max-w-4xl text-left"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.h1
                 className="font-bold mb-6"
+                variants={itemVariants}
                 style={{
                   fontSize: "clamp(3rem, 5vw, 5.2rem)",
                   lineHeight: 1.05,
                   letterSpacing: "-0.04em",
                   color: "#f5f5f7",
-                  animation: "cio-fade-up .7s ease .05s both",
                 }}
               >
                 Learn web development for free with your tribe.
-              </h1>
+              </motion.h1>
 
-              {/* Subheadline - fundtracer size, lyqn style */}
-              <p
+              <motion.p
                 className="mb-10"
+                variants={itemVariants}
                 style={{
                   maxWidth: 700,
                   color: "#98989d",
                   fontSize: 19,
                   lineHeight: 1.4,
                   fontWeight: 400,
-                  animation: "cio-fade-up .7s ease .15s both",
                 }}
               >
                 No paywalls. No corporate jargon. Just real projects, real feedback, and a community of
                 developers building in public. Zero to hired — completely free.
-              </p>
+              </motion.p>
 
-              {/* CTA buttons - original styling */}
-              <div
+              <motion.div
                 className="flex flex-col sm:flex-row gap-4 mb-16"
-                style={{ animation: "cio-fade-up .7s ease .25s both" }}
+                variants={itemVariants}
               >
-                <Link
-                  href="/blog"
-                  className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all"
-                  style={{
-                    background: "#D0F201",
-                    color: "#10180B",
-                    padding: "16px 32px",
-                    fontSize: 16,
-                  }}
-                  onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
-                  onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  Start Learning Free
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  href="#paths"
-                  className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all"
-                  style={{
-                    background: "transparent",
-                    color: "#f5f5f7",
-                    border: "1px solid rgba(245,245,247,0.15)",
-                    padding: "16px 32px",
-                    fontSize: 16,
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.borderColor = "#f5f5f7";
-                    e.currentTarget.style.background = "rgba(255,255,255,0.02)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(245,245,247,0.15)";
-                    e.currentTarget.style.background = "transparent";
-                  }}
+                  <Link
+                    href="/blog"
+                    className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors"
+                    style={{
+                      background: "#D0F201",
+                      color: "#10180B",
+                      padding: "16px 32px",
+                      fontSize: 16,
+                    }}
+                  >
+                    Start Learning Free
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  Explore Paths
-                </Link>
-              </div>
+                  <Link
+                    href="#paths"
+                    className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors"
+                    style={{
+                      background: "transparent",
+                      color: "#f5f5f7",
+                      border: "1px solid rgba(245,245,247,0.15)",
+                      padding: "16px 32px",
+                      fontSize: 16,
+                    }}
+                  >
+                    Explore Paths
+                  </Link>
+                </motion.div>
+              </motion.div>
 
-              {/* Trust signals */}
-              <div className="flex items-center gap-8 text-xs" style={{ color: "#636366", animation: "cio-fade-up .7s ease .35s both" }}>
-                <span className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#30d158" }} />
-                  No credit card
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#30d158" }} />
-                  Lifetime access
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#30d158" }} />
-                  Community support
-                </span>
-              </div>
-            </div>
+              <motion.div
+                className="flex items-center gap-8 text-xs"
+                variants={itemVariants}
+                style={{ color: "#636366" }}
+              >
+                {["No credit card", "Lifetime access", "Community support"].map((text) => (
+                  <motion.span
+                    key={text}
+                    className="flex items-center gap-2"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <motion.span
+                      className="h-1.5 w-1.5 rounded-full"
+                      style={{ background: "#30d158" }}
+                      animate={{ scale: [1, 1.3, 1] }}
+                      transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+                    />
+                    {text}
+                  </motion.span>
+                ))}
+              </motion.div>
+            </motion.div>
           </div>
         </section>
         </Reveal>
@@ -211,18 +237,36 @@ export default function Home() {
         <Reveal delay={0.1}>
         <section className="border-y py-14 md:py-16" style={{ borderColor: "#38383a", background: "#0a0a0a" }}>
           <div className="mx-auto max-w-7xl px-6">
-            <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
+            <motion.div
+              className="grid grid-cols-2 gap-10 md:grid-cols-4"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+            >
               {metrics.map((m) => (
-                <div key={m.label} className="text-center">
-                  <div className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold" style={{ color: "#f5f5f7" }}>
+                <motion.div
+                  key={m.label}
+                  className="text-center"
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.08, transition: { duration: 0.2 } }}
+                >
+                  <motion.div
+                    className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold"
+                    style={{ color: "#f5f5f7" }}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+                  >
                     {m.value}
-                  </div>
+                  </motion.div>
                   <div className="mt-1.5 text-xs uppercase tracking-widest" style={{ color: "#636366" }}>
                     {m.label}
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
         </Reveal>
@@ -231,7 +275,13 @@ export default function Home() {
         <Reveal delay={0.1}>
         <section style={{ background: "#0a0a0a" }}>
           <div className="mx-auto max-w-[1400px] px-6 py-20 md:py-32">
-            <div className="text-center mb-20 max-w-4xl mx-auto" style={{ animation: "cio-fade-up .7s ease both" }}>
+            <motion.div
+              className="text-center mb-20 max-w-4xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <h2
                 className="font-heading font-bold mb-6"
                 style={{
@@ -254,15 +304,20 @@ export default function Home() {
               >
                 Three pillars that make TechTribe the most effective way to learn development.
               </p>
-            </div>
+            </motion.div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {features.map((f, i) => {
                 return (
-                  <div
+                  <motion.div
                     key={f.title}
-                    className="relative rounded-[32px] overflow-hidden flex flex-col justify-between p-10 min-h-[380px] transition-transform duration-500 hover:-translate-y-1"
-                    style={{ animation: `cio-fade-up .7s ease ${i % 3 * 100}ms both` }}
+                    className="relative rounded-[32px] overflow-hidden flex flex-col justify-between p-10 min-h-[380px]"
+                    custom={i}
+                    variants={cardVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-60px" }}
+                    whileHover={{ y: -4, transition: { duration: 0.3 } }}
                   >
                     <div className="absolute inset-0 z-0" style={{ background: "#1c1c1e" }} />
                     <div
@@ -286,18 +341,19 @@ export default function Home() {
                       >
                         {f.description}
                       </p>
-                      <div
+                      <motion.div
                         className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
                         style={{
                           background: "rgba(208,242,1,0.15)",
                           backdropFilter: "blur(8px)",
                           boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
                         }}
+                        whileHover={{ scale: 1.15, rotate: 5 }}
                       >
                         <f.icon className="w-5 h-5" style={{ color: "#D0F201" }} />
-                      </div>
+                      </motion.div>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -309,39 +365,61 @@ export default function Home() {
         <Reveal delay={0.1}>
         <section id="paths" className="py-20 md:py-32" style={{ background: "#141416" }}>
           <div className="mx-auto max-w-7xl px-6">
-            <div className="mx-auto max-w-2xl text-center mb-16">
-              <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#D0F201" }}>Learning Paths</div>
+            <motion.div
+              className="mx-auto max-w-2xl text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <motion.div
+                className="text-xs font-semibold uppercase tracking-widest mb-4"
+                style={{ color: "#D0F201" }}
+                initial={{ opacity: 0, y: -8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                Learning Paths
+              </motion.div>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight" style={{ color: "#f5f5f7" }}>
                 Choose your track
               </h2>
               <p className="mt-4 text-sm md:text-base max-w-lg mx-auto" style={{ color: "#98989d" }}>
                 Structured paths designed to take you from beginner to job-ready.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <motion.div
+              className="grid gap-6 md:grid-cols-3"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+            >
               {paths.map((p) => (
-                <div
+                <motion.div
                   key={p.title}
-                  className="group rounded-[24px] p-8 md:p-10 transition-all duration-300"
+                  className="rounded-[24px] p-8 md:p-10"
+                  variants={itemVariants}
                   style={{
                     background: "#1c1c1e",
                     border: "1px solid rgba(245,245,247,0.08)",
                   }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = "translateY(-4px)";
-                    e.currentTarget.style.borderColor = "rgba(208,242,1,0.2)";
-                    e.currentTarget.style.boxShadow = "0 16px 40px rgba(0,0,0,0.3)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.borderColor = "rgba(245,245,247,0.08)";
-                    e.currentTarget.style.boxShadow = "none";
+                  whileHover={{
+                    y: -4,
+                    borderColor: "rgba(208,242,1,0.2)",
+                    boxShadow: "0 16px 40px rgba(0,0,0,0.3)",
+                    transition: { duration: 0.25 },
                   }}
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl mb-6" style={{ background: "rgba(208,242,1,0.1)" }}>
+                  <motion.div
+                    className="flex h-12 w-12 items-center justify-center rounded-xl mb-6"
+                    style={{ background: "rgba(208,242,1,0.1)" }}
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                  >
                     <p.icon className="h-5 w-5" style={{ color: "#D0F201" }} />
-                  </div>
+                  </motion.div>
                   <h3 className="font-heading text-xl font-semibold mb-3" style={{ color: "#f5f5f7" }}>
                     {p.title}
                   </h3>
@@ -354,21 +432,30 @@ export default function Home() {
                       { label: "Duration", value: p.duration },
                       { label: "Outcome", value: p.outcome },
                     ].map((row) => (
-                      <div key={row.label} className="flex items-center justify-between text-sm">
+                      <motion.div
+                        key={row.label}
+                        className="flex items-center justify-between text-sm"
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                      >
                         <span style={{ color: "#636366" }}>{row.label}</span>
                         <span className="font-medium" style={{ color: row.label === "Outcome" ? "#D0F201" : "#f5f5f7" }}>
                           {row.value}
                         </span>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
-                  <Link href="/blog" className="inline-flex items-center gap-1 text-sm font-medium hover:underline" style={{ color: "#D0F201" }}>
-                    View curriculum
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
+                  <motion.div whileHover={{ x: 3 }} transition={{ duration: 0.2 }}>
+                    <Link href="/blog" className="inline-flex items-center gap-1 text-sm font-medium" style={{ color: "#D0F201" }}>
+                      View curriculum
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </motion.div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
         </Reveal>
@@ -377,8 +464,23 @@ export default function Home() {
         <Reveal delay={0.1}>
         <section className="py-20 md:py-32" style={{ background: "#0a0a0a" }}>
           <div className="mx-auto max-w-7xl px-6">
-            <div className="mx-auto max-w-2xl text-center mb-16">
-              <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#D0F201" }}>Community</div>
+            <motion.div
+              className="mx-auto max-w-2xl text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <motion.div
+                className="text-xs font-semibold uppercase tracking-widest mb-4"
+                style={{ color: "#D0F201" }}
+                initial={{ opacity: 0, y: -8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                Community
+              </motion.div>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight" style={{ color: "#f5f5f7" }}>
                 Learn with mentors who&apos;ve been there
               </h2>
@@ -386,30 +488,38 @@ export default function Home() {
                 Our mentors are active engineers at top companies. They review your code, answer questions,
                 and guide your learning journey.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-16">
+            <motion.div
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-16"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+            >
               {testimonials.map((t) => (
-                <div
+                <motion.div
                   key={t.name}
-                  className="rounded-[24px] p-6 transition-all duration-300"
+                  className="rounded-[24px] p-6"
+                  variants={itemVariants}
                   style={{
                     background: "#1c1c1e",
                     border: "1px solid rgba(245,245,247,0.08)",
                   }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow = "0 16px 40px rgba(0,0,0,0.3)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "none";
+                  whileHover={{
+                    y: -2,
+                    boxShadow: "0 16px 40px rgba(0,0,0,0.3)",
+                    transition: { duration: 0.25 },
                   }}
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold" style={{ background: "rgba(208,242,1,0.2)", color: "#D0F201" }}>
+                    <motion.div
+                      className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold"
+                      style={{ background: "rgba(208,242,1,0.2)", color: "#D0F201" }}
+                      whileHover={{ scale: 1.15, rotate: -5 }}
+                    >
                       {t.initials}
-                    </div>
+                    </motion.div>
                     <div>
                       <div className="text-sm font-medium" style={{ color: "#f5f5f7" }}>{t.name}</div>
                       <div className="text-xs" style={{ color: "#636366" }}>{t.role}</div>
@@ -418,20 +528,30 @@ export default function Home() {
                   <p className="text-sm leading-relaxed" style={{ color: "#98989d" }}>
                     &ldquo;{t.content}&rdquo;
                   </p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
-            <div
+            <motion.div
               className="rounded-[24px] p-10 md:p-16 text-center max-w-3xl mx-auto"
               style={{
                 background: "#1c1c1e",
                 border: "1px solid rgba(245,245,247,0.08)",
               }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
             >
-              <div className="flex -space-x-2 justify-center mb-6">
+              <motion.div
+                className="flex -space-x-2 justify-center mb-6"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
                 {[...Array(5)].map((_, i) => (
-                  <div
+                  <motion.div
                     key={i}
                     className="flex h-12 w-12 items-center justify-center rounded-full border-2 text-sm font-bold"
                     style={{
@@ -439,23 +559,37 @@ export default function Home() {
                       borderColor: "#0a0a0a",
                       color: "#636366",
                     }}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.5 + i * 0.08 }}
                   >
                     {String.fromCharCode(65 + i)}
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-              <blockquote
+              </motion.div>
+              <motion.blockquote
                 className="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold leading-snug"
                 style={{ color: "#f5f5f7" }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.6 }}
               >
                 &ldquo;The best decision I&rsquo;ve made was joining TechTribe. 
                 I went from knowing nothing about code to shipping production apps in 3 months.&rdquo;
-              </blockquote>
-              <div className="mt-6">
+              </motion.blockquote>
+              <motion.div
+                className="mt-6"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.8 }}
+              >
                 <div className="text-base font-medium" style={{ color: "#f5f5f7" }}>David Kim</div>
                 <div className="text-sm" style={{ color: "#636366" }}>Software Engineer at Stripe</div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
         </Reveal>
@@ -463,17 +597,36 @@ export default function Home() {
         {/* ───── Final CTA ───── */}
         <Reveal delay={0.1}>
         <section className="relative overflow-hidden border-t py-20 md:py-32" style={{ borderColor: "#38383a", background: "#0a0a0a" }}>
-          <div
+          <motion.div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full pointer-events-none"
             style={{
               background: "radial-gradient(circle, rgba(208,242,1,0.08) 0%, transparent 70%)",
               zIndex: 0,
             }}
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: "easeOut" }}
           />
 
           <div className="mx-auto max-w-7xl px-6 relative z-10">
-            <div className="mx-auto max-w-2xl text-center">
-              <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#D0F201" }}>Get Started</div>
+            <motion.div
+              className="mx-auto max-w-2xl text-center"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <motion.div
+                className="text-xs font-semibold uppercase tracking-widest mb-4"
+                style={{ color: "#D0F201" }}
+                initial={{ opacity: 0, y: -8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                Get Started
+              </motion.div>
               <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight" style={{ color: "#f5f5f7" }}>
                 Start building your future today
               </h2>
@@ -482,39 +635,60 @@ export default function Home() {
                 No credit card required. Free forever.
               </p>
 
-              <div className="mt-10 flex items-center justify-center gap-4">
-                <Link
-                  href="/blog"
-                  className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all"
-                  style={{
-                    background: "#D0F201",
-                    color: "#10180B",
-                    padding: "14px 28px",
-                    fontSize: 15,
-                  }}
-                  onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
-                  onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
-                >
-                  Start Learning Free
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
+              <motion.div
+                className="mt-10 flex items-center justify-center gap-4"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+              >
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+                  <Link
+                    href="/blog"
+                    className="inline-flex items-center justify-center gap-2 rounded-full font-semibold"
+                    style={{
+                      background: "#D0F201",
+                      color: "#10180B",
+                      padding: "14px 28px",
+                      fontSize: 15,
+                    }}
+                  >
+                    Start Learning Free
+                    <motion.div
+                      animate={{ x: [0, 3, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </motion.div>
+                  </Link>
+                </motion.div>
+              </motion.div>
 
-              <div className="mt-8 flex items-center justify-center gap-8 text-xs" style={{ color: "#636366" }}>
-                <span className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#30d158" }} />
-                  Free forever
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#30d158" }} />
-                  No credit card
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#30d158" }} />
-                  Cancel anytime
-                </span>
-              </div>
-            </div>
+              <motion.div
+                className="mt-8 flex items-center justify-center gap-8 text-xs"
+                style={{ color: "#636366" }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.4 }}
+              >
+                {["Free forever", "No credit card", "Cancel anytime"].map((text) => (
+                  <motion.span
+                    key={text}
+                    className="flex items-center gap-2"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <motion.span
+                      className="h-1.5 w-1.5 rounded-full"
+                      style={{ background: "#30d158" }}
+                      animate={{ scale: [1, 1.3, 1] }}
+                      transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+                    />
+                    {text}
+                  </motion.span>
+                ))}
+              </motion.div>
+            </motion.div>
           </div>
         </section>
         </Reveal>
