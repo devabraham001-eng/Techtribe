@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Search, BookOpen, Code2, Shield, Wrench, GraduationCap, GitCompare, Terminal } from "lucide-react";
+import { Search, Briefcase, Code2, GraduationCap, Server, Bot } from "lucide-react";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { PostGridSkeleton } from "@/components/ui/skeleton";
 import { LiveIndicator } from "@/components/blog/live/LiveIndicator";
@@ -11,14 +11,11 @@ import { useLivePosts } from "@/hooks/useLivePosts";
 
 const categoryFilters = [
   { name: "All", slug: null, icon: null },
-  { name: "Product", slug: "product", icon: BookOpen },
-  { name: "Tutorial", slug: "tutorial", icon: Terminal },
-  { name: "Engineering", slug: "engineering", icon: Code2 },
-  { name: "Security", slug: "security", icon: Shield },
-  { name: "Tools", slug: "tools", icon: Wrench },
-  { name: "Education", slug: "education", icon: GraduationCap },
-  { name: "Comparison", slug: "comparison", icon: GitCompare },
-  { name: "Development", slug: "development", icon: Terminal },
+  { name: "Web Dev", slug: "web-development", icon: Code2 },
+  { name: "Career", slug: "career-freelancing", icon: Briefcase },
+  { name: "DevOps", slug: "backend-devops", icon: Server },
+  { name: "AI & Tools", slug: "ai-tools", icon: Bot },
+  { name: "Productivity", slug: "productivity", icon: GraduationCap },
 ];
 
 export default function BlogPage() {

@@ -6,12 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { getInitials } from "@/lib/utils";
-
-const AUTHORS: Record<string, { name: string; bio: string; twitter?: string; github?: string }> = {
-  "alex-johnson": { name: "Alex Johnson", bio: "Senior frontend developer and tech writer. Building the future of web applications with React, Next.js, and TypeScript. Open source contributor and conference speaker.", twitter: "@alexjohnson", github: "alexjohnson" },
-  "sarah-chen": { name: "Sarah Chen", bio: "Full-stack developer and freelancing coach. Helping developers build profitable freelance careers through practical advice and proven strategies.", twitter: "@sarahchen", github: "sarahchen" },
-  "marcus-williams": { name: "Marcus Williams", bio: "DevOps engineer and cloud infrastructure specialist. Passionate about developer productivity and building systems that scale.", twitter: "@marcusw", github: "marcuswilliams" },
-};
+import { DEMO_AUTHORS, DEMO_POSTS } from "@/lib/demo-data";
 
 export default async function AuthorPage({
   params,
@@ -19,11 +14,13 @@ export default async function AuthorPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const author = AUTHORS[slug];
+  const author = DEMO_AUTHORS.find((item) => item.slug === slug);
 
   if (!author) {
     notFound();
   }
+
+  const posts = DEMO_POSTS.filter((post) => post.author.slug === slug);
 
   return (
     <div className="space-y-8">
@@ -68,7 +65,7 @@ export default async function AuthorPage({
 
       <div>
         <h2 className="font-heading text-2xl font-bold mb-6">Articles by {author.name}</h2>
-        <PostGrid posts={[]} variant="vertical" columns={3} />
+        <PostGrid posts={posts} variant="vertical" columns={3} />
       </div>
     </div>
   );

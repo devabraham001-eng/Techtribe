@@ -1,4 +1,4 @@
-import type { Post, Category } from "@/types/blog";
+import type { Author, Category, Post } from "@/types/blog";
 
 export const DEMO_CATEGORIES: Category[] = [
   { id: "cat1", name: "Web Dev", slug: "web-development", description: "Frontend, backend, and full-stack development", icon: "💻", postCount: 24, createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-07-01T00:00:00Z" },
@@ -20,7 +20,7 @@ export const DEMO_TAGS = [
   { id: "t24", name: "Supabase", slug: "supabase", postCount: 7, createdAt: "2026-01-01T00:00:00Z" },
 ];
 
-export const DEMO_AUTHORS = [
+export const DEMO_AUTHORS: Author[] = [
   { id: "a1", name: "Alex Johnson", slug: "alex-johnson", bio: "Senior frontend developer. Building the future of web apps.", avatarUrl: "", isStaff: true, createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-07-01T00:00:00Z" },
   { id: "a2", name: "Sarah Chen", slug: "sarah-chen", bio: "Full-stack developer & freelancing coach.", avatarUrl: "", isStaff: true, createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-07-01T00:00:00Z" },
   { id: "a3", name: "Marcus Williams", slug: "marcus-williams", bio: "DevOps engineer & cloud infrastructure specialist.", avatarUrl: "", isStaff: false, createdAt: "2026-02-01T00:00:00Z", updatedAt: "2026-06-01T00:00:00Z" },

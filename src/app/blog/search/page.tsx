@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { PostGrid } from "@/components/blog/post/PostGrid";
+import { DEMO_POSTS } from "@/lib/demo-data";
 
 export default async function SearchPage({
   searchParams,
@@ -8,6 +10,23 @@ export default async function SearchPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q } = await searchParams;
+  const query = q?.trim() ?? "";
+  const results = query
+    ? DEMO_POSTS.filter((post) => {
+        const searchText = [
+          post.title,
+          post.excerpt,
+          post.author.name,
+          post.category?.name,
+          ...post.tags.map((tag) => tag.name),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        return searchText.includes(query.toLowerCase());
+      })
+    : [];
 
   return (
     <div className="space-y-8">
@@ -24,19 +43,28 @@ export default async function SearchPage({
           type="search"
           name="q"
           placeholder="Search articles..."
-          defaultValue={q}
+          defaultValue={query}
           className="h-14 pl-12 text-lg rounded-2xl"
           autoFocus
           aria-label="Search articles"
         />
       </form>
 
-      {q && (
-        <div className="py-8">
-          <p className="text-muted-foreground">
-            No results found for &quot;<strong>{q}</strong>&quot;. Try a different search term.
-          </p>
-        </div>
+      {query && (
+        results.length > 0 ? (
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              {results.length} result{results.length === 1 ? "" : "s"} for &quot;{query}&quot;
+            </p>
+            <PostGrid posts={results} variant="vertical" columns={3} />
+          </div>
+        ) : (
+          <div className="py-8">
+            <p className="text-muted-foreground">
+              No results found for &quot;<strong>{query}</strong>&quot;. Try a different search term.
+            </p>
+          </div>
+        )
       )}
     </div>
   );

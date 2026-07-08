@@ -3,14 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { PostGrid } from "@/components/blog/post/PostGrid";
-
-const CATEGORIES: Record<string, { name: string; description: string }> = {
-  "web-development": { name: "Web Development", description: "Frontend, backend, and full-stack development tutorials, guides, and best practices." },
-  "career-freelancing": { name: "Career & Freelancing", description: "Career advice, freelancing tips, client management, and professional growth strategies." },
-  "backend-devops": { name: "Backend & DevOps", description: "Server-side development, database design, cloud infrastructure, and CI/CD pipelines." },
-  "ai-tools": { name: "AI & Tools", description: "AI-powered tools, productivity resources, and emerging technologies for developers." },
-  "productivity": { name: "Productivity", description: "Workflow optimization, time management, and tools to help you ship faster." },
-};
+import { DEMO_CATEGORIES, DEMO_POSTS } from "@/lib/demo-data";
 
 export default async function CategoryPage({
   params,
@@ -18,11 +11,13 @@ export default async function CategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const category = CATEGORIES[slug];
+  const category = DEMO_CATEGORIES.find((item) => item.slug === slug);
 
   if (!category) {
     notFound();
   }
+
+  const posts = DEMO_POSTS.filter((post) => post.category?.slug === slug);
 
   return (
     <div className="space-y-8">
@@ -45,7 +40,7 @@ export default async function CategoryPage({
       </div>
 
       <PostGrid
-        posts={[]}
+        posts={posts}
         variant="vertical"
         columns={3}
       />
