@@ -1,8 +1,9 @@
-// Database schema for TechTribe Blog
-// Run this in Supabase SQL Editor
+-- Database schema for TechTribe Blog
+-- Run this in Supabase SQL Editor
 
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
+create extension if not exists "pgcrypto";
 
 -- Categories
 create table if not exists categories (
@@ -126,6 +127,13 @@ create policy "Public read authors" on authors for select using (true);
 create policy "Public read active ad slots" on ad_slots for select using (is_active = true);
 create policy "Public read published posts" on posts for select using (status = 'published' and visibility = 'public');
 
+create policy "Users create own author profile" on authors
+  for insert with check (user_id = auth.uid());
+
+create policy "Users update own author profile" on authors
+  for update using (user_id = auth.uid())
+  with check (user_id = auth.uid());
+
 -- Authenticated insert for view tracking
 create policy "Anyone can insert post views" on post_views for insert with (true);
 
@@ -133,7 +141,38 @@ create policy "Anyone can insert post views" on post_views for insert with (true
 create policy "Authors manage own posts" on posts
   for all using (
     author_id in (select id from authors where user_id = auth.uid())
+  )
+  with check (
+    author_id in (select id from authors where user_id = auth.uid())
   );
+
+-- Create an author profile for each newly confirmed user
+create or replace function handle_new_user()
+returns trigger as $$
+declare
+  base_name text;
+  base_slug text;
+begin
+  base_name := coalesce(new.raw_user_meta_data ->> 'name', split_part(new.email, '@', 1), 'TechTribe Author');
+  base_slug := lower(regexp_replace(base_name, '[^a-zA-Z0-9]+', '-', 'g'));
+  base_slug := trim(both '-' from base_slug);
+
+  insert into public.authors (user_id, name, slug)
+  values (
+    new.id,
+    base_name,
+    base_slug || '-' || left(new.id::text, 8)
+  )
+  on conflict (user_id) do nothing;
+
+  return new;
+end;
+$$ language plpgsql security definer set search_path = public;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function handle_new_user();
 
 -- Enable real-time subscriptions
 alter publication supabase_realtime add table posts;

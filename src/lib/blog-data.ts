@@ -3,6 +3,7 @@ import {
   createServerSupabaseClient,
   incrementView as incrementSupabaseView,
 } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type { Author, Category, Post, Tag } from "@/types/blog";
 import type { Database } from "@/types/database";
 
@@ -30,13 +31,6 @@ export interface PaginatedPosts {
     totalPages: number;
     hasMore: boolean;
   };
-}
-
-function hasSupabaseConfig() {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
 }
 
 function paginate(posts: Post[], page = 1, limit = 9): PaginatedPosts {
@@ -104,7 +98,7 @@ function mapPost(
   row: PostRow,
   authors: Map<string, Author>,
   categories: Map<string, Category>,
-  tagsBySlug: Map<string, Tag>
+  tagsById: Map<string, Tag>
 ): Post | null {
   const author = row.author_id ? authors.get(row.author_id) : undefined;
   if (!author) return null;
@@ -124,7 +118,7 @@ function mapPost(
     scheduledAt: row.scheduled_at ?? undefined,
     author,
     category: row.category_id ? categories.get(row.category_id) : undefined,
-    tags: row.tags.map((slug) => tagsBySlug.get(slug)).filter((tag): tag is Tag => Boolean(tag)),
+    tags: row.tags.map((id) => tagsById.get(id)).filter((tag): tag is Tag => Boolean(tag)),
     seoTitle: row.seo_title ?? undefined,
     seoDescription: row.seo_description ?? undefined,
     seoKeywords: row.seo_keywords,
@@ -162,16 +156,16 @@ async function getSupabaseCollections() {
   const tags = (tagsResult.data ?? []).map(mapTag);
   const authorsById = new Map(authors.map((author) => [author.id, author]));
   const categoriesById = new Map(categories.map((category) => [category.id, category]));
-  const tagsBySlug = new Map(tags.map((tag) => [tag.slug, tag]));
+  const tagsById = new Map(tags.map((tag) => [tag.id, tag]));
   const posts = (postsResult.data ?? [])
-    .map((post) => mapPost(post, authorsById, categoriesById, tagsBySlug))
+    .map((post) => mapPost(post, authorsById, categoriesById, tagsById))
     .filter((post): post is Post => Boolean(post));
 
   return { authors, categories, tags, posts };
 }
 
 async function getCollections() {
-  if (!hasSupabaseConfig()) {
+  if (!isSupabaseConfigured()) {
     return {
       authors: DEMO_AUTHORS,
       categories: DEMO_CATEGORIES,
@@ -263,7 +257,7 @@ export async function incrementBlogViewCount(slug: string) {
   const post = await getBlogPostBySlug(slug);
   if (!post) return null;
 
-  if (hasSupabaseConfig()) {
+  if (isSupabaseConfigured()) {
     try {
       const { error } = await incrementSupabaseView(post.id);
       if (error) throw error;
