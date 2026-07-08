@@ -40,11 +40,11 @@ export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
       });
       if (res.ok) {
         const data = await res.json();
-        setState((prev) => ({
+        setState({
           count: data.viewCount,
           isLive: true,
           lastUpdated: new Date(),
-        }));
+        });
       }
     } catch {
       // Silent fail
@@ -53,12 +53,16 @@ export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
 
   useEffect(() => {
     const interval = setInterval(fetchLiveCount, 30000);
-    fetchLiveCount();
-    return () => clearInterval(interval);
+    const timeout = setTimeout(fetchLiveCount, 0);
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
   }, [fetchLiveCount]);
 
   useEffect(() => {
-    incrementView();
+    const timeout = setTimeout(incrementView, 0);
+    return () => clearTimeout(timeout);
   }, [incrementView]);
 
   return {

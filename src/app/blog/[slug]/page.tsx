@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import { Calendar, Clock, ArrowLeft, Share2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { PostGrid } from "@/components/blog/post/PostGrid";
-import { ArticleSkeleton } from "@/components/ui/skeleton";
 import { LiveIndicator, LiveViewCount } from "@/components/blog/live/LiveIndicator";
 import { useRealtimeViewCount } from "@/hooks/useRealtimeViewCount";
 import { formatDate } from "@/lib/utils";

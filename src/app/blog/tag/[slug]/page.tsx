@@ -43,7 +43,7 @@ export default async function TagPage({
             #{tag.name}
           </h1>
           <p className="text-muted-foreground text-lg mt-2">
-            Articles tagged with "{tag.name}"
+            Articles tagged with &quot;{tag.name}&quot;
           </p>
         </div>
       </div>

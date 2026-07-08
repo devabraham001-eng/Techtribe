@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Menu } from "lucide-react";
@@ -18,7 +19,7 @@ export function BlogHeader() {
     <header className="fixed top-0 left-0 right-0 z-50 pt-4 pb-4" style={{ background: "#0a0a0a" }}>
       <div className="mx-auto max-w-7xl px-6 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 font-bold text-lg" style={{ letterSpacing: "-0.02em" }}>
-          <img src="/ttlg.png" alt="TechTribe" className="h-7 w-auto" />
+          <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" priority />
           <span style={{ color: "#f5f5f7" }}>TechTribe</span>
         </Link>
 

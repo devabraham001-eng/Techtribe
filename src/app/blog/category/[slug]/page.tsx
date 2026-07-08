@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { PostGrid } from "@/components/blog/post/PostGrid";
-import type { Post, Category } from "@/types/blog";
 
 const CATEGORIES: Record<string, { name: string; description: string }> = {
   "web-development": { name: "Web Development", description: "Frontend, backend, and full-stack development tutorials, guides, and best practices." },

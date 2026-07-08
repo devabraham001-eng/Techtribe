@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -85,7 +86,7 @@ export function BlogFooter() {
       >
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <Link href="/" className="flex items-center gap-2.5 font-bold text-lg" style={{ letterSpacing: "-0.02em" }}>
-            <img src="/ttlg.png" alt="TechTribe" className="h-7 w-auto" />
+            <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" />
             <span style={{ color: "#f5f5f7" }}>TechTribe</span>
           </Link>
           <nav className="flex flex-wrap items-center justify-center gap-6 text-xs" style={{ color: "#636366" }}>

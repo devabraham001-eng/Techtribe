@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronRight, Mail, ArrowRight, Tag, User, Calendar, TrendingUp } from "lucide-react";
+import { ChevronRight, Mail, Calendar, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -162,6 +162,7 @@ export function BlogSidebar({
                 >
                   <div className="relative h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
                     {post.coverImageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={post.coverImageUrl}
                         alt={post.coverImageAlt || post.title}

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Search, BookOpen, Code2, Shield, Wrench, GraduationCap, GitCompare, Terminal, Bell, ArrowRight } from "lucide-react";
+import { Search, BookOpen, Code2, Shield, Wrench, GraduationCap, GitCompare, Terminal } from "lucide-react";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { PostGridSkeleton } from "@/components/ui/skeleton";
 import { LiveIndicator } from "@/components/blog/live/LiveIndicator";

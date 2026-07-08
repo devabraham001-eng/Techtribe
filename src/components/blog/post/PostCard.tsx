@@ -1,6 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
-import { Clock, Eye, TrendingUp } from "lucide-react";
+import { Clock, Eye } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
 import type { PostCardProps } from "@/types/blog";
 
@@ -17,6 +17,7 @@ export function PostCard({
         <article className="flex gap-4 p-4 bg-card border border-border rounded-xl hover:bg-card-hover transition-colors duration-150">
           <div className="relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-secondary">
             {post.coverImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={post.coverImageUrl}
                 alt={post.coverImageAlt || post.title}
@@ -60,6 +61,7 @@ export function PostCard({
           <div className="grid md:grid-cols-2 gap-0">
             <div className="relative aspect-[4/3] md:aspect-auto overflow-hidden bg-secondary">
               {post.coverImageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={post.coverImageUrl}
                   alt={post.coverImageAlt || post.title}
@@ -124,6 +126,7 @@ export function PostCard({
       <article className={cn("bg-card border border-border rounded-xl hover:border-primary/20 hover:bg-card-hover transition-all duration-150 flex flex-col h-full", className)}>
         <div className="relative aspect-[16/9] overflow-hidden bg-secondary rounded-t-xl">
           {post.coverImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={post.coverImageUrl}
               alt={post.coverImageAlt || post.title}

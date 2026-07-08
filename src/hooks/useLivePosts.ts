@@ -24,9 +24,12 @@ export function useLivePosts() {
   }, []);
 
   useEffect(() => {
-    fetchPosts();
+    const timeout = setTimeout(fetchPosts, 0);
     const interval = setInterval(fetchPosts, 60000);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
   }, [fetchPosts]);
 
   return { posts, loading, error, refresh: fetchPosts };

@@ -75,12 +75,6 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${bricolageGrotesque.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         <BlogHeader />
         <main className="flex-1 pt-28 md:pt-36">

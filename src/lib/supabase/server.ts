@@ -79,5 +79,9 @@ export async function getCategories() {
 
 export async function incrementView(postId: string) {
   const supabase = await createServerSupabaseClient();
-  return supabase.rpc("increment_post_views", { post_id: postId } as any);
+  const args: Database["public"]["Functions"]["increment_post_views"]["Args"] = {
+    post_id: postId,
+  };
+
+  return supabase.rpc("increment_post_views" as never, args as never);
 }
