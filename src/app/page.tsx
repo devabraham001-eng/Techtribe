@@ -170,12 +170,13 @@ export default function Home() {
                 variants={itemVariants}
               >
                 <motion.div
+                  className="w-full sm:w-auto"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <Link
                     href="/blog"
-                    className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors"
+                    className="flex sm:inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors w-full"
                     style={{
                       background: "#D0F201",
                       color: "#10180B",
@@ -188,12 +189,13 @@ export default function Home() {
                   </Link>
                 </motion.div>
                 <motion.div
+                  className="w-full sm:w-auto"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <Link
                     href="#paths"
-                    className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors"
+                    className="flex sm:inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors w-full"
                     style={{
                       background: "transparent",
                       color: "#f5f5f7",
