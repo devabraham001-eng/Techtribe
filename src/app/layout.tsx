@@ -32,10 +32,10 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://techtribe.app"),
   icons: {
     icon: [
-      { url: "/logo.png", type: "image/png" },
+      { url: "/ttlg.png", type: "image/png" },
     ],
     apple: [
-      { url: "/logo.png" },
+      { url: "/ttlg.png" },
     ],
   },
   openGraph: {
@@ -44,13 +44,13 @@ export const metadata: Metadata = {
     siteName: "TechTribe",
     title: "TechTribe Blog — Learn, Build, Get Hired",
     description: "Learn digital skills, find freelance work, share progress, and stay updated with tech news.",
-    images: [{ url: "/logo.png", width: 512, height: 512 }],
+    images: [{ url: "/ttlg.png", width: 512, height: 512 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "TechTribe Blog",
     description: "Learn digital skills, find freelance work, share progress, and stay updated with tech news.",
-    images: ["/logo.png"],
+    images: ["/ttlg.png"],
   },
   robots: {
     index: true,
