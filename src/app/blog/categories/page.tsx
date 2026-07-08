@@ -2,9 +2,14 @@ import * as React from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { DEMO_CATEGORIES, DEMO_POSTS } from "@/lib/demo-data";
+import { getBlogCategories, getBlogPosts } from "@/lib/blog-data";
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const [categories, posts] = await Promise.all([
+    getBlogCategories(),
+    getBlogPosts(),
+  ]);
+
   return (
     <div className="space-y-8">
       <div>
@@ -15,8 +20,8 @@ export default function CategoriesPage() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {DEMO_CATEGORIES.map((cat) => {
-          const count = DEMO_POSTS.filter((post) => post.category?.slug === cat.slug).length;
+        {categories.map((cat) => {
+          const count = posts.filter((post) => post.category?.slug === cat.slug).length;
 
           return (
             <Link

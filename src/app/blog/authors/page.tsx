@@ -2,14 +2,14 @@ import * as React from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
+import { getBlogAuthors, getBlogPosts } from "@/lib/blog-data";
 
-const AUTHORS = [
-  { name: "Alex Johnson", slug: "alex-johnson", bio: "Senior frontend developer and tech writer.", articles: 24, twitter: "@alexjohnson", github: "alexjohnson" },
-  { name: "Sarah Chen", slug: "sarah-chen", bio: "Full-stack developer and freelancing coach.", articles: 18, twitter: "@sarahchen", github: "sarahchen" },
-  { name: "Marcus Williams", slug: "marcus-williams", bio: "DevOps engineer and cloud infrastructure specialist.", articles: 15, twitter: "@marcusw", github: "marcuswilliams" },
-];
+export default async function AuthorsPage() {
+  const [authors, posts] = await Promise.all([
+    getBlogAuthors(),
+    getBlogPosts(),
+  ]);
 
-export default function AuthorsPage() {
   return (
     <div className="space-y-8">
       <div>
@@ -20,7 +20,10 @@ export default function AuthorsPage() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {AUTHORS.map((author) => (
+        {authors.map((author) => {
+          const articleCount = posts.filter((post) => post.author.slug === author.slug).length;
+
+          return (
           <Link
             key={author.slug}
             href={`/blog/author/${author.slug}`}
@@ -35,10 +38,13 @@ export default function AuthorsPage() {
                 {author.name}
               </h2>
               <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{author.bio}</p>
-              <p className="text-xs text-muted-foreground mt-3">{author.articles} articles</p>
+              <p className="text-xs text-muted-foreground mt-3">
+                {articleCount} article{articleCount === 1 ? "" : "s"}
+              </p>
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

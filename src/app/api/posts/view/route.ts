@@ -1,18 +1,22 @@
 import { NextResponse } from "next/server";
-import { DEMO_POSTS } from "@/lib/demo-data";
+import { getBlogViewCount, incrementBlogViewCount } from "@/lib/blog-data";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   const { slug } = await request.json();
-  const post = DEMO_POSTS.find((p) => p.slug === slug);
-  if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (typeof slug !== "string" || !slug.trim()) {
+    return NextResponse.json({ error: "Missing slug" }, { status: 400 });
+  }
 
-  post.viewCount += 1 + Math.floor(Math.random() * 3);
+  const viewCount = await incrementBlogViewCount(slug);
+  if (viewCount === null) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 
   return NextResponse.json({
-    slug: post.slug,
-    viewCount: post.viewCount,
+    slug,
+    viewCount,
     updatedAt: new Date().toISOString(),
   });
 }
@@ -22,14 +26,12 @@ export async function GET(request: Request) {
   const slug = searchParams.get("slug");
   if (!slug) return NextResponse.json({ error: "Missing slug" }, { status: 400 });
 
-  const post = DEMO_POSTS.find((p) => p.slug === slug);
-  if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  const liveViewCount = post.viewCount + Math.floor(Math.random() * 5);
+  const viewCount = await getBlogViewCount(slug);
+  if (viewCount === null) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   return NextResponse.json({
-    slug: post.slug,
-    viewCount: liveViewCount,
+    slug,
+    viewCount,
     isLive: true,
   });
 }

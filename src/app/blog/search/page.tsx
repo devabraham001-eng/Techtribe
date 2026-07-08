@@ -2,7 +2,7 @@ import * as React from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { PostGrid } from "@/components/blog/post/PostGrid";
-import { DEMO_POSTS } from "@/lib/demo-data";
+import { searchBlogPosts } from "@/lib/blog-data";
 
 export default async function SearchPage({
   searchParams,
@@ -11,22 +11,7 @@ export default async function SearchPage({
 }) {
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
-  const results = query
-    ? DEMO_POSTS.filter((post) => {
-        const searchText = [
-          post.title,
-          post.excerpt,
-          post.author.name,
-          post.category?.name,
-          ...post.tags.map((tag) => tag.name),
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-
-        return searchText.includes(query.toLowerCase());
-      })
-    : [];
+  const results = query ? await searchBlogPosts(query) : [];
 
   return (
     <div className="space-y-8">

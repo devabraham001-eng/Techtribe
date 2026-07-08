@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { DEMO_CATEGORIES } from "@/lib/demo-data";
+import { getBlogCategories } from "@/lib/blog-data";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  await new Promise((r) => setTimeout(r, 200));
-  return NextResponse.json({ categories: DEMO_CATEGORIES });
+  const categories = await getBlogCategories();
+  return NextResponse.json({ categories });
 }

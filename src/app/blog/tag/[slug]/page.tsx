@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { PostGrid } from "@/components/blog/post/PostGrid";
-import { DEMO_POSTS, DEMO_TAGS } from "@/lib/demo-data";
+import { getBlogPosts, getBlogTags } from "@/lib/blog-data";
 
 export default async function TagPage({
   params,
@@ -11,15 +11,15 @@ export default async function TagPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const tag = DEMO_TAGS.find((item) => item.slug === slug);
+  const [tags, posts] = await Promise.all([
+    getBlogTags(),
+    getBlogPosts({ tag: slug }),
+  ]);
+  const tag = tags.find((item) => item.slug === slug);
 
   if (!tag) {
     notFound();
   }
-
-  const posts = DEMO_POSTS.filter((post) =>
-    post.tags.some((item) => item.slug === slug)
-  );
 
   return (
     <div className="space-y-8">

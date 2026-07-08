@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { PostGrid } from "@/components/blog/post/PostGrid";
-import { DEMO_CATEGORIES, DEMO_POSTS } from "@/lib/demo-data";
+import { getBlogCategories, getBlogPosts } from "@/lib/blog-data";
 
 export default async function CategoryPage({
   params,
@@ -11,13 +11,15 @@ export default async function CategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const category = DEMO_CATEGORIES.find((item) => item.slug === slug);
+  const [categories, posts] = await Promise.all([
+    getBlogCategories(),
+    getBlogPosts({ category: slug }),
+  ]);
+  const category = categories.find((item) => item.slug === slug);
 
   if (!category) {
     notFound();
   }
-
-  const posts = DEMO_POSTS.filter((post) => post.category?.slug === slug);
 
   return (
     <div className="space-y-8">

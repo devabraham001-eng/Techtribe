@@ -1,9 +1,14 @@
 import * as React from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { DEMO_POSTS, DEMO_TAGS } from "@/lib/demo-data";
+import { getBlogPosts, getBlogTags } from "@/lib/blog-data";
 
-export default function TagsPage() {
+export default async function TagsPage() {
+  const [tags, posts] = await Promise.all([
+    getBlogTags(),
+    getBlogPosts(),
+  ]);
+
   return (
     <div className="space-y-8">
       <div>
@@ -14,8 +19,8 @@ export default function TagsPage() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        {DEMO_TAGS.map((tag) => {
-          const count = DEMO_POSTS.filter((post) =>
+        {tags.map((tag) => {
+          const count = posts.filter((post) =>
             post.tags.some((item) => item.slug === tag.slug)
           ).length;
 

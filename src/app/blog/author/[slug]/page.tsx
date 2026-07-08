@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { getInitials } from "@/lib/utils";
-import { DEMO_AUTHORS, DEMO_POSTS } from "@/lib/demo-data";
+import { getBlogAuthors, getBlogPosts } from "@/lib/blog-data";
 
 export default async function AuthorPage({
   params,
@@ -14,13 +14,15 @@ export default async function AuthorPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const author = DEMO_AUTHORS.find((item) => item.slug === slug);
+  const [authors, posts] = await Promise.all([
+    getBlogAuthors(),
+    getBlogPosts({ author: slug }),
+  ]);
+  const author = authors.find((item) => item.slug === slug);
 
   if (!author) {
     notFound();
   }
-
-  const posts = DEMO_POSTS.filter((post) => post.author.slug === slug);
 
   return (
     <div className="space-y-8">
