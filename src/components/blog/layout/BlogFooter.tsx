@@ -1,5 +1,7 @@
+"use client";
 import * as React from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export function BlogFooter() {
   return (
@@ -32,17 +34,55 @@ export function BlogFooter() {
 
       <div className="overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
-          <svg width="100%" height="264" viewBox="0 0 1297 264" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="xMidYMid meet" style={{ opacity: 0.7 }}>
-            <text x="50%" y="140" textAnchor="middle" dominantBaseline="middle" fill="#DBFE01" fontFamily="'Bricolage Grotesque', system-ui, sans-serif" fontSize="160" fontWeight="800" letterSpacing="2">
+          <motion.svg
+            width="100%" height="264" viewBox="0 0 1297 264" fill="none"
+            xmlns="http://www.w3.org/2000/svg" className="w-full"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ opacity: 0.7 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 0.7 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.text
+              x="50%" y="140" textAnchor="middle" dominantBaseline="middle"
+              fill="#DBFE01" fontFamily="'Bricolage Grotesque', system-ui, sans-serif"
+              fontSize="160" fontWeight="800" letterSpacing="2"
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
+            >
               TechTribe
-            </text>
-            <path d="M0 160 Q 160 120, 320 160 T 640 160 T 960 160 T 1297 160" stroke="#DBFE01" strokeWidth="1" fill="none" opacity="0.3" />
-            <path d="M0 170 Q 160 140, 320 170 T 640 170 T 960 170 T 1297 170" stroke="#DBFE01" strokeWidth="0.5" fill="none" opacity="0.15" />
-          </svg>
+            </motion.text>
+            <motion.path
+              d="M0 160 Q 160 120, 320 160 T 640 160 T 960 160 T 1297 160"
+              stroke="#DBFE01" strokeWidth="1" fill="none" opacity="0.3"
+              initial={{ pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.8, ease: "easeInOut", delay: 0.4 }}
+            />
+            <motion.path
+              d="M0 170 Q 160 140, 320 170 T 640 170 T 960 170 T 1297 170"
+              stroke="#DBFE01" strokeWidth="0.5" fill="none" opacity="0.15"
+              initial={{ pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 2.2, ease: "easeInOut", delay: 0.6 }}
+            />
+          </motion.svg>
         </div>
       </div>
 
-      <div className="border-t" style={{ borderColor: "#38383a" }}>
+      <motion.div
+        className="border-t"
+        style={{ borderColor: "#38383a" }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <Link href="/" className="flex items-center gap-2.5 font-bold text-lg" style={{ letterSpacing: "-0.02em" }}>
             <img src="/ttlg.png" alt="TechTribe" className="h-7 w-auto" />
@@ -55,7 +95,7 @@ export function BlogFooter() {
             <span className="cursor-pointer hover:opacity-70">Manage cookies</span>
           </nav>
         </div>
-      </div>
+      </motion.div>
     </footer>
   );
 }
