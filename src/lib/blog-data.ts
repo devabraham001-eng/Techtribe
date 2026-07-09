@@ -135,15 +135,16 @@ function mapPost(
 async function getSupabaseCollections() {
   const supabase = await createServerSupabaseClient();
   const [authorsResult, categoriesResult, tagsResult, postsResult] = await Promise.all([
-    supabase.from("authors").select("*"),
-    supabase.from("categories").select("*").order("name"),
-    supabase.from("tags").select("*").order("name"),
+    supabase.from("authors").select("id, name, slug, bio, avatar_url, twitter, github, linkedin, website, is_staff, created_at, updated_at"),
+    supabase.from("categories").select("id, name, slug, description, color, icon, post_count, created_at, updated_at").order("name"),
+    supabase.from("tags").select("id, name, slug, description, post_count, created_at").order("name"),
     supabase
       .from("posts")
-      .select("*")
+      .select("id, slug, title, excerpt, cover_image_url, cover_image_alt, status, visibility, published_at, author_id, category_id, tags, reading_time, view_count, created_at, updated_at")
       .eq("status", "published")
       .eq("visibility", "public")
-      .order("published_at", { ascending: false }),
+      .order("published_at", { ascending: false })
+      .limit(50),
   ]);
 
   if (authorsResult.error) throw authorsResult.error;

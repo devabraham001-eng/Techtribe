@@ -2,10 +2,12 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { PageTransition } from "@/components/motion/PageTransition";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export default function LoginPage() {
   return (
+    <PageTransition>
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md pb-20">
         <Link
@@ -24,5 +26,6 @@ export default function LoginPage() {
         </Suspense>
       </div>
     </div>
+    </PageTransition>
   );
 }

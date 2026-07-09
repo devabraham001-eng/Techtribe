@@ -14,6 +14,7 @@ import {
   Plus,
 } from "lucide-react";
 import { DashboardRightPanel } from "./DashboardRightPanel";
+import { Reveal } from "@/components/motion/Reveal";
 import { useWriteModal } from "./WriteModalContext";
 
 interface PostSummary {
@@ -122,10 +123,11 @@ export function AuthorDashboardClient({
   return (
     <div className="flex h-full">
       {/* Center Feed */}
-      <div className="flex-1 min-w-0 overflow-y-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div className="flex-1 min-w-0 overflow-y-auto py-4 sm:py-6 px-3 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl">
         {/* Stories row */}
-        <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
+        <Reveal direction="up" duration={0.4} delay={0}>
+        <div className="flex gap-3 sm:gap-4 mb-6 overflow-x-auto pb-2">
           {storyItems.map((item) => {
             const Icon = item.icon;
             const content = (
@@ -171,8 +173,10 @@ export function AuthorDashboardClient({
             );
           })}
         </div>
+        </Reveal>
 
         {/* Feed header */}
+        <Reveal direction="up" duration={0.4} delay={0.1}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading text-lg font-bold text-foreground">Your articles</h2>
           <button
@@ -184,6 +188,7 @@ export function AuthorDashboardClient({
             Write
           </button>
         </div>
+        </Reveal>
 
         {/* Loading state */}
         {loading && (
@@ -202,6 +207,7 @@ export function AuthorDashboardClient({
 
         {/* Empty state */}
         {!loading && !error && posts.length === 0 && (
+          <Reveal direction="up" duration={0.4}>
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="h-16 w-16 rounded-full bg-card border border-border flex items-center justify-center mb-4">
               <FileText className="h-6 w-6 text-muted-foreground" />
@@ -219,10 +225,12 @@ export function AuthorDashboardClient({
               Write an article
             </button>
           </div>
+          </Reveal>
         )}
 
         {/* Post feed - Instagram style cards */}
         {!loading && !error && posts.length > 0 && (
+          <Reveal direction="up" duration={0.4} delay={0.2}>
           <div className="space-y-3">
             {posts.map((post) => {
               const statusColor =
@@ -309,11 +317,13 @@ export function AuthorDashboardClient({
               );
             })}
           </div>
+          </Reveal>
         )}
           </div>
         </div>
 
       {/* Right Panel */}
+      <Reveal direction="left" duration={0.4} delay={0.3}>
       <aside className="w-[320px] flex-shrink-0 hidden xl:block border-l border-border overflow-y-auto px-5 py-4">
         <DashboardRightPanel
           authorName={authorName}
@@ -324,6 +334,7 @@ export function AuthorDashboardClient({
           totalViews={totalViews}
         />
       </aside>
+      </Reveal>
     </div>
   );
 }

@@ -1,10 +1,18 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { X, Loader2 } from "lucide-react";
 import { useWriteModal } from "./WriteModalContext";
-import { PostEditor } from "../editor/PostEditor";
 import type { Category, Tag } from "@/types/blog";
+
+const PostEditor = dynamic(() => import("../editor/PostEditor").then((mod) => mod.PostEditor), {
+  loading: () => (
+    <div className="flex items-center justify-center h-64">
+      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+    </div>
+  ),
+});
 
 export function WriteModal() {
   const { open, closeWriteModal, editId } = useWriteModal();

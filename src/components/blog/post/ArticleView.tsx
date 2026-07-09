@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Share2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { LiveIndicator, LiveViewCount } from "@/components/blog/live/LiveIndicator";
 import { PostGrid } from "@/components/blog/post/PostGrid";
+import { Reveal } from "@/components/motion/Reveal";
 import { Separator } from "@/components/ui/separator";
 import { useRealtimeViewCount } from "@/hooks/useRealtimeViewCount";
 import { formatDate } from "@/lib/utils";
 import type { Post } from "@/types/blog";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ArticleViewProps {
   post: Post;
@@ -22,6 +23,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
   return (
     <article className="max-w-[720px] mx-auto">
+      <Reveal direction="left" duration={0.3}>
       <Link
         href="/blog"
         className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-6"
@@ -29,8 +31,10 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
         <ArrowLeft className="h-3.5 w-3.5" />
         Back to blog
       </Link>
+      </Reveal>
 
       <header className="mb-8">
+        <Reveal direction="up" duration={0.4}>
         <div className="flex items-center gap-3 mb-3">
           {post.category && (
             <Link href={`/blog/category/${post.category.slug}`}>
@@ -44,18 +48,24 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
           </span>
           <LiveIndicator />
         </div>
+        </Reveal>
 
+        <Reveal direction="up" duration={0.4} delay={0.1}>
         <h1 className="font-heading text-3xl md:text-4xl font-bold leading-tight tracking-tight text-foreground mb-4">
           {post.title}
         </h1>
+        </Reveal>
 
         {post.excerpt && (
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <Reveal direction="up" duration={0.4} delay={0.2}>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
             {post.excerpt}
           </p>
+          </Reveal>
         )}
 
-        <div className="flex items-center gap-4 mt-5 pt-4 border-t border-border">
+        <Reveal direction="up" duration={0.4} delay={0.25}>
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-5 pt-4 border-t border-border">
           <div className="flex items-center gap-2.5">
             <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
               <span className="text-xs font-bold text-primary">
@@ -83,8 +93,10 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
             <LiveViewCount count={viewCount} />
           </div>
         </div>
+        </Reveal>
       </header>
 
+      <Reveal direction="up" duration={0.4} delay={0.3}>
       <div className="relative aspect-[2/1] rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-secondary to-card border border-border mb-10">
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-8xl font-heading font-bold text-primary/10 select-none">
@@ -92,7 +104,9 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
           </span>
         </div>
       </div>
+      </Reveal>
 
+      <Reveal direction="up" duration={0.4} delay={0.35}>
       <div className="prose-custom max-w-none">
         {post.contentMdx ? (
           post.contentMdx.split("\n").map((line, index) => {
@@ -157,8 +171,10 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
           </p>
         )}
       </div>
+      </Reveal>
 
       {post.tags.length > 0 && (
+        <Reveal direction="up" duration={0.4} delay={0.4}>
         <div className="flex flex-wrap gap-2 mt-10 pt-6 border-t border-border">
           <span className="text-xs text-muted-foreground mr-1">Tags:</span>
           {post.tags.map((tag) => (
@@ -169,8 +185,10 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
             </Link>
           ))}
         </div>
+        </Reveal>
       )}
 
+      <Reveal direction="up" duration={0.4} delay={0.45}>
       <div className="flex items-center justify-between mt-8 pt-4 border-t border-border">
         <div className="flex items-center gap-2">
           <Share2 className="h-4 w-4 text-muted-foreground" />
@@ -184,9 +202,13 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
           Refresh &rarr;
         </button>
       </div>
+      </Reveal>
 
+      <Reveal direction="up" duration={0.4} delay={0.5}>
       <Separator className="my-10" />
+      </Reveal>
 
+      <Reveal direction="up" duration={0.4} delay={0.5}>
       <div className="bg-card border border-border rounded-xl p-6">
         <div className="flex items-start gap-4">
           <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
@@ -207,8 +229,10 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
           </div>
         </div>
       </div>
+      </Reveal>
 
       {(prevPost || nextPost) && (
+        <Reveal direction="up" duration={0.4} delay={0.55}>
         <nav className="mt-12 grid gap-4 sm:grid-cols-2" aria-label="Article navigation">
           {prevPost ? (
             <Link
@@ -243,9 +267,11 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
             <div />
           )}
         </nav>
+        </Reveal>
       )}
 
       {relatedPosts.length > 0 && (
+        <Reveal direction="up" duration={0.4} delay={0.6}>
         <div className="mt-12">
           <h2 className="font-heading text-lg font-semibold text-foreground mb-5">
             Related articles
@@ -257,6 +283,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
             showCategory={false}
           />
         </div>
+        </Reveal>
       )}
     </article>
   );

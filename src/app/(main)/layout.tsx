@@ -4,16 +4,26 @@ import { PageTransition } from "@/components/motion/PageTransition";
 import { DashboardSidebarWrapper } from "@/components/blog/dashboard/DashboardSidebarWrapper";
 import { WriteModalProvider } from "@/components/blog/dashboard/WriteModalContext";
 import { WriteModal } from "@/components/blog/dashboard/WriteModal";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export default async function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   let isAuthenticated = false;
+  let isStaff = false;
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     isAuthenticated = !!user;
+    if (user) {
+      const { data: author } = await supabase
+        .from("authors")
+        .select("is_staff")
+        .eq("user_id", user.id)
+        .single();
+      isStaff = (author as { is_staff: boolean } | null)?.is_staff ?? false;
+    }
   } catch {}
 
   if (isAuthenticated) {
@@ -23,12 +33,13 @@ export default async function MainLayout({
           <aside className="flex-shrink-0 hidden lg:block border-r border-border overflow-hidden">
             <DashboardSidebarWrapper />
           </aside>
-          <div className="flex-1 min-w-0 overflow-y-auto">
+          <div className="flex-1 min-w-0 overflow-y-auto pb-16 md:pb-0">
             <PageTransition>
               {children}
             </PageTransition>
           </div>
         </main>
+        <MobileBottomNav isAuthenticated={true} isStaff={isStaff} />
         <WriteModal />
       </WriteModalProvider>
     );
@@ -43,11 +54,12 @@ export default async function MainLayout({
         Skip to content
       </a>
       <BlogHeader />
-      <main id="main-content" className="flex-1 pt-28 md:pt-36" role="main">
+      <main id="main-content" className="flex-1 pt-28 md:pt-36 pb-20 md:pb-0" role="main">
         <PageTransition>
           {children}
         </PageTransition>
       </main>
+      <MobileBottomNav isAuthenticated={false} isStaff={false} />
       <BlogFooter />
     </>
   );

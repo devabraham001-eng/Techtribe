@@ -73,7 +73,7 @@ export async function getCategories() {
   const supabase = await createServerSupabaseClient();
   return supabase
     .from("categories")
-    .select("*")
+    .select("id, name, slug, description, color, icon, post_count")
     .order("name");
 }
 

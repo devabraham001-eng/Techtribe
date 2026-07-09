@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import nextDynamic from "next/dynamic";
 import { ArrowLeft, Database as DatabaseIcon } from "lucide-react";
-import { SettingsForm } from "@/components/auth/SettingsForm";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type { Database } from "@/types/database";
 
 type AuthorRow = Database["public"]["Tables"]["authors"]["Row"];
+
+const SettingsForm = nextDynamic(() => import("@/components/auth/SettingsForm").then((mod) => mod.SettingsForm), {
+  loading: () => <div className="flex items-center justify-center h-48"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>,
+});
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +35,7 @@ export default async function SettingsPage() {
 
   const { data: authorData } = await supabase
     .from("authors")
-    .select("*")
+    .select("id, name, slug, bio, avatar_url, twitter, github, linkedin, website, is_staff, created_at, updated_at")
     .eq("user_id", user.id)
     .single();
 

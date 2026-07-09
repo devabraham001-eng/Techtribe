@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { Edit, Trash2, Plus, Loader2, AlertCircle, Save, X } from "lucide-react";
+import { Reveal } from "@/components/motion/Reveal";
 
 type Tab = "posts" | "categories" | "tags";
 
@@ -199,6 +200,7 @@ export function AdminDashboardClient() {
 
   return (
     <div className="space-y-6">
+      <Reveal direction="up" duration={0.4} delay={0}>
       <div className="flex flex-wrap gap-1 rounded-lg bg-muted/50 p-1">
         {tabs.map((t) => (
           <button
@@ -213,6 +215,7 @@ export function AdminDashboardClient() {
           </button>
         ))}
       </div>
+      </Reveal>
 
       {error && (
         <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
@@ -266,6 +269,7 @@ export function AdminDashboardClient() {
       )}
 
       {!loading && tab === "categories" && (
+        <Reveal direction="up" duration={0.4} delay={0.1}>
         <div className="space-y-3">
           <button
             type="button"
@@ -338,9 +342,11 @@ export function AdminDashboardClient() {
             </table>
           </div>
         </div>
+        </Reveal>
       )}
 
       {!loading && tab === "tags" && (
+        <Reveal direction="up" duration={0.4} delay={0.1}>
         <div className="space-y-3">
           <button
             type="button"
@@ -413,6 +419,7 @@ export function AdminDashboardClient() {
             </table>
           </div>
         </div>
+        </Reveal>
       )}
     </div>
   );

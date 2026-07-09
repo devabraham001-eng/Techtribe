@@ -1,8 +1,12 @@
 import { redirect } from "next/navigation";
+import nextDynamic from "next/dynamic";
 import { Database as DatabaseIcon } from "lucide-react";
-import { AuthorDashboardClient } from "@/components/blog/dashboard/AuthorDashboardClient";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+
+const AuthorDashboardClient = nextDynamic(() => import("@/components/blog/dashboard/AuthorDashboardClient").then((mod) => mod.AuthorDashboardClient), {
+  loading: () => <div className="flex items-center justify-center h-48"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>,
+});
 
 export const dynamic = "force-dynamic";
 

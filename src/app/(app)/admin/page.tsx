@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import nextDynamic from "next/dynamic";
 import { ArrowLeft, Database as DatabaseIcon, ShieldAlert } from "lucide-react";
-import { AdminDashboardClient } from "@/components/blog/admin/AdminDashboardClient";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+
+const AdminDashboardClient = nextDynamic(() => import("@/components/blog/admin/AdminDashboardClient").then((mod) => mod.AdminDashboardClient), {
+  loading: () => <div className="flex items-center justify-center h-48"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>,
+});
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +59,7 @@ export default async function AdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-6 pb-20 pt-6">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 pb-20 pt-6">
       <div className="mb-8 flex flex-col sm:flex-row items-start justify-between gap-4">
         <div>
           <Link

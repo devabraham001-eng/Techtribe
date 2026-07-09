@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Save, Loader2 } from "lucide-react";
+import { Reveal } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,6 +65,7 @@ export function SettingsForm({ author }: SettingsFormProps) {
   }
 
   return (
+    <Reveal direction="up" duration={0.4}>
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="name">Display name</Label>
@@ -122,5 +124,6 @@ export function SettingsForm({ author }: SettingsFormProps) {
         Save settings
       </Button>
     </form>
+    </Reveal>
   );
 }
