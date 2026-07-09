@@ -12,6 +12,7 @@ import {
   Shield,
   LogOut,
 } from "lucide-react";
+import { useWriteModal } from "./WriteModalContext";
 
 interface SidebarProps {
   authorName: string;
@@ -19,16 +20,9 @@ interface SidebarProps {
   isStaff: boolean;
 }
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/blog/write", label: "Write", icon: PenLine },
-  { href: "/blog", label: "Published", icon: CheckCircle },
-  { href: "/blog/write", label: "Drafts", icon: FileEdit },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
-
 export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarProps) {
   const pathname = usePathname();
+  const { openWriteModal } = useWriteModal();
 
   return (
     <nav className="flex h-full flex-col" aria-label="Dashboard navigation">
@@ -39,24 +33,64 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
       </div>
 
       <div className="flex-1 space-y-1 px-2 py-4 overflow-y-auto">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
-                isActive
-                  ? "bg-card font-semibold text-foreground"
-                  : "text-muted-foreground hover:bg-card hover:text-foreground"
-              }`}
-            >
-              <Icon className="h-5 w-5 flex-shrink-0" />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
+        {/* Dashboard */}
+        <Link
+          href="/dashboard"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+            pathname === "/dashboard"
+              ? "bg-card font-semibold text-foreground"
+              : "text-muted-foreground hover:bg-card hover:text-foreground"
+          }`}
+        >
+          <LayoutDashboard className="h-5 w-5 flex-shrink-0" />
+          <span>Dashboard</span>
+        </Link>
+
+        {/* Write - opens modal */}
+        <button
+          type="button"
+          onClick={() => openWriteModal()}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-card hover:text-foreground transition-colors text-left"
+        >
+          <PenLine className="h-5 w-5 flex-shrink-0" />
+          <span>Write</span>
+        </button>
+
+        {/* Published */}
+        <Link
+          href="/blog"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+            pathname === "/blog"
+              ? "bg-card font-semibold text-foreground"
+              : "text-muted-foreground hover:bg-card hover:text-foreground"
+          }`}
+        >
+          <CheckCircle className="h-5 w-5 flex-shrink-0" />
+          <span>Published</span>
+        </Link>
+
+        {/* Drafts - opens modal */}
+        <button
+          type="button"
+          onClick={() => openWriteModal()}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-card hover:text-foreground transition-colors text-left"
+        >
+          <FileEdit className="h-5 w-5 flex-shrink-0" />
+          <span>Drafts</span>
+        </button>
+
+        {/* Settings */}
+        <Link
+          href="/settings"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+            pathname === "/settings"
+              ? "bg-card font-semibold text-foreground"
+              : "text-muted-foreground hover:bg-card hover:text-foreground"
+          }`}
+        >
+          <Settings className="h-5 w-5 flex-shrink-0" />
+          <span>Settings</span>
+        </Link>
 
         {isStaff && (
           <Link

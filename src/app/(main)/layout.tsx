@@ -2,6 +2,8 @@ import { BlogHeader } from "@/components/blog/layout/BlogHeader";
 import { BlogFooter } from "@/components/blog/layout/BlogFooter";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { DashboardSidebarWrapper } from "@/components/blog/dashboard/DashboardSidebarWrapper";
+import { WriteModalProvider } from "@/components/blog/dashboard/WriteModalContext";
+import { WriteModal } from "@/components/blog/dashboard/WriteModal";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export default async function MainLayout({
@@ -16,16 +18,19 @@ export default async function MainLayout({
 
   if (isAuthenticated) {
     return (
-      <main className="flex h-screen" role="main" id="main-content">
-        <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border">
-          <DashboardSidebarWrapper />
-        </aside>
-        <div className="flex-1 min-w-0 overflow-y-auto">
-          <PageTransition>
-            {children}
-          </PageTransition>
-        </div>
-      </main>
+      <WriteModalProvider>
+        <main className="flex h-screen" role="main" id="main-content">
+          <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border">
+            <DashboardSidebarWrapper />
+          </aside>
+          <div className="flex-1 min-w-0 overflow-y-auto">
+            <PageTransition>
+              {children}
+            </PageTransition>
+          </div>
+        </main>
+        <WriteModal />
+      </WriteModalProvider>
     );
   }
 
