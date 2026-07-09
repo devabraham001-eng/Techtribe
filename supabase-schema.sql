@@ -230,3 +230,24 @@ insert into tags (name, slug) values
   ('Performance', 'performance'), ('CSS', 'css'), ('Supabase', 'supabase'),
   ('DevOps', 'devops'), ('Productivity', 'productivity'), ('Tools', 'tools')
 on conflict (slug) do nothing;
+
+-- Storage RLS: authenticated users can upload to post-covers and avatars
+create policy "Authenticated users can upload images"
+on storage.objects for insert
+with check (
+  bucket_id in ('post-covers', 'avatars')
+  and auth.role() = 'authenticated'
+);
+
+create policy "Public read storage objects"
+on storage.objects for select
+using (bucket_id in ('post-covers', 'avatars'));
+
+create policy "Users can update own storage objects"
+on storage.objects for update
+using (auth.uid() = owner)
+with check (auth.uid() = owner);
+
+create policy "Users can delete own storage objects"
+on storage.objects for delete
+using (auth.uid() = owner);
