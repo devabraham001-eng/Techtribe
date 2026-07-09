@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
-export async function POST(request: Request) {
+async function handleSignOut(request: Request) {
   if (isSupabaseConfigured()) {
     const supabase = await createServerSupabaseClient();
     await supabase.auth.signOut();
@@ -10,3 +10,6 @@ export async function POST(request: Request) {
 
   return NextResponse.redirect(new URL("/blog", request.url), { status: 303 });
 }
+
+export const GET = handleSignOut;
+export const POST = handleSignOut;
