@@ -16,6 +16,57 @@ interface CreatePostBody {
   status?: unknown;
 }
 
+export async function GET(request: Request) {
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+  }
+
+  const { data: authorData, error: authorError } = await supabase
+    .from("authors")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+  const author = authorData as { id: string } | null;
+
+  if (authorError || !author) {
+    return NextResponse.json({ error: "Author profile not found." }, { status: 403 });
+  }
+
+  const url = new URL(request.url);
+  const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
+  const limit = Math.min(50, Math.max(1, Number(url.searchParams.get("limit")) || 20));
+  const offset = (page - 1) * limit;
+
+  const { data: posts, error, count } = await supabase
+    .from("posts")
+    .select("*", { count: "exact" })
+    .eq("author_id", author.id)
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    posts,
+    pagination: {
+      page,
+      limit,
+      total: count ?? 0,
+      totalPages: Math.ceil((count ?? 0) / limit),
+      hasMore: page < Math.ceil((count ?? 0) / limit),
+    },
+  });
+}
+
 export async function POST(request: Request) {
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });

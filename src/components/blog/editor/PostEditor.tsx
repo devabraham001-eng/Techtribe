@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
-import { Eye, Save } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, Save, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,10 +16,41 @@ interface PostEditorProps {
 
 export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("id");
   const formRef = React.useRef<HTMLFormElement>(null);
   const [loading, setLoading] = React.useState(false);
+  const [initialLoading, setInitialLoading] = React.useState(!!editId);
   const [message, setMessage] = React.useState<string | null>(null);
   const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    if (!editId) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/author/posts?limit=1`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const post = (data.posts ?? []).find((p: { id: string }) => p.id === editId);
+        if (!post) return;
+        const form = formRef.current;
+        if (!form) return;
+        const titleEl = form.elements.namedItem("title") as HTMLInputElement;
+        const excerptEl = form.elements.namedItem("excerpt") as HTMLTextAreaElement;
+        const contentEl = form.elements.namedItem("contentMdx") as HTMLTextAreaElement;
+        const categoryEl = form.elements.namedItem("categoryId") as HTMLSelectElement;
+        if (titleEl) titleEl.value = post.title;
+        if (excerptEl) excerptEl.value = post.excerpt ?? "";
+        if (contentEl) contentEl.value = post.content_mdx ?? "";
+        if (categoryEl && post.category_id) categoryEl.value = post.category_id;
+        if (post.tags) setSelectedTags(post.tags);
+      } catch {
+        // Silent fail
+      } finally {
+        setInitialLoading(false);
+      }
+    })();
+  }, [editId]);
 
   function toggleTag(tagId: string) {
     setSelectedTags((current) =>
@@ -36,8 +67,12 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
     setMessage(null);
 
     try {
-      const response = await fetch("/api/author/posts", {
-        method: "POST",
+      const isEditing = !!editId;
+      const url = isEditing ? `/api/author/posts/${editId}` : "/api/author/posts";
+      const method = isEditing ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: formData.get("title"),
@@ -53,9 +88,11 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
         throw new Error(result.error || "Could not save the article.");
       }
 
-      setMessage(status === "published" ? "Article published." : "Draft saved.");
-      if (status === "published") {
+      setMessage(isEditing ? "Article updated." : status === "published" ? "Article published." : "Draft saved.");
+      if (status === "published" && !isEditing) {
         router.push(`/blog/${result.post.slug}`);
+        router.refresh();
+      } else {
         router.refresh();
       }
     } catch (error) {
@@ -63,6 +100,14 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (initialLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
   return (
@@ -155,7 +200,7 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
       <div className="flex flex-wrap gap-3 border-t border-border pt-5">
         <Button type="submit" loading={loading}>
           <Save className="mr-2 h-4 w-4" />
-          Save draft
+          {editId ? "Update draft" : "Save draft"}
         </Button>
         {canPublish && (
           <Button

@@ -15,7 +15,12 @@ type AuthorAccess = Pick<
 
 export const dynamic = "force-dynamic";
 
-export default async function WritePage() {
+export default async function WritePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ id?: string }>;
+}) {
+  const { id } = await searchParams;
   if (!isSupabaseConfigured()) {
     return (
       <div className="mx-auto max-w-2xl px-6 pb-20">
@@ -58,9 +63,9 @@ export default async function WritePage() {
       </Link>
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold">Write an article</h1>
+          <h1 className="font-heading text-3xl font-bold">{id ? "Edit article" : "Write an article"}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Save work as a draft. Staff authors can publish immediately.
+            {id ? "Update your article and save changes." : "Save work as a draft. Staff authors can publish immediately."}
           </p>
         </div>
         <form action="/auth/signout" method="post">
