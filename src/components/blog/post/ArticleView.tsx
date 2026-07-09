@@ -8,13 +8,16 @@ import { Separator } from "@/components/ui/separator";
 import { useRealtimeViewCount } from "@/hooks/useRealtimeViewCount";
 import { formatDate } from "@/lib/utils";
 import type { Post } from "@/types/blog";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ArticleViewProps {
   post: Post;
   relatedPosts: Post[];
+  prevPost?: Post | null;
+  nextPost?: Post | null;
 }
 
-export function ArticleView({ post, relatedPosts }: ArticleViewProps) {
+export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleViewProps) {
   const { viewCount, refresh } = useRealtimeViewCount(post.slug, post.viewCount);
 
   return (
@@ -204,6 +207,43 @@ export function ArticleView({ post, relatedPosts }: ArticleViewProps) {
           </div>
         </div>
       </div>
+
+      {(prevPost || nextPost) && (
+        <nav className="mt-12 grid gap-4 sm:grid-cols-2" aria-label="Article navigation">
+          {prevPost ? (
+            <Link
+              href={`/blog/${prevPost.slug}`}
+              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+            >
+              <ChevronLeft className="h-5 w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+              <div className="min-w-0">
+                <div className="text-xs text-muted-foreground mb-0.5">Previous</div>
+                <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                  {prevPost.title}
+                </div>
+              </div>
+            </Link>
+          ) : (
+            <div />
+          )}
+          {nextPost ? (
+            <Link
+              href={`/blog/${nextPost.slug}`}
+              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors text-right sm:text-left"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="text-xs text-muted-foreground mb-0.5">Next</div>
+                <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                  {nextPost.title}
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+            </Link>
+          ) : (
+            <div />
+          )}
+        </nav>
+      )}
 
       {relatedPosts.length > 0 && (
         <div className="mt-12">
