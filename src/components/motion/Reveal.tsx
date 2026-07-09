@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
 interface RevealProps {
   children: React.ReactNode;
@@ -24,6 +24,7 @@ export function Reveal({
 }: RevealProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once, margin: "-60px" });
+  const prefersReduced = useReducedMotion();
 
   const variants = {
     hidden: {
@@ -37,6 +38,10 @@ export function Reveal({
       x: 0,
     },
   };
+
+  if (prefersReduced) {
+    return <div ref={ref} className={className}>{children}</div>;
+  }
 
   return (
     <motion.div

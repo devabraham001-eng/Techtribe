@@ -23,7 +23,7 @@ export function BlogHeader() {
           <span style={{ color: "#f5f5f7" }}>TechTribe</span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-6" style={{ fontSize: 14, fontWeight: 500, color: "#f5f5f7" }}>
+        <nav className="hidden lg:flex items-center gap-6" style={{ fontSize: 14, fontWeight: 500, color: "#f5f5f7" }} aria-label="Main">
           <Link href="/blog" className="hover:opacity-70">Blog</Link>
           <Link href="/blog/categories" className="hover:opacity-70">Categories</Link>
           <Link href="/blog/authors" className="hover:opacity-70">Authors</Link>
@@ -43,7 +43,7 @@ export function BlogHeader() {
           </Link>
         </div>
 
-        <button className="lg:hidden flex items-center justify-center" aria-label="Menu" onClick={() => setMenuOpen(!menuOpen)}>
+        <button className="lg:hidden flex items-center justify-center" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
           <Menu className="h-5 w-5" style={{ color: "#f5f5f7" }} />
         </button>
       </div>
@@ -58,7 +58,7 @@ export function BlogHeader() {
           className="lg:hidden border-t overflow-hidden"
           style={{ borderColor: "#38383a", background: "#0a0a0a" }}
         >
-          <div className="mx-auto max-w-7xl px-6 py-4 space-y-2">
+          <div className="mx-auto max-w-7xl px-6 py-4 space-y-2" role="navigation" aria-label="Mobile">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
