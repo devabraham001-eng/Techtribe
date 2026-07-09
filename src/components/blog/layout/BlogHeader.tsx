@@ -28,6 +28,7 @@ export function BlogHeader() {
           <Link href="/blog/categories" className="hover:opacity-70">Categories</Link>
           <Link href="/blog/authors" className="hover:opacity-70">Authors</Link>
           <Link href="/dashboard" className="hover:opacity-70">Dashboard</Link>
+          <Link href="/admin" className="hover:opacity-70">Admin</Link>
         </nav>
 
         <div className="hidden lg:flex items-center gap-4">
@@ -75,6 +76,14 @@ export function BlogHeader() {
               onClick={() => setMenuOpen(false)}
             >
               Dashboard
+            </Link>
+            <Link
+              href="/admin"
+              className="block py-2 text-sm font-medium"
+              style={{ color: "#f5f5f7" }}
+              onClick={() => setMenuOpen(false)}
+            >
+              Admin
             </Link>
             <Link
               href="/blog"
