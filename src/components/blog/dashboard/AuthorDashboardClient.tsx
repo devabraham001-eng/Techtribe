@@ -121,8 +121,8 @@ export function AuthorDashboardClient({
   return (
     <div className="flex gap-0 max-w-7xl mx-auto">
       {/* Left Sidebar - Instagram style */}
-      <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border">
-        <div className="sticky top-36 h-[calc(100vh-144px)]">
+      <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border min-h-screen">
+        <div className="sticky top-0 h-screen">
           <DashboardSidebar
             authorName={authorName}
             authorAvatar={authorAvatar}
@@ -303,8 +303,8 @@ export function AuthorDashboardClient({
       </div>
 
       {/* Right Panel - Instagram style */}
-      <aside className="w-[320px] flex-shrink-0 hidden xl:block border-l border-border">
-        <div className="sticky top-36 h-[calc(100vh-144px)] overflow-y-auto px-5 py-4">
+      <aside className="w-[320px] flex-shrink-0 hidden xl:block border-l border-border min-h-screen">
+        <div className="sticky top-0 h-screen overflow-y-auto px-5 py-4">
           <DashboardRightPanel
             authorName={authorName}
             authorBio={authorBio}
