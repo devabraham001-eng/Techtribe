@@ -178,7 +178,7 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
   return (
     <>
       {restoreData && (
-        <div className="mb-6 flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
+        <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
           <RotateCcw className="h-4 w-4 text-primary" />
           <span className="flex-1 text-muted-foreground">
             You have unsaved content from a previous session.
@@ -253,7 +253,7 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
           />
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="categoryId">Category</Label>
             <select

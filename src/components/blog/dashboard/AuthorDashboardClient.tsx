@@ -138,7 +138,7 @@ export function AuthorDashboardClient({ authorId, isStaff }: DashboardProps) {
                 return (
                   <tr key={post.id} className="border-b border-border last:border-0 hover:bg-muted/20">
                     <td className="px-4 py-3">
-                      <div className="font-medium truncate max-w-[260px] sm:max-w-sm">
+                      <div className="font-medium truncate max-w-[40vw] sm:max-w-sm">
                         {post.title}
                       </div>
                     </td>

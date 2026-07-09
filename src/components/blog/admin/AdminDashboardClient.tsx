@@ -199,7 +199,7 @@ export function AdminDashboardClient() {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-1 rounded-lg bg-muted/50 p-1 w-fit">
+      <div className="flex flex-wrap gap-1 rounded-lg bg-muted/50 p-1">
         {tabs.map((t) => (
           <button
             key={t.key}

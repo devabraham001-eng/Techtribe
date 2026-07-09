@@ -14,7 +14,7 @@ export default function LoginPage() {
         <ArrowLeft className="h-4 w-4" />
         Back to blog
       </Link>
-      <h1 className="font-heading text-3xl font-bold">Write for TechTribe</h1>
+      <h1 className="font-heading text-2xl sm:text-3xl font-bold">Write for TechTribe</h1>
       <p className="mb-8 mt-2 text-sm text-muted-foreground">
         Sign in to create drafts and publish articles.
       </p>

@@ -56,7 +56,7 @@ export default async function AdminPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 pb-20 pt-6">
-      <div className="mb-8 flex items-start justify-between gap-4">
+      <div className="mb-8 flex flex-col sm:flex-row items-start justify-between gap-4">
         <div>
           <Link
             href="/dashboard"
@@ -65,7 +65,7 @@ export default async function AdminPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to dashboard
           </Link>
-          <h1 className="font-heading text-3xl font-bold mt-2">Admin panel</h1>
+          <h1 className="font-heading text-2xl sm:text-3xl font-bold mt-2">Admin panel</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Manage posts, categories, and tags. Signed in as {author.name}.
           </p>

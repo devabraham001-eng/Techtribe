@@ -61,7 +61,7 @@ export default async function WritePage({
         <ArrowLeft className="h-4 w-4" />
         Back to blog
       </Link>
-      <div className="mb-8 flex items-start justify-between gap-4">
+      <div className="mb-8 flex flex-col sm:flex-row items-start justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold">{id ? "Edit article" : "Write an article"}</h1>
           <p className="mt-2 text-sm text-muted-foreground">

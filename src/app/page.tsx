@@ -210,7 +210,7 @@ export default function Home() {
               </motion.div>
 
               <motion.div
-                className="flex items-center gap-8 text-xs"
+                className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs"
                 variants={itemVariants}
                 style={{ color: "#636366" }}
               >
@@ -313,7 +313,7 @@ export default function Home() {
                 return (
                   <motion.div
                     key={f.title}
-                    className="relative rounded-[32px] overflow-hidden flex flex-col justify-between p-10 min-h-[380px]"
+                    className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden flex flex-col justify-between p-6 sm:p-10 min-h-[300px] sm:min-h-[380px]"
                     custom={i}
                     variants={cardVariants}
                     initial="hidden"
@@ -402,7 +402,7 @@ export default function Home() {
               {paths.map((p) => (
                 <motion.div
                   key={p.title}
-                  className="rounded-[24px] p-8 md:p-10"
+                  className="rounded-[16px] sm:rounded-[24px] p-6 sm:p-8 md:p-10"
                   variants={itemVariants}
                   style={{
                     background: "#1c1c1e",
@@ -502,7 +502,7 @@ export default function Home() {
               {testimonials.map((t) => (
                 <motion.div
                   key={t.name}
-                  className="rounded-[24px] p-6"
+                  className="rounded-[16px] sm:rounded-[24px] p-5 sm:p-6"
                   variants={itemVariants}
                   style={{
                     background: "#1c1c1e",
@@ -535,7 +535,7 @@ export default function Home() {
             </motion.div>
 
             <motion.div
-              className="rounded-[24px] p-10 md:p-16 text-center max-w-3xl mx-auto"
+              className="rounded-[16px] sm:rounded-[24px] p-6 sm:p-10 md:p-16 text-center max-w-3xl mx-auto"
               style={{
                 background: "#1c1c1e",
                 border: "1px solid rgba(245,245,247,0.08)",

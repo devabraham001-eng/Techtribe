@@ -8,7 +8,7 @@ export function BlogFooter() {
   return (
     <footer className="border-t" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-10">
           <div>
             <p className="font-heading font-bold text-2xl" style={{ color: "#f5f5f7", letterSpacing: "-0.02em" }}>
               Experience liftoff
@@ -84,12 +84,12 @@ export function BlogFooter() {
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.3 }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
           <Link href="/" className="flex items-center gap-2.5 font-bold text-lg" style={{ letterSpacing: "-0.02em" }}>
             <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" />
             <span style={{ color: "#f5f5f7" }}>TechTribe</span>
           </Link>
-          <nav className="flex flex-wrap items-center justify-center gap-6 text-xs" style={{ color: "#636366" }}>
+          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs" style={{ color: "#636366" }}>
             <Link href="#" className="hover:opacity-70" style={{ color: "#636366" }}>Privacy Policy</Link>
             <Link href="#" className="hover:opacity-70" style={{ color: "#636366" }}>Terms of Service</Link>
             <Link href="#" className="hover:opacity-70" style={{ color: "#636366" }}>Cookie Policy</Link>

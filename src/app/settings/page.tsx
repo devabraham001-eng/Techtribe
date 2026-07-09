@@ -38,7 +38,7 @@ export default async function SettingsPage() {
   const author = authorData as AuthorRow | null;
 
   return (
-    <div className="mx-auto max-w-2xl px-6 pb-20 pt-6">
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 pb-10 sm:pb-20 pt-6">
       <Link
         href="/dashboard"
         className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
@@ -46,7 +46,7 @@ export default async function SettingsPage() {
         <ArrowLeft className="h-4 w-4" />
         Back to dashboard
       </Link>
-      <h1 className="font-heading text-3xl font-bold mb-2">Account settings</h1>
+      <h1 className="font-heading text-2xl sm:text-3xl font-bold mb-2">Account settings</h1>
       <p className="text-sm text-muted-foreground mb-8">
         Update your author profile and social links.
       </p>

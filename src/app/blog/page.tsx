@@ -43,7 +43,7 @@ export default function BlogPage() {
     <div>
       {/* ───── Blog Hero ───── */}
       <Reveal direction="none" duration={0.4}>
-      <header className="text-center max-w-2xl mx-auto mb-10">
+      <header className="text-center max-w-2xl mx-auto mb-10 px-4 sm:px-0">
         <span className="inline-block text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#98989d", opacity: 1, transform: "none" }}>
           Insights &amp; Tutorials
         </span>
