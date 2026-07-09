@@ -1,6 +1,7 @@
 import { BlogHeader } from "@/components/blog/layout/BlogHeader";
 import { BlogFooter } from "@/components/blog/layout/BlogFooter";
 import { PageTransition } from "@/components/motion/PageTransition";
+import { DashboardSidebarWrapper } from "@/components/blog/dashboard/DashboardSidebarWrapper";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export default async function MainLayout({
@@ -15,19 +16,16 @@ export default async function MainLayout({
 
   if (isAuthenticated) {
     return (
-      <>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:z-50 focus:inset-x-4 focus:top-4 focus:block focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-center focus:text-sm focus:font-medium focus:text-primary-foreground"
-        >
-          Skip to content
-        </a>
-        <main id="main-content" className="flex-1" role="main">
+      <main className="flex-1 flex min-h-0" role="main" id="main-content">
+        <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border">
+          <DashboardSidebarWrapper />
+        </aside>
+        <div className="flex-1 min-w-0 overflow-y-auto">
           <PageTransition>
             {children}
           </PageTransition>
-        </main>
-      </>
+        </div>
+      </main>
     );
   }
 

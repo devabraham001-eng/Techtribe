@@ -13,7 +13,6 @@ import {
   PenLine,
   Plus,
 } from "lucide-react";
-import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardRightPanel } from "./DashboardRightPanel";
 
 interface PostSummary {
@@ -120,18 +119,9 @@ export function AuthorDashboardClient({
 
   return (
     <div className="flex h-full">
-      {/* Left Sidebar - Instagram style */}
-      <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border">
-        <DashboardSidebar
-          authorName={authorName}
-          authorAvatar={authorAvatar}
-          isStaff={isStaff}
-        />
-      </aside>
-
-      {/* Center Feed - scrollable */}
-      <div className="flex-1 min-w-0 overflow-y-auto">
-        <div className="mx-auto max-w-2xl py-6 px-4 sm:px-6">
+      {/* Center Feed */}
+      <div className="flex-1 min-w-0 overflow-y-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl">
         {/* Stories row */}
         <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
           {storyItems.map((item) => {
@@ -299,10 +289,10 @@ export function AuthorDashboardClient({
             })}
           </div>
         )}
+          </div>
         </div>
-      </div>
 
-      {/* Right Panel - Instagram style */}
+      {/* Right Panel */}
       <aside className="w-[320px] flex-shrink-0 hidden xl:block border-l border-border overflow-y-auto px-5 py-4">
         <DashboardRightPanel
           authorName={authorName}
