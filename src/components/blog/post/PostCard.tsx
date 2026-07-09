@@ -115,7 +115,7 @@ export function PostCard({
                   </div>
                 )}
               </div>
-              <div className="flex flex-col justify-center p-6 lg:p-8">
+            <div className="flex flex-col justify-center p-4 sm:p-6 lg:p-8">
                 <div className="flex items-center gap-3 mb-3">
                   {showCategory && post.category && <span className="text-xs font-medium text-primary uppercase tracking-wider">{post.category.name}</span>}
                   <span className="text-xs text-fg-tertiary">{formatDate(post.publishedAt || post.createdAt)}</span>

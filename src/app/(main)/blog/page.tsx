@@ -40,10 +40,10 @@ export default function BlogPage() {
   }, [posts, activeFilter, searchQuery]);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8">
       {/* ───── Blog Hero ───── */}
       <Reveal direction="none" duration={0.4}>
-      <header className="text-center max-w-2xl mx-auto mb-10 px-4 sm:px-0">
+      <header className="text-center max-w-2xl mx-auto mb-8 sm:mb-10 px-4 sm:px-0">
         <span className="inline-block text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#98989d", opacity: 1, transform: "none" }}>
           Insights &amp; Tutorials
         </span>
@@ -61,8 +61,8 @@ export default function BlogPage() {
 
       {/* ───── Promo ───── */}
       <Reveal delay={0.1}>
-      <div className="mb-10">
-        <div className="bg-card border border-border rounded-2xl p-6 flex items-start gap-4">
+      <div className="mb-8 sm:mb-10">
+        <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 flex items-start gap-3 sm:gap-4">
           <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(208,242,1,0.1)" }}>
             <Search className="w-5 h-5" style={{ color: "#D0F201" }} />
           </div>

@@ -11,7 +11,7 @@ export default async function CategoriesPage() {
   ]);
 
   return (
-    <div className="space-y-8 px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8">
       <div>
         <h1 className="font-heading text-4xl font-bold tracking-tight">Categories</h1>
         <p className="text-muted-foreground text-lg mt-2">
