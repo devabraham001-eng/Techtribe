@@ -175,7 +175,7 @@ export default function Home() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Link
-                    href="/blog"
+                    href="/login"
                     className="flex sm:inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors w-full"
                     style={{
                       background: "#D0F201",
@@ -646,7 +646,7 @@ export default function Home() {
               >
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
                   <Link
-                    href="/blog"
+                    href="/login"
                     className="inline-flex items-center justify-center gap-2 rounded-full font-semibold"
                     style={{
                       background: "#D0F201",

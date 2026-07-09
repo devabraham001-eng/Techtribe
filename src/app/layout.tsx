@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { Inter, Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
-import { BlogHeader } from "@/components/blog/layout/BlogHeader";
-import { BlogFooter } from "@/components/blog/layout/BlogFooter";
-import { PageTransition } from "@/components/motion/PageTransition";
 import "./globals.css";
 
 const inter = Inter({
@@ -76,19 +73,7 @@ export default function RootLayout({
       className={`${inter.variable} ${bricolageGrotesque.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:z-50 focus:inset-x-4 focus:top-4 focus:block focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-center focus:text-sm focus:font-medium focus:text-primary-foreground"
-        >
-          Skip to content
-        </a>
-        <BlogHeader />
-        <main id="main-content" className="flex-1 pt-28 md:pt-36" role="main">
-          <PageTransition>
-            {children}
-          </PageTransition>
-        </main>
-        <BlogFooter />
+        {children}
       </body>
     </html>
   );
