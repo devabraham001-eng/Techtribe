@@ -22,7 +22,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
   const { viewCount, refresh } = useRealtimeViewCount(post.slug, post.viewCount);
 
   return (
-    <article className="max-w-[720px] mx-auto">
+    <article className="max-w-[720px] mx-auto px-4 sm:px-0">
       <Reveal direction="left" duration={0.3}>
       <Link
         href="/blog"

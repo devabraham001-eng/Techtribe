@@ -40,7 +40,7 @@ export default function BlogPage() {
   }, [posts, activeFilter, searchQuery]);
 
   return (
-    <div>
+    <div className="px-4 sm:px-6 lg:px-8">
       {/* ───── Blog Hero ───── */}
       <Reveal direction="none" duration={0.4}>
       <header className="text-center max-w-2xl mx-auto mb-10 px-4 sm:px-0">

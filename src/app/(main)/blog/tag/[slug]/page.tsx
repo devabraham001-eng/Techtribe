@@ -22,7 +22,7 @@ export default async function TagPage({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 px-4 sm:px-6 lg:px-8">
       <div className="space-y-4">
         <Link
           href="/blog"
