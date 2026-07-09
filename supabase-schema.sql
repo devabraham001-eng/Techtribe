@@ -135,7 +135,7 @@ create policy "Users update own author profile" on authors
   with check (user_id = auth.uid());
 
 -- Authenticated insert for view tracking
-create policy "Anyone can insert post views" on post_views for insert with (true);
+create policy "Anyone can insert post views" on post_views for insert with check (true);
 
 -- Authors can manage their own content
 create policy "Authors manage own posts" on posts
