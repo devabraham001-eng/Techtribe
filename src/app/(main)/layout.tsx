@@ -20,7 +20,7 @@ export default async function MainLayout({
     return (
       <WriteModalProvider>
         <main className="flex h-screen" role="main" id="main-content">
-          <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border">
+          <aside className="flex-shrink-0 hidden lg:block border-r border-border overflow-hidden">
             <DashboardSidebarWrapper />
           </aside>
           <div className="flex-1 min-w-0 overflow-y-auto">

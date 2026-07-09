@@ -8,7 +8,7 @@ export default function AppLayout({
   return (
     <WriteModalProvider>
       <main className="flex h-screen" role="main">
-        <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border">
+        <aside className="flex-shrink-0 hidden lg:block border-r border-border overflow-hidden">
           <DashboardSidebarWrapper />
         </aside>
 
