@@ -119,22 +119,21 @@ export function AuthorDashboardClient({
   ];
 
   return (
-    <div className="flex gap-0 max-w-7xl mx-auto">
+    <div className="flex h-full">
       {/* Left Sidebar - Instagram style */}
-      <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border min-h-screen">
-        <div className="sticky top-0 h-screen">
-          <DashboardSidebar
-            authorName={authorName}
-            authorAvatar={authorAvatar}
-            isStaff={isStaff}
-          />
-        </div>
+      <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border">
+        <DashboardSidebar
+          authorName={authorName}
+          authorAvatar={authorAvatar}
+          isStaff={isStaff}
+        />
       </aside>
 
-      {/* Center Feed */}
-      <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-4 max-w-2xl">
+      {/* Center Feed - scrollable */}
+      <div className="flex-1 min-w-0 overflow-y-auto">
+        <div className="mx-auto max-w-2xl py-6 px-4 sm:px-6">
         {/* Stories row */}
-        <div className="flex gap-4 mb-6 overflow-x-auto pb-2 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 scrollbar-none">
+        <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
           {storyItems.map((item) => {
             const Icon = item.icon;
             const content = (
@@ -300,20 +299,19 @@ export function AuthorDashboardClient({
             })}
           </div>
         )}
+        </div>
       </div>
 
       {/* Right Panel - Instagram style */}
-      <aside className="w-[320px] flex-shrink-0 hidden xl:block border-l border-border min-h-screen">
-        <div className="sticky top-0 h-screen overflow-y-auto px-5 py-4">
-          <DashboardRightPanel
-            authorName={authorName}
-            authorBio={authorBio}
-            authorAvatar={authorAvatar}
-            publishedCount={published.length}
-            draftCount={drafts.length}
-            totalViews={totalViews}
-          />
-        </div>
+      <aside className="w-[320px] flex-shrink-0 hidden xl:block border-l border-border overflow-y-auto px-5 py-4">
+        <DashboardRightPanel
+          authorName={authorName}
+          authorBio={authorBio}
+          authorAvatar={authorAvatar}
+          publishedCount={published.length}
+          draftCount={drafts.length}
+          totalViews={totalViews}
+        />
       </aside>
     </div>
   );
