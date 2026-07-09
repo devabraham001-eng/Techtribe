@@ -16,7 +16,7 @@ export default async function MainLayout({
 
   if (isAuthenticated) {
     return (
-      <main className="flex-1 flex min-h-0" role="main" id="main-content">
+      <main className="flex h-screen" role="main" id="main-content">
         <aside className="w-[245px] flex-shrink-0 hidden lg:block border-r border-border">
           <DashboardSidebarWrapper />
         </aside>
