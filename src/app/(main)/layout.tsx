@@ -39,7 +39,7 @@ export default async function MainLayout({
             </PageTransition>
           </div>
         </main>
-        <MobileBottomNav isAuthenticated={true} isStaff={isStaff} />
+        <MobileBottomNav isAuthenticated={true} />
         <WriteModal />
       </WriteModalProvider>
     );
