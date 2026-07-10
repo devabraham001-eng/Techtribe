@@ -10,6 +10,7 @@ import {
   Plus,
   Ellipsis,
   Search,
+  Settings,
   LogOut,
   Tags,
   Users,
@@ -18,9 +19,10 @@ import {
 
 interface MobileBottomNavProps {
   isAuthenticated: boolean;
+  isStaff: boolean;
 }
 
-export function MobileBottomNav({ isAuthenticated }: MobileBottomNavProps) {
+export function MobileBottomNav({ isAuthenticated, isStaff }: MobileBottomNavProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [moreOpen, setMoreOpen] = React.useState(false);
@@ -40,7 +42,7 @@ export function MobileBottomNav({ isAuthenticated }: MobileBottomNavProps) {
 
   const tabs = isAuthenticated
     ? [
-        { id: "home", label: "Home", icon: House, href: "/" },
+        { id: "dashboard", label: "Dashboard", icon: House, href: "/dashboard" },
         { id: "blog", label: "Blog", icon: Compass, href: "/blog" },
         { id: "write", label: "Write", icon: Plus, href: "", action: () => router.push("/blog/write") },
         { id: "more", label: "More", icon: Ellipsis, href: "", action: () => setMoreOpen(true) },
@@ -61,6 +63,7 @@ export function MobileBottomNav({ isAuthenticated }: MobileBottomNavProps) {
     ? [
         { label: "Categories", icon: Tags, href: "/blog/categories" },
         { label: "Authors", icon: Users, href: "/blog/authors" },
+        { label: "Settings", icon: Settings, href: "/settings" },
       ]
     : [
         { label: "Categories", icon: Tags, href: "/blog/categories" },
