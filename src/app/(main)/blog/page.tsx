@@ -73,14 +73,14 @@ export default function BlogPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-12">
       {/* ───── Blog Hero ───── */}
-      <header className="max-w-2xl mb-8 sm:mb-10">
-        <span className="inline-block text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#98989d" }}>
+      <header className="text-center mx-auto mb-8 sm:mb-10">
+        <span className="inline-block text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-2 sm:mb-3" style={{ color: "#98989d" }}>
           Insights &amp; Tutorials
         </span>
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "#f5f5f7" }}>
+        <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-2 sm:mb-3" style={{ color: "#f5f5f7" }}>
           TechTribe Blog
         </h1>
-        <p className="text-sm sm:text-base max-w-lg" style={{ color: "#98989d" }}>
+        <p className="text-xs sm:text-sm md:text-base max-w-lg mx-auto" style={{ color: "#98989d" }}>
           Web development tutorials, career insights, and community stories — built by the TechTribe team.
         </p>
       </header>
