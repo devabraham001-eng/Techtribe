@@ -84,7 +84,7 @@ export default function BlogPage() {
       {/* ───── Filters ───── */}
       <Reveal delay={0.15}>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:flex-wrap">
+        <div className="flex flex-wrap items-center gap-2">
           {categoryFilters.map((cat) => {
             const isActive = cat.slug === activeFilter || (!cat.slug && !activeFilter);
             const Icon = cat.icon;
