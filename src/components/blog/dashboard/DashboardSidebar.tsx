@@ -69,11 +69,14 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
             }`}
           >
             {collapsed ? (
-              <span className="font-heading font-bold text-lg text-foreground">TT</span>
+              <img src="/ttlg.png" alt="TechTribe" className="h-7 w-auto" />
             ) : (
-              <span className="font-heading font-bold text-lg" style={{ letterSpacing: "-0.02em", color: "#f5f5f7" }}>
-                TechTribe
-              </span>
+              <>
+                <img src="/ttlg.png" alt="TechTribe" className="h-7 w-auto" />
+                <span className="font-heading font-bold text-lg" style={{ letterSpacing: "-0.02em", color: "#f5f5f7" }}>
+                  TechTribe
+                </span>
+              </>
             )}
           </Link>
         </div>
