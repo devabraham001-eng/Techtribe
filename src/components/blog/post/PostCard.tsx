@@ -178,7 +178,7 @@ export function PostCard({
               <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-tertiary">
                   <span>{post.author.name}</span>
-                  <span className="hidden xs:inline">·</span>
+                  <span className="hidden sm:inline">·</span>
                   <div className="flex items-center gap-1">
                     <Eye className="h-3 w-3" />
                     <span>{post.viewCount}</span>
