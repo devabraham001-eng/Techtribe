@@ -116,20 +116,20 @@ export function PostCard({
                 )}
               </div>
             <div className="flex flex-col justify-center p-4 sm:p-6 lg:p-8">
-                <div className="flex items-center gap-3 mb-3">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
                   {showCategory && post.category && <span className="text-xs font-medium text-primary uppercase tracking-wider">{post.category.name}</span>}
                   <span className="text-xs text-fg-tertiary">{formatDate(post.publishedAt || post.createdAt)}</span>
                 </div>
-                <h2 className="font-heading text-2xl lg:text-3xl font-bold leading-tight mb-3 group-hover:text-primary transition-colors">{post.title}</h2>
+                <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-bold leading-tight mb-3 group-hover:text-primary transition-colors">{post.title}</h2>
                 {post.excerpt && <p className="text-sm text-muted-foreground leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>}
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-3 text-xs text-fg-tertiary">
+                <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-tertiary">
                     <span>{post.author.name}</span>
                     <span>·</span>
                     <div className="flex items-center gap-1"><Eye className="h-3 w-3" /><span>{post.viewCount}</span></div>
                     {showReadingTime && (<><span>·</span><div className="flex items-center gap-1"><Clock className="h-3 w-3" /><span>{post.readingTime} min</span></div></>)}
                   </div>
-                  <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">Read more →</span>
+                  <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">Read more →</span>
                 </div>
               </div>
             </div>
@@ -156,8 +156,8 @@ export function PostCard({
                 </div>
               )}
             </div>
-            <div className="flex flex-col justify-center p-6 lg:p-8">
-              <div className="flex items-center gap-3 mb-3">
+            <div className="flex flex-col justify-center p-4 sm:p-6 lg:p-8">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
                 {showCategory && post.category && (
                   <span className="text-xs font-medium text-primary uppercase tracking-wider">
                     {post.category.name}
@@ -167,7 +167,7 @@ export function PostCard({
                   {formatDate(post.publishedAt || post.createdAt)}
                 </span>
               </div>
-              <h2 className="font-heading text-2xl lg:text-3xl font-bold leading-tight mb-3 group-hover:text-primary transition-colors">
+              <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-bold leading-tight mb-3 group-hover:text-primary transition-colors">
                 {post.title}
               </h2>
               {post.excerpt && (
@@ -175,10 +175,10 @@ export function PostCard({
                   {post.excerpt}
                 </p>
               )}
-              <div className="flex items-center justify-between mt-auto">
-                <div className="flex items-center gap-3 text-xs text-fg-tertiary">
+              <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-tertiary">
                   <span>{post.author.name}</span>
-                  <span>·</span>
+                  <span className="hidden xs:inline">·</span>
                   <div className="flex items-center gap-1">
                     <Eye className="h-3 w-3" />
                     <span>{post.viewCount}</span>
@@ -193,7 +193,7 @@ export function PostCard({
                     </>
                   )}
                 </div>
-                <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">
                   Read more →
                 </span>
               </div>
@@ -222,7 +222,7 @@ export function PostCard({
             )}
           </div>
           <div className="flex flex-col flex-1 p-4">
-            <div className="flex items-center gap-2 text-xs text-fg-tertiary mb-2.5">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-tertiary mb-2.5">
               <span>{post.author.name}</span>
               <span>·</span>
               <span>{formatDate(post.publishedAt || post.createdAt)}</span>
@@ -265,7 +265,7 @@ export function PostCard({
           )}
         </div>
         <div className="flex flex-col flex-1 p-4">
-          <div className="flex items-center gap-2 text-xs text-fg-tertiary mb-2.5">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-tertiary mb-2.5">
             <span>{post.author.name}</span>
             <span>·</span>
             <span>{formatDate(post.publishedAt || post.createdAt)}</span>

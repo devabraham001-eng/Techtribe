@@ -22,7 +22,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
   const { viewCount, refresh } = useRealtimeViewCount(post.slug, post.viewCount);
 
   return (
-    <article className="max-w-[720px] mx-auto px-4 sm:px-0 pt-6 lg:pt-8">
+    <article className="max-w-[720px] mx-auto px-4 sm:px-0 pt-6 lg:pt-8 pb-12">
       <Reveal direction="left" duration={0.3}>
       <Link
         href="/blog"
@@ -51,14 +51,14 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
         </Reveal>
 
         <Reveal direction="up" duration={0.4} delay={0.1}>
-        <h1 className="font-heading text-3xl md:text-4xl font-bold leading-tight tracking-tight text-foreground mb-4">
+        <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold leading-tight tracking-tight text-foreground mb-4">
           {post.title}
         </h1>
         </Reveal>
 
         {post.excerpt && (
           <Reveal direction="up" duration={0.4} delay={0.2}>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
             {post.excerpt}
           </p>
           </Reveal>
@@ -67,7 +67,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
         <Reveal direction="up" duration={0.4} delay={0.25}>
         <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-5 pt-4 border-t border-border">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
               <span className="text-xs font-bold text-primary">
                 {post.author.name.charAt(0)}
               </span>
@@ -79,7 +79,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
               {post.author.name}
             </Link>
           </div>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground ml-auto">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground sm:ml-auto">
             <div className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               <time dateTime={post.publishedAt || post.createdAt}>
@@ -97,7 +97,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       </header>
 
       <Reveal direction="up" duration={0.4} delay={0.3}>
-      <div className="relative aspect-[2/1] rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-secondary to-card border border-border mb-10">
+      <div className="relative aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-secondary to-card border border-border mb-8 sm:mb-10">
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-8xl font-heading font-bold text-primary/10 select-none">
             TT
@@ -114,7 +114,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
               return (
                 <h2
                   key={index}
-                  className="font-heading text-2xl font-semibold tracking-tight mt-10 mb-4 text-foreground"
+                  className="font-heading text-xl sm:text-2xl font-semibold tracking-tight mt-8 sm:mt-10 mb-4 text-foreground"
                 >
                   {line.slice(3)}
                 </h2>
@@ -124,7 +124,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
               return (
                 <h3
                   key={index}
-                  className="font-heading text-xl font-semibold tracking-tight mt-8 mb-3 text-foreground"
+                  className="font-heading text-lg sm:text-xl font-semibold tracking-tight mt-6 sm:mt-8 mb-3 text-foreground"
                 >
                   {line.slice(4)}
                 </h3>
@@ -134,23 +134,23 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
               return (
                 <blockquote
                   key={index}
-                  className="border-l-2 border-primary pl-5 italic text-muted-foreground my-8"
+                  className="border-l-2 border-primary pl-4 sm:pl-5 italic text-muted-foreground my-6 sm:my-8"
                 >
                   {line.slice(2)}
                 </blockquote>
               );
             }
             if (line.startsWith("---")) {
-              return <Separator key={index} className="my-10" />;
+              return <Separator key={index} className="my-8 sm:my-10" />;
             }
             if (line.trim() === "") {
-              return <div key={index} className="h-4" />;
+              return <div key={index} className="h-3 sm:h-4" />;
             }
             if (line.match(/^[*-] /)) {
               return (
                 <li
                   key={index}
-                  className="text-sm leading-relaxed mb-2 ml-4 list-disc text-muted-foreground"
+                  className="text-sm sm:text-base leading-relaxed mb-2 ml-4 list-disc text-muted-foreground"
                 >
                   {line.slice(2)}
                 </li>
@@ -159,7 +159,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
             return (
               <p
                 key={index}
-                className="mb-6 leading-relaxed text-sm text-muted-foreground"
+                className="mb-5 sm:mb-6 leading-relaxed text-sm sm:text-base text-muted-foreground break-words"
               >
                 {line}
               </p>
@@ -175,11 +175,11 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
       {post.tags.length > 0 && (
         <Reveal direction="up" duration={0.4} delay={0.4}>
-        <div className="flex flex-wrap gap-2 mt-10 pt-6 border-t border-border">
-          <span className="text-xs text-muted-foreground mr-1">Tags:</span>
+        <div className="flex flex-wrap gap-2 mt-8 sm:mt-10 pt-6 border-t border-border">
+          <span className="text-xs text-muted-foreground w-full sm:w-auto mb-1 sm:mb-0">Tags:</span>
           {post.tags.map((tag) => (
             <Link key={tag.id} href={`/blog/tag/${tag.slug}`}>
-              <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors">
+              <span className="px-3 py-1 rounded-md text-xs font-medium bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors inline-block">
                 #{tag.name}
               </span>
             </Link>
@@ -189,7 +189,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       )}
 
       <Reveal direction="up" duration={0.4} delay={0.45}>
-      <div className="flex items-center justify-between mt-8 pt-4 border-t border-border">
+      <div className="flex flex-wrap items-center justify-between gap-3 mt-8 pt-4 border-t border-border">
         <div className="flex items-center gap-2">
           <Share2 className="h-4 w-4 text-muted-foreground" />
           <span className="text-xs text-muted-foreground">Share</span>
@@ -205,25 +205,25 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       </Reveal>
 
       <Reveal direction="up" duration={0.4} delay={0.5}>
-      <Separator className="my-10" />
+      <Separator className="my-8 sm:my-10" />
       </Reveal>
 
       <Reveal direction="up" duration={0.4} delay={0.5}>
-      <div className="bg-card border border-border rounded-xl p-6">
-        <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-            <span className="font-bold text-primary">
+      <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
+        <div className="flex items-start gap-3 sm:gap-4">
+          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+            <span className="text-sm sm:font-bold text-primary">
               {post.author.name.charAt(0)}
             </span>
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <Link
               href={`/blog/author/${post.author.slug}`}
               className="font-heading font-semibold text-sm text-foreground hover:text-primary transition-colors"
             >
               {post.author.name}
             </Link>
-            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">
               {post.author.bio}
             </p>
           </div>
@@ -233,7 +233,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
       {(prevPost || nextPost) && (
         <Reveal direction="up" duration={0.4} delay={0.55}>
-        <nav className="mt-12 grid gap-4 sm:grid-cols-2" aria-label="Article navigation">
+        <nav className="mt-8 sm:mt-12 grid gap-3 sm:gap-4 sm:grid-cols-2" aria-label="Article navigation">
           {prevPost ? (
             <Link
               href={`/blog/${prevPost.slug}`}
@@ -272,8 +272,8 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
       {relatedPosts.length > 0 && (
         <Reveal direction="up" duration={0.4} delay={0.6}>
-        <div className="mt-12">
-          <h2 className="font-heading text-lg font-semibold text-foreground mb-5">
+        <div className="mt-10 sm:mt-12">
+          <h2 className="font-heading text-base sm:text-lg font-semibold text-foreground mb-5">
             Related articles
           </h2>
           <PostGrid
