@@ -23,21 +23,32 @@ export function WriteModal() {
 
   React.useEffect(() => {
     if (!open) return;
-    setLoading(true);
-    setCategories([]);
-    setTags([]);
-    Promise.all([
-      fetch("/api/categories").then((r) => r.json()),
-      fetch("/api/tags").then((r) => r.json()),
-      fetch("/api/author/profile").then((r) => r.json()),
-    ])
-      .then(([cats, tgs, profile]) => {
-        setCategories((cats as { categories?: Category[] }).categories ?? (cats as Category[]) ?? []);
-        setTags((tgs as { tags?: Tag[] }).tags ?? (tgs as Tag[]) ?? []);
-        setCanPublish((profile as { is_staff?: boolean }).is_staff ?? false);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    let active = true;
+    const loadTimer = window.setTimeout(() => {
+      setLoading(true);
+      setCategories([]);
+      setTags([]);
+      Promise.all([
+        fetch("/api/categories").then((r) => r.json()),
+        fetch("/api/tags").then((r) => r.json()),
+        fetch("/api/author/profile").then((r) => r.json()),
+      ])
+        .then(([cats, tgs, profile]) => {
+          if (!active) return;
+          setCategories((cats as { categories?: Category[] }).categories ?? (cats as Category[]) ?? []);
+          setTags((tgs as { tags?: Tag[] }).tags ?? (tgs as Tag[]) ?? []);
+          setCanPublish((profile as { is_staff?: boolean }).is_staff ?? false);
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (active) setLoading(false);
+        });
+    }, 0);
+
+    return () => {
+      active = false;
+      window.clearTimeout(loadTimer);
+    };
   }, [open]);
 
   if (!open) return null;

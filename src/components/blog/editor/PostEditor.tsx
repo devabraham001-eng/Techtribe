@@ -49,15 +49,19 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
   }, [selectedTags]);
 
   React.useEffect(() => {
-    const saved = localStorage.getItem(AUTOSAVE_KEY);
-    if (!saved || editId) return;
-    try {
-      const parsed = JSON.parse(saved) as Record<string, string>;
-      const savedAt = Number(parsed.savedAt) || 0;
-      if (Date.now() - savedAt < 60000 && (parsed.title || parsed.contentMdx)) {
-        setRestoreData(parsed);
-      }
-    } catch { /* ignore */ }
+    const restoreTimer = window.setTimeout(() => {
+      const saved = localStorage.getItem(AUTOSAVE_KEY);
+      if (!saved || editId) return;
+      try {
+        const parsed = JSON.parse(saved) as Record<string, string>;
+        const savedAt = Number(parsed.savedAt) || 0;
+        if (Date.now() - savedAt < 60000 && (parsed.title || parsed.contentMdx)) {
+          setRestoreData(parsed);
+        }
+      } catch { /* ignore */ }
+    }, 0);
+
+    return () => window.clearTimeout(restoreTimer);
   }, [editId]);
 
   function restoreFromLocal() {

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Settings, BookOpen, Layers, Users } from "lucide-react";
+import { BookOpen, Layers, Users } from "lucide-react";
 
 interface RightPanelProps {
   authorName: string;

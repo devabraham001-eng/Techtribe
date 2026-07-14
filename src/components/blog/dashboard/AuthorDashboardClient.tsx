@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   Edit,
   Eye,
@@ -36,13 +35,10 @@ interface DashboardProps {
 }
 
 export function AuthorDashboardClient({
-  authorId,
   authorName,
   authorBio,
   authorAvatar,
-  isStaff,
 }: DashboardProps) {
-  const router = useRouter();
   const [posts, setPosts] = React.useState<PostSummary[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -68,7 +64,11 @@ export function AuthorDashboardClient({
   }
 
   React.useEffect(() => {
-    void loadPosts();
+    const loadTimer = window.setTimeout(() => {
+      void loadPosts();
+    }, 0);
+
+    return () => window.clearTimeout(loadTimer);
   }, []);
 
   async function handleDelete(id: string) {

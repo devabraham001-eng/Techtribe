@@ -30,8 +30,12 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
   const [collapsed, setCollapsed] = React.useState(false);
 
   React.useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === "true") setCollapsed(true);
+    const restoreTimer = window.setTimeout(() => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === "true") setCollapsed(true);
+    }, 0);
+
+    return () => window.clearTimeout(restoreTimer);
   }, []);
 
   function toggleCollapse() {

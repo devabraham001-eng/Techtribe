@@ -112,7 +112,13 @@ export function AdminDashboardClient() {
     }
   }
 
-  React.useEffect(() => { void loadAll(); }, []);
+  React.useEffect(() => {
+    const loadTimer = window.setTimeout(() => {
+      void loadAll();
+    }, 0);
+
+    return () => window.clearTimeout(loadTimer);
+  }, []);
 
   const tabs: { key: Tab; label: string }[] = [
     { key: "posts", label: `Posts (${posts.length})` },

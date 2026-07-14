@@ -28,7 +28,11 @@ export function MobileBottomNav({ isAuthenticated, isStaff }: MobileBottomNavPro
   const [moreOpen, setMoreOpen] = React.useState(false);
 
   React.useEffect(() => {
-    setMoreOpen(false);
+    const closeTimer = window.setTimeout(() => {
+      setMoreOpen(false);
+    }, 0);
+
+    return () => window.clearTimeout(closeTimer);
   }, [pathname]);
 
   React.useEffect(() => {
@@ -63,6 +67,7 @@ export function MobileBottomNav({ isAuthenticated, isStaff }: MobileBottomNavPro
     ? [
         { label: "Categories", icon: Tags, href: "/blog/categories" },
         { label: "Authors", icon: Users, href: "/blog/authors" },
+        ...(isStaff ? [{ label: "Admin", icon: Settings, href: "/admin" }] : []),
         { label: "Settings", icon: Settings, href: "/settings" },
       ]
     : [
