@@ -246,6 +246,53 @@ create trigger trg_set_reading_time
   for each row
   execute function set_reading_time();
 
+-- Keep public category and tag counts in sync with published posts
+create or replace function refresh_taxonomy_post_counts()
+returns void as $$
+begin
+  update categories
+  set post_count = coalesce(counts.total, 0),
+      updated_at = now()
+  from (
+    select c.id, count(p.id)::int as total
+    from categories c
+    left join posts p
+      on p.category_id = c.id
+      and p.status = 'published'
+      and p.visibility = 'public'
+    group by c.id
+  ) counts
+  where categories.id = counts.id;
+
+  update tags
+  set post_count = coalesce(counts.total, 0)
+  from (
+    select t.id, count(p.id)::int as total
+    from tags t
+    left join posts p
+      on t.id = any(p.tags)
+      and p.status = 'published'
+      and p.visibility = 'public'
+    group by t.id
+  ) counts
+  where tags.id = counts.id;
+end;
+$$ language plpgsql security definer set search_path = public;
+
+create or replace function refresh_taxonomy_post_counts_trigger()
+returns trigger as $$
+begin
+  perform refresh_taxonomy_post_counts();
+  return null;
+end;
+$$ language plpgsql security definer set search_path = public;
+
+drop trigger if exists trg_refresh_taxonomy_post_counts on posts;
+create trigger trg_refresh_taxonomy_post_counts
+  after insert or update or delete on posts
+  for each statement
+  execute function refresh_taxonomy_post_counts_trigger();
+
 -- Seed data
 insert into categories (name, slug, description, icon) values
   ('Web Development', 'web-development', 'Frontend, backend, and full-stack development', '💻'),
@@ -262,6 +309,8 @@ insert into tags (name, slug) values
   ('Performance', 'performance'), ('CSS', 'css'), ('Supabase', 'supabase'),
   ('DevOps', 'devops'), ('Productivity', 'productivity'), ('Tools', 'tools')
 on conflict (slug) do nothing;
+
+select refresh_taxonomy_post_counts();
 
 -- Public storage buckets used by avatar and post cover uploads
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
