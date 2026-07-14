@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -73,10 +74,10 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
             }`}
           >
             {collapsed ? (
-              <img src="/ttlg.png" alt="TechTribe" className="h-7 w-auto" />
+              <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" />
             ) : (
               <>
-                <img src="/ttlg.png" alt="TechTribe" className="h-7 w-auto" />
+                <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" />
                 <span className="font-heading font-bold text-lg" style={{ letterSpacing: "-0.02em", color: "#f5f5f7" }}>
                   TechTribe
                 </span>
