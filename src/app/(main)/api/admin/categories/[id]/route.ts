@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { slugify } from "@/lib/utils";
 
 export async function PUT(
   request: Request,
@@ -23,11 +24,24 @@ export async function PUT(
 
   const body = await request.json();
   const updates: Record<string, unknown> = {};
-  if (typeof body.name === "string" && body.name.trim()) updates.name = body.name.trim();
-  if (typeof body.slug === "string" && body.slug.trim()) updates.slug = body.slug.trim();
+  if (typeof body.name === "string") {
+    const name = body.name.trim();
+    if (!name) return NextResponse.json({ error: "Name cannot be empty." }, { status: 400 });
+    updates.name = name;
+  }
+  if (typeof body.slug === "string") {
+    const slug = slugify(body.slug);
+    if (!slug) return NextResponse.json({ error: "Slug cannot be empty." }, { status: 400 });
+    updates.slug = slug;
+  }
   if (typeof body.description === "string") updates.description = body.description.trim() || null;
-  if (typeof body.icon === "string") updates.icon = body.icon || null;
-  if (typeof body.color === "string") updates.color = body.color || null;
+  if (typeof body.icon === "string") updates.icon = body.icon.trim() || null;
+  if (typeof body.color === "string") updates.color = body.color.trim() || null;
+  updates.updated_at = new Date().toISOString();
+
+  if (Object.keys(updates).length === 1) {
+    return NextResponse.json({ error: "No category changes provided." }, { status: 400 });
+  }
 
   const { data, error } = await supabase.from("categories").update(updates as never).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });

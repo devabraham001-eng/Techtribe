@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { slugify } from "@/lib/utils";
 
 export async function GET() {
   if (!isSupabaseConfigured()) {
@@ -35,14 +36,18 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   const name = typeof body.name === "string" ? body.name.trim() : "";
-  const slug = typeof body.slug === "string" ? body.slug.trim() : "";
+  const slug = typeof body.slug === "string" ? slugify(body.slug) : "";
+  const description = typeof body.description === "string" ? body.description.trim() || null : null;
+  const icon = typeof body.icon === "string" ? body.icon.trim() || null : null;
+  const color = typeof body.color === "string" ? body.color.trim() || null : null;
+
   if (!name || !slug) {
     return NextResponse.json({ error: "Name and slug are required." }, { status: 400 });
   }
 
   const { data, error } = await supabase
     .from("categories")
-    .insert({ name, slug, description: body.description || null, icon: body.icon || null, color: body.color || null } as never)
+    .insert({ name, slug, description, icon, color } as never)
     .select()
     .single();
 
