@@ -5,6 +5,7 @@ import type { Database } from "@/types/database";
 
 type PostUpdate = Database["public"]["Tables"]["posts"]["Update"];
 type PostRow = Database["public"]["Tables"]["posts"]["Row"];
+type AuthorPostUpdate = PostUpdate & Pick<PostRow, "updated_at">;
 
 export async function GET(
   _request: Request,
@@ -92,16 +93,24 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const updates: PostUpdate = {};
+  const updates: Partial<AuthorPostUpdate> = {};
 
-  if (typeof body.title === "string" && body.title.trim().length >= 5) {
-    updates.title = body.title.trim();
+  if (typeof body.title === "string") {
+    const title = body.title.trim();
+    if (title.length < 5) {
+      return NextResponse.json({ error: "Title must be at least 5 characters." }, { status: 400 });
+    }
+    updates.title = title;
   }
   if (typeof body.excerpt === "string") {
     updates.excerpt = body.excerpt.trim() || null;
   }
   if (typeof body.contentMdx === "string") {
-    updates.content_mdx = body.contentMdx.trim();
+    const contentMdx = body.contentMdx.trim();
+    if (!contentMdx) {
+      return NextResponse.json({ error: "Article content is required." }, { status: 400 });
+    }
+    updates.content_mdx = contentMdx;
   }
   if (typeof body.categoryId === "string" && body.categoryId) {
     updates.category_id = body.categoryId;
@@ -122,6 +131,7 @@ export async function PUT(
       updates.published_at = new Date().toISOString();
     }
   }
+  updates.updated_at = new Date().toISOString();
 
   const { data: updated, error } = await supabase
     .from("posts")
@@ -156,10 +166,10 @@ export async function DELETE(
 
   const { data: authorData } = await supabase
     .from("authors")
-    .select("id")
+    .select("id, is_staff")
     .eq("user_id", user.id)
     .single();
-  const author = authorData as { id: string } | null;
+  const author = authorData as { id: string; is_staff: boolean } | null;
 
   if (!author) {
     return NextResponse.json({ error: "Author profile not found." }, { status: 403 });
@@ -167,10 +177,10 @@ export async function DELETE(
 
   const { data: existing } = await supabase
     .from("posts")
-    .select("author_id")
+    .select("author_id, status")
     .eq("id", id)
     .single();
-  const post = existing as { author_id: string } | null;
+  const post = existing as { author_id: string; status: PostRow["status"] } | null;
 
   if (!post) {
     return NextResponse.json({ error: "Post not found." }, { status: 404 });
@@ -178,6 +188,10 @@ export async function DELETE(
 
   if (post.author_id !== author.id) {
     return NextResponse.json({ error: "You can only delete your own posts." }, { status: 403 });
+  }
+
+  if (post.status === "published" && !author.is_staff) {
+    return NextResponse.json({ error: "Only staff authors can delete published posts." }, { status: 403 });
   }
 
   const { error } = await supabase.from("posts").delete().eq("id", id);
