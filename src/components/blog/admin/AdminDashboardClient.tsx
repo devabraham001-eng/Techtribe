@@ -101,6 +101,7 @@ export function AdminDashboardClient() {
   const [editing, setEditing] = React.useState<string | null>(null);
   const [showNewForm, setShowNewForm] = React.useState(false);
   const [updatingPost, setUpdatingPost] = React.useState<string | null>(null);
+  const [deletingItem, setDeletingItem] = React.useState<string | null>(null);
 
   async function loadAll() {
     setLoading(true);
@@ -169,13 +170,21 @@ export function AdminDashboardClient() {
 
   async function deleteCategory(id: string) {
     if (!confirm("Delete this category?")) return;
-    const res = await fetch(`/api/admin/categories/${id}`, { method: "DELETE" });
-    if (!res.ok) {
-      const data = await res.json();
-      alert(data.error || "Failed to delete");
-      return;
+    setDeletingItem(id);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/categories/${id}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete category");
+      }
+      if (editing === id) setEditing(null);
+      void loadAll();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete category");
+    } finally {
+      setDeletingItem(null);
     }
-    void loadAll();
   }
 
   async function saveTag(id: string, values: Record<string, string>) {
@@ -208,13 +217,21 @@ export function AdminDashboardClient() {
 
   async function deleteTag(id: string) {
     if (!confirm("Delete this tag?")) return;
-    const res = await fetch(`/api/admin/tags/${id}`, { method: "DELETE" });
-    if (!res.ok) {
-      const data = await res.json();
-      alert(data.error || "Failed to delete");
-      return;
+    setDeletingItem(id);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/tags/${id}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete tag");
+      }
+      if (editing === id) setEditing(null);
+      void loadAll();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete tag");
+    } finally {
+      setDeletingItem(null);
     }
-    void loadAll();
   }
 
   async function updatePostStatus(id: string, status: PostStatus) {
@@ -372,8 +389,14 @@ export function AdminDashboardClient() {
                         <button type="button" onClick={() => setEditing(editing === cat.id ? null : cat.id)} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="Edit">
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button type="button" onClick={() => void deleteCategory(cat.id)} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" title="Delete">
-                          <Trash2 className="h-4 w-4" />
+                        <button
+                          type="button"
+                          onClick={() => void deleteCategory(cat.id)}
+                          disabled={deletingItem === cat.id}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                          title="Delete"
+                        >
+                          {deletingItem === cat.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                         </button>
                       </td>
                     </tr>
@@ -449,8 +472,14 @@ export function AdminDashboardClient() {
                         <button type="button" onClick={() => setEditing(editing === tag.id ? null : tag.id)} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="Edit">
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button type="button" onClick={() => void deleteTag(tag.id)} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" title="Delete">
-                          <Trash2 className="h-4 w-4" />
+                        <button
+                          type="button"
+                          onClick={() => void deleteTag(tag.id)}
+                          disabled={deletingItem === tag.id}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                          title="Delete"
+                        >
+                          {deletingItem === tag.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                         </button>
                       </td>
                     </tr>
