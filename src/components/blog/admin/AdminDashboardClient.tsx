@@ -2,16 +2,17 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Edit, Trash2, Plus, Loader2, AlertCircle, Save, X } from "lucide-react";
+import { Edit, Trash2, Plus, Loader2, AlertCircle, Save, X, Eye } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 
 type Tab = "posts" | "categories" | "tags";
+type PostStatus = "draft" | "review" | "scheduled" | "published" | "archived";
 
 interface PostItem {
   id: string;
   slug: string;
   title: string;
-  status: string;
+  status: PostStatus;
   view_count: number;
   created_at: string;
 }
@@ -99,6 +100,7 @@ export function AdminDashboardClient() {
   const [error, setError] = React.useState<string | null>(null);
   const [editing, setEditing] = React.useState<string | null>(null);
   const [showNewForm, setShowNewForm] = React.useState(false);
+  const [updatingPost, setUpdatingPost] = React.useState<string | null>(null);
 
   async function loadAll() {
     setLoading(true);
@@ -215,6 +217,31 @@ export function AdminDashboardClient() {
     void loadAll();
   }
 
+  async function updatePostStatus(id: string, status: PostStatus) {
+    setUpdatingPost(id);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/posts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to update post");
+      }
+      setPosts((current) =>
+        current.map((post) =>
+          post.id === id ? { ...post, status: data.post.status as PostStatus } : post
+        )
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update post");
+    } finally {
+      setUpdatingPost(null);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <Reveal direction="up" duration={0.4} delay={0}>
@@ -267,16 +294,27 @@ export function AdminDashboardClient() {
                 <tr key={post.id} className="border-b border-border last:border-0 hover:bg-muted/20">
                   <td className="px-4 py-3 font-medium truncate max-w-[260px] sm:max-w-sm">{post.title}</td>
                   <td className="px-4 py-3 hidden sm:table-cell">
-                    <span className={`text-xs font-medium capitalize ${
-                      post.status === "published" ? "text-green-500" : post.status === "draft" ? "text-yellow-500" : "text-muted-foreground"
-                    }`}>{post.status}</span>
+                    <select
+                      value={post.status}
+                      disabled={updatingPost === post.id}
+                      onChange={(event) => void updatePostStatus(post.id, event.target.value as PostStatus)}
+                      className="h-8 rounded-md border border-border bg-background px-2 text-xs capitalize text-foreground disabled:opacity-50"
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="review">Review</option>
+                      <option value="scheduled">Scheduled</option>
+                      <option value="published">Published</option>
+                      <option value="archived">Archived</option>
+                    </select>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{(post.view_count ?? 0).toLocaleString()}</td>
                   <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{new Date(post.created_at).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-right">
-                    <Link href={`/blog/write?id=${post.id}`} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="Edit">
-                      <Edit className="h-4 w-4" />
-                    </Link>
+                    {post.status === "published" && (
+                      <Link href={`/blog/${post.slug}`} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="View">
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    )}
                   </td>
                 </tr>
               ))}
