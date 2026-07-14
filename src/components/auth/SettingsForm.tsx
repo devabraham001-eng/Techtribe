@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Save } from "lucide-react";
+import { Loader2, Save, Upload } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,44 @@ interface SettingsFormProps {
 export function SettingsForm({ author }: SettingsFormProps) {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  async function handleAvatarUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !formRef.current) return;
+
+    setUploadingAvatar(true);
+    setMessage(null);
+
+    try {
+      const uploadData = new FormData();
+      uploadData.set("file", file);
+      uploadData.set("bucket", "avatars");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to upload avatar");
+      }
+
+      const avatarInput = formRef.current.elements.namedItem("avatar_url") as HTMLInputElement | null;
+      if (avatarInput) {
+        avatarInput.value = data.url;
+      }
+      setMessage("Avatar uploaded. Save settings to keep it.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Failed to upload avatar");
+    } finally {
+      setUploadingAvatar(false);
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -66,7 +103,7 @@ export function SettingsForm({ author }: SettingsFormProps) {
 
   return (
     <Reveal direction="up" duration={0.4}>
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="name">Display name</Label>
         <Input id="name" name="name" defaultValue={author?.name ?? ""} required />
@@ -87,6 +124,21 @@ export function SettingsForm({ author }: SettingsFormProps) {
       <div className="space-y-2">
         <Label htmlFor="avatar_url">Avatar URL</Label>
         <Input id="avatar_url" name="avatar_url" type="url" defaultValue={author?.avatar_url ?? ""} placeholder="https://..." />
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">
+          {uploadingAvatar ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Upload className="h-3.5 w-3.5" />
+          )}
+          {uploadingAvatar ? "Uploading avatar..." : "Upload avatar image"}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="sr-only"
+            disabled={uploadingAvatar}
+            onChange={(event) => void handleAvatarUpload(event)}
+          />
+        </label>
       </div>
 
       <fieldset className="rounded-lg border border-border p-5 space-y-4">
@@ -119,7 +171,7 @@ export function SettingsForm({ author }: SettingsFormProps) {
         </p>
       )}
 
-      <Button type="submit" loading={loading}>
+      <Button type="submit" loading={loading} disabled={uploadingAvatar}>
         <Save className="mr-2 h-4 w-4" />
         Save settings
       </Button>

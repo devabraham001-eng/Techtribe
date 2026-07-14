@@ -37,13 +37,18 @@ export async function PUT(request: Request) {
   const body = await request.json();
   const updates: Record<string, unknown> = {};
 
-  if (typeof body.name === "string" && body.name.trim()) updates.name = body.name.trim();
+  if (typeof body.name === "string") {
+    const name = body.name.trim();
+    if (!name) return NextResponse.json({ error: "Display name cannot be empty." }, { status: 400 });
+    updates.name = name;
+  }
   if (typeof body.bio === "string") updates.bio = body.bio.trim() || null;
-  if (typeof body.avatar_url === "string") updates.avatar_url = body.avatar_url || null;
+  if (typeof body.avatar_url === "string") updates.avatar_url = body.avatar_url.trim() || null;
   if (typeof body.twitter === "string") updates.twitter = body.twitter.trim() || null;
   if (typeof body.github === "string") updates.github = body.github.trim() || null;
   if (typeof body.linkedin === "string") updates.linkedin = body.linkedin.trim() || null;
   if (typeof body.website === "string") updates.website = body.website.trim() || null;
+  updates.updated_at = new Date().toISOString();
 
   const { data, error } = await supabase
     .from("authors")
