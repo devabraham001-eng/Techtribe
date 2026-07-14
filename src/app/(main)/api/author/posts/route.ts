@@ -11,6 +11,8 @@ interface CreatePostBody {
   title?: unknown;
   excerpt?: unknown;
   contentMdx?: unknown;
+  coverImageUrl?: unknown;
+  coverImageAlt?: unknown;
   categoryId?: unknown;
   tagIds?: unknown;
   status?: unknown;
@@ -76,6 +78,8 @@ export async function POST(request: Request) {
   const title = typeof body.title === "string" ? body.title.trim() : "";
   const excerpt = typeof body.excerpt === "string" ? body.excerpt.trim() : "";
   const contentMdx = typeof body.contentMdx === "string" ? body.contentMdx.trim() : "";
+  const coverImageUrl = typeof body.coverImageUrl === "string" ? body.coverImageUrl.trim() : "";
+  const coverImageAlt = typeof body.coverImageAlt === "string" ? body.coverImageAlt.trim() : "";
   const categoryId = typeof body.categoryId === "string" && body.categoryId ? body.categoryId : null;
   const tagIds = Array.isArray(body.tagIds)
     ? body.tagIds.filter((tag): tag is string => typeof tag === "string")
@@ -121,8 +125,8 @@ export async function POST(request: Request) {
     excerpt: excerpt || null,
     content_mdx: contentMdx,
     content_html: null,
-    cover_image_url: null,
-    cover_image_alt: null,
+    cover_image_url: coverImageUrl || null,
+    cover_image_alt: coverImageAlt || null,
     status,
     visibility: "public",
     published_at: status === "published" ? now : null,

@@ -112,6 +112,12 @@ export async function PUT(
     }
     updates.content_mdx = contentMdx;
   }
+  if (typeof body.coverImageUrl === "string") {
+    updates.cover_image_url = body.coverImageUrl.trim() || null;
+  }
+  if (typeof body.coverImageAlt === "string") {
+    updates.cover_image_alt = body.coverImageAlt.trim() || null;
+  }
   if (typeof body.categoryId === "string" && body.categoryId) {
     updates.category_id = body.categoryId;
   } else if (body.categoryId === null || body.categoryId === "") {

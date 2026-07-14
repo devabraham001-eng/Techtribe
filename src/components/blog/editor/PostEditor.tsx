@@ -23,6 +23,8 @@ interface EditablePost {
   title: string;
   excerpt: string | null;
   content_mdx: string;
+  cover_image_url: string | null;
+  cover_image_alt: string | null;
   category_id: string | null;
   tags: string[] | null;
 }
@@ -49,9 +51,11 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
       const title = (form.elements.namedItem("title") as HTMLInputElement)?.value ?? "";
       const excerpt = (form.elements.namedItem("excerpt") as HTMLTextAreaElement)?.value ?? "";
       const contentMdx = (form.elements.namedItem("contentMdx") as HTMLTextAreaElement)?.value ?? "";
+      const coverImageUrl = (form.elements.namedItem("coverImageUrl") as HTMLInputElement)?.value ?? "";
+      const coverImageAlt = (form.elements.namedItem("coverImageAlt") as HTMLInputElement)?.value ?? "";
       const categoryId = (form.elements.namedItem("categoryId") as HTMLSelectElement)?.value ?? "";
       if (!title && !contentMdx) return;
-      const data = { title, excerpt, contentMdx, categoryId, tags: JSON.stringify(selectedTags), savedAt: Date.now().toString() };
+      const data = { title, excerpt, contentMdx, coverImageUrl, coverImageAlt, categoryId, tags: JSON.stringify(selectedTags), savedAt: Date.now().toString() };
       localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
       setAutosaveIndicator("Auto-saved");
       setTimeout(() => setAutosaveIndicator(null), 2000);
@@ -80,6 +84,8 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
     (form.elements.namedItem("title") as HTMLInputElement).value = restoreData.title ?? "";
     (form.elements.namedItem("excerpt") as HTMLTextAreaElement).value = restoreData.excerpt ?? "";
     (form.elements.namedItem("contentMdx") as HTMLTextAreaElement).value = restoreData.contentMdx ?? "";
+    (form.elements.namedItem("coverImageUrl") as HTMLInputElement).value = restoreData.coverImageUrl ?? "";
+    (form.elements.namedItem("coverImageAlt") as HTMLInputElement).value = restoreData.coverImageAlt ?? "";
     const catEl = form.elements.namedItem("categoryId") as HTMLSelectElement;
     if (catEl && restoreData.categoryId) catEl.value = restoreData.categoryId;
     if (restoreData.tags) {
@@ -109,6 +115,8 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
         (form.elements.namedItem("title") as HTMLInputElement).value = post.title;
         (form.elements.namedItem("excerpt") as HTMLTextAreaElement).value = post.excerpt ?? "";
         (form.elements.namedItem("contentMdx") as HTMLTextAreaElement).value = post.content_mdx ?? "";
+        (form.elements.namedItem("coverImageUrl") as HTMLInputElement).value = post.cover_image_url ?? "";
+        (form.elements.namedItem("coverImageAlt") as HTMLInputElement).value = post.cover_image_alt ?? "";
         const catEl = form.elements.namedItem("categoryId") as HTMLSelectElement;
         if (catEl && post.category_id) catEl.value = post.category_id;
         setSelectedTags(post.tags ?? []);
@@ -165,6 +173,8 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
           title: formData.get("title"),
           excerpt: formData.get("excerpt"),
           contentMdx: formData.get("contentMdx"),
+          coverImageUrl: formData.get("coverImageUrl"),
+          coverImageAlt: formData.get("coverImageAlt"),
           categoryId: formData.get("categoryId") || null,
           tagIds: selectedTags,
           status,
@@ -277,6 +287,30 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
             placeholder="Write in Markdown..."
             onChange={handleFieldChange}
           />
+        </div>
+
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="coverImageUrl">Cover image URL</Label>
+            <Input
+              id="coverImageUrl"
+              name="coverImageUrl"
+              type="url"
+              placeholder="https://..."
+              onChange={handleFieldChange}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="coverImageAlt">Cover image alt text</Label>
+            <Input
+              id="coverImageAlt"
+              name="coverImageAlt"
+              maxLength={160}
+              placeholder="Describe the cover image"
+              onChange={handleFieldChange}
+            />
+          </div>
         </div>
 
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
