@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 interface ViewCountState {
   count: number;
@@ -11,7 +13,7 @@ interface ViewCountState {
 export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
   const [state, setState] = useState<ViewCountState>({
     count: initialCount,
-    isLive: true,
+    isLive: false,
     lastUpdated: null,
   });
 
@@ -20,11 +22,11 @@ export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
       const res = await fetch(`/api/posts/view?slug=${slug}`);
       if (res.ok) {
         const data = await res.json();
-        setState({
+        setState((current) => ({
           count: data.viewCount,
-          isLive: data.isLive,
+          isLive: current.isLive,
           lastUpdated: new Date(),
-        });
+        }));
       }
     } catch {
       // Silent fail - keep current count
@@ -40,11 +42,11 @@ export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
       });
       if (res.ok) {
         const data = await res.json();
-        setState({
+        setState((current) => ({
           count: data.viewCount,
-          isLive: true,
+          isLive: current.isLive,
           lastUpdated: new Date(),
-        });
+        }));
       }
     } catch {
       // Silent fail
@@ -52,13 +54,50 @@ export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
   }, [slug]);
 
   useEffect(() => {
-    const interval = setInterval(fetchLiveCount, 30000);
     const timeout = setTimeout(fetchLiveCount, 0);
+
+    if (!isSupabaseConfigured()) {
+      return () => clearTimeout(timeout);
+    }
+
+    const supabase = createClient();
+    let active = true;
+    const channel = supabase
+      .channel(`post-view-count-${slug}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "posts",
+          filter: `slug=eq.${slug}`,
+        },
+        (payload) => {
+          if (!active) return;
+          const nextCount = payload.new.view_count;
+          if (typeof nextCount !== "number") return;
+          setState({
+            count: nextCount,
+            isLive: true,
+            lastUpdated: new Date(),
+          });
+        }
+      )
+      .subscribe((status) => {
+        if (!active) return;
+        if (status === "SUBSCRIBED") {
+          setState((current) => ({ ...current, isLive: true }));
+        } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+          setState((current) => ({ ...current, isLive: false }));
+        }
+      });
+
     return () => {
+      active = false;
       clearTimeout(timeout);
-      clearInterval(interval);
+      void supabase.removeChannel(channel);
     };
-  }, [fetchLiveCount]);
+  }, [fetchLiveCount, slug]);
 
   useEffect(() => {
     const timeout = setTimeout(incrementView, 0);
