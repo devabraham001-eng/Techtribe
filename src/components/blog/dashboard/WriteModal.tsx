@@ -91,6 +91,7 @@ export function WriteModal() {
               categories={categories}
               tags={tags}
               canPublish={canPublish}
+              editId={editId}
             />
           )}
         </div>

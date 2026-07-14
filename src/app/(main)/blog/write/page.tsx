@@ -68,7 +68,7 @@ export default async function WritePage({
           </p>
         </div>
       </div>
-      <PostEditor categories={categories} tags={tags} canPublish={Boolean(author?.is_staff)} />
+      <PostEditor categories={categories} tags={tags} canPublish={Boolean(author?.is_staff)} editId={id ?? null} />
     </div>
   );
 }

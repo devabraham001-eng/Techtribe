@@ -15,6 +15,8 @@ interface PostEditorProps {
   categories: Category[];
   tags: Tag[];
   canPublish: boolean;
+  editId?: string | null;
+  onSaved?: () => void;
 }
 
 interface EditablePost {
@@ -25,10 +27,10 @@ interface EditablePost {
   tags: string[] | null;
 }
 
-export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
+export function PostEditor({ categories, tags, canPublish, editId: providedEditId, onSaved }: PostEditorProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const editId = searchParams.get("id");
+  const editId = providedEditId ?? searchParams.get("id");
   const formRef = React.useRef<HTMLFormElement>(null);
   const [loading, setLoading] = React.useState(false);
   const [initialLoading, setInitialLoading] = React.useState(!!editId);
@@ -176,6 +178,8 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
       setHasUnsaved(false);
       setMessage(isEditing ? "Article updated." : status === "published" ? "Article published." : "Draft saved.");
       localStorage.removeItem(AUTOSAVE_KEY);
+      window.dispatchEvent(new CustomEvent("techtribe:author-posts-changed"));
+      onSaved?.();
       if (status === "published" && !isEditing) {
         router.push(`/blog/${result.post.slug}`);
         router.refresh();

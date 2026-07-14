@@ -71,6 +71,15 @@ export function AuthorDashboardClient({
     return () => window.clearTimeout(loadTimer);
   }, []);
 
+  React.useEffect(() => {
+    const handlePostsChanged = () => {
+      void loadPosts();
+    };
+
+    window.addEventListener("techtribe:author-posts-changed", handlePostsChanged);
+    return () => window.removeEventListener("techtribe:author-posts-changed", handlePostsChanged);
+  }, []);
+
   async function handleDelete(id: string) {
     if (!confirm("Delete this article permanently?")) return;
     setDeleting(id);
