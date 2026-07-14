@@ -42,12 +42,14 @@ export function AuthorDashboardClient({
   const [posts, setPosts] = React.useState<PostSummary[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [actionError, setActionError] = React.useState<string | null>(null);
   const [deleting, setDeleting] = React.useState<string | null>(null);
   const { openWriteModal } = useWriteModal();
 
   async function loadPosts() {
     setLoading(true);
     setError(null);
+    setActionError(null);
     try {
       const res = await fetch(`/api/author/posts?limit=50`);
       if (!res.ok) {
@@ -83,6 +85,7 @@ export function AuthorDashboardClient({
   async function handleDelete(id: string) {
     if (!confirm("Delete this article permanently?")) return;
     setDeleting(id);
+    setActionError(null);
     try {
       const res = await fetch(`/api/author/posts/${id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -91,7 +94,7 @@ export function AuthorDashboardClient({
       }
       setPosts((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to delete");
+      setActionError(err instanceof Error ? err.message : "Failed to delete");
     } finally {
       setDeleting(null);
     }
@@ -211,6 +214,13 @@ export function AuthorDashboardClient({
           <div className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
             {error}
+          </div>
+        )}
+
+        {actionError && (
+          <div className="mb-4 flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            {actionError}
           </div>
         )}
 
