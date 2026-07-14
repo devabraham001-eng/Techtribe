@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, Save, Loader2, Cloud, RotateCcw } from "lucide-react";
+import { Eye, Save, Loader2, Cloud, RotateCcw, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +41,7 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
   const [autosaveIndicator, setAutosaveIndicator] = React.useState<string | null>(null);
   const [hasUnsaved, setHasUnsaved] = React.useState(false);
   const [restoreData, setRestoreData] = React.useState<Record<string, string> | null>(null);
+  const [uploadingCover, setUploadingCover] = React.useState(false);
   const autosaveRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const debounceAutosave = React.useCallback(() => {
@@ -153,6 +154,43 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
   function handleFieldChange() {
     setHasUnsaved(true);
     debounceAutosave();
+  }
+
+  async function handleCoverUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !formRef.current) return;
+
+    setUploadingCover(true);
+    setMessage(null);
+
+    try {
+      const formData = new FormData();
+      formData.set("file", file);
+      formData.set("bucket", "post-covers");
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Could not upload the cover image.");
+      }
+
+      const coverInput = formRef.current.elements.namedItem("coverImageUrl") as HTMLInputElement | null;
+      if (coverInput) {
+        coverInput.value = result.url;
+      }
+      setHasUnsaved(true);
+      setAutosaveIndicator("Cover uploaded");
+      window.setTimeout(() => setAutosaveIndicator(null), 3000);
+      debounceAutosave();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not upload the cover image.");
+    } finally {
+      setUploadingCover(false);
+    }
   }
 
   async function submit(form: HTMLFormElement, status: "draft" | "published") {
@@ -299,6 +337,21 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
               placeholder="https://..."
               onChange={handleFieldChange}
             />
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">
+              {uploadingCover ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Upload className="h-3.5 w-3.5" />
+              )}
+              {uploadingCover ? "Uploading cover..." : "Upload cover image"}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="sr-only"
+                disabled={uploadingCover}
+                onChange={(event) => void handleCoverUpload(event)}
+              />
+            </label>
           </div>
 
           <div className="space-y-2">
