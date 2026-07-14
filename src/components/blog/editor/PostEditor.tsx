@@ -17,6 +17,14 @@ interface PostEditorProps {
   canPublish: boolean;
 }
 
+interface EditablePost {
+  title: string;
+  excerpt: string | null;
+  content_mdx: string;
+  category_id: string | null;
+  tags: string[] | null;
+}
+
 export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -83,13 +91,17 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
 
   React.useEffect(() => {
     if (!editId) return;
+    let active = true;
     (async () => {
       try {
-        const res = await fetch(`/api/author/posts?limit=1`);
-        if (!res.ok) return;
+        const res = await fetch(`/api/author/posts/${editId}`, { cache: "no-store" });
         const data = await res.json();
-        const post = (data.posts ?? []).find((p: { id: string }) => p.id === editId);
-        if (!post) return;
+        if (!res.ok) {
+          throw new Error(data.error || "Could not load the article.");
+        }
+        if (!active) return;
+        const post = data.post as EditablePost | null;
+        if (!post) throw new Error("Could not load the article.");
         const form = formRef.current;
         if (!form) return;
         (form.elements.namedItem("title") as HTMLInputElement).value = post.title;
@@ -97,13 +109,19 @@ export function PostEditor({ categories, tags, canPublish }: PostEditorProps) {
         (form.elements.namedItem("contentMdx") as HTMLTextAreaElement).value = post.content_mdx ?? "";
         const catEl = form.elements.namedItem("categoryId") as HTMLSelectElement;
         if (catEl && post.category_id) catEl.value = post.category_id;
-        if (post.tags) setSelectedTags(post.tags);
-      } catch {
-        // Silent fail
+        setSelectedTags(post.tags ?? []);
+      } catch (error) {
+        if (active) {
+          setMessage(error instanceof Error ? error.message : "Could not load the article.");
+        }
       } finally {
-        setInitialLoading(false);
+        if (active) setInitialLoading(false);
       }
     })();
+
+    return () => {
+      active = false;
+    };
   }, [editId]);
 
   React.useEffect(() => {

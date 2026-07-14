@@ -6,6 +6,48 @@ import type { Database } from "@/types/database";
 type PostUpdate = Database["public"]["Tables"]["posts"]["Update"];
 type PostRow = Database["public"]["Tables"]["posts"]["Row"];
 
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+  }
+
+  const { data: authorData, error: authorError } = await supabase
+    .from("authors")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+  const author = authorData as { id: string } | null;
+
+  if (authorError || !author) {
+    return NextResponse.json({ error: "Author profile not found." }, { status: 403 });
+  }
+
+  const { data: post, error } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("id", id)
+    .eq("author_id", author.id)
+    .single();
+
+  if (error || !post) {
+    return NextResponse.json({ error: "Post not found." }, { status: 404 });
+  }
+
+  return NextResponse.json({ post });
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
