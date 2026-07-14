@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft, Database as DatabaseIcon } from "lucide-react";
 import { PostEditor } from "@/components/blog/editor/PostEditor";
-import { Button } from "@/components/ui/button";
 import { getBlogCategories, getBlogTags } from "@/lib/blog-data";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -68,11 +67,6 @@ export default async function WritePage({
             {id ? "Update your article and save changes." : "Save work as a draft. Staff authors can publish immediately."}
           </p>
         </div>
-        <form action="/auth/signout" method="post">
-          <Button type="submit" variant="outline" size="sm">
-            Sign out
-          </Button>
-        </form>
       </div>
       <PostEditor categories={categories} tags={tags} canPublish={Boolean(author?.is_staff)} />
     </div>

@@ -5,8 +5,8 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next") || "/blog/write";
-  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/blog/write";
+  const next = url.searchParams.get("next") || "/dashboard";
+  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
 
   if (!isSupabaseConfigured()) {
     return NextResponse.redirect(new URL("/login?error=not-configured", url.origin));
