@@ -43,38 +43,49 @@ function EditForm({
 }) {
   const [values, setValues] = React.useState(initial);
   const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+    setError(null);
     try {
       await onSave(values);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save changes");
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-2 p-3 bg-muted/30 rounded-lg">
-      {fields.map((f) => (
-        <div key={f.key}>
-          <label className="block text-xs text-muted-foreground mb-1">{f.label}</label>
-          <input
-            className="h-8 rounded-md border border-border bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            value={values[f.key] ?? ""}
-            onChange={(e) => setValues((prev) => ({ ...prev, [f.key]: e.target.value }))}
-            required={f.required}
-          />
+    <form onSubmit={handleSubmit} className="space-y-3 rounded-lg bg-muted/30 p-3">
+      <div className="flex flex-wrap items-end gap-2">
+        {fields.map((f) => (
+          <div key={f.key}>
+            <label className="block text-xs text-muted-foreground mb-1">{f.label}</label>
+            <input
+              className="h-8 rounded-md border border-border bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              value={values[f.key] ?? ""}
+              onChange={(e) => setValues((prev) => ({ ...prev, [f.key]: e.target.value }))}
+              required={f.required}
+            />
+          </div>
+        ))}
+        <div className="flex gap-1">
+          <button type="submit" disabled={saving} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-green-500 hover:bg-green-500/10 disabled:opacity-50">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          </button>
+          <button type="button" onClick={onCancel} disabled={saving} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted disabled:opacity-50">
+            <X className="h-4 w-4" />
+          </button>
         </div>
-      ))}
-      <div className="flex gap-1">
-        <button type="submit" disabled={saving} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-green-500 hover:bg-green-500/10">
-          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-        </button>
-        <button type="button" onClick={onCancel} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted">
-          <X className="h-4 w-4" />
-        </button>
       </div>
+      {error && (
+        <p className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+          {error}
+        </p>
+      )}
     </form>
   );
 }
