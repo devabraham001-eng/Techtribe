@@ -120,6 +120,17 @@ alter table posts enable row level security;
 alter table ad_slots enable row level security;
 alter table post_views enable row level security;
 
+-- Recreate app policies so this setup script can be rerun safely
+drop policy if exists "Public read categories" on categories;
+drop policy if exists "Public read tags" on tags;
+drop policy if exists "Public read authors" on authors;
+drop policy if exists "Public read active ad slots" on ad_slots;
+drop policy if exists "Public read published posts" on posts;
+drop policy if exists "Users create own author profile" on authors;
+drop policy if exists "Users update own author profile" on authors;
+drop policy if exists "Anyone can insert post views" on post_views;
+drop policy if exists "Authors manage own posts" on posts;
+
 -- Public read access
 create policy "Public read categories" on categories for select using (true);
 create policy "Public read tags" on tags for select using (true);
@@ -175,8 +186,28 @@ create trigger on_auth_user_created
   for each row execute function handle_new_user();
 
 -- Enable real-time subscriptions
-alter publication supabase_realtime add table posts;
-alter publication supabase_realtime add table post_views;
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'posts'
+  ) then
+    alter publication supabase_realtime add table posts;
+  end if;
+
+  if not exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'post_views'
+  ) then
+    alter publication supabase_realtime add table post_views;
+  end if;
+end $$;
 
 -- Function to increment view count
 create or replace function increment_post_views(post_id uuid)
@@ -209,6 +240,7 @@ begin
 end;
 $$ language plpgsql;
 
+drop trigger if exists trg_set_reading_time on posts;
 create trigger trg_set_reading_time
   before insert or update on posts
   for each row
@@ -231,7 +263,35 @@ insert into tags (name, slug) values
   ('DevOps', 'devops'), ('Productivity', 'productivity'), ('Tools', 'tools')
 on conflict (slug) do nothing;
 
+-- Public storage buckets used by avatar and post cover uploads
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values
+  (
+    'post-covers',
+    'post-covers',
+    true,
+    5242880,
+    array['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+  ),
+  (
+    'avatars',
+    'avatars',
+    true,
+    5242880,
+    array['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+  )
+on conflict (id) do update
+set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
 -- Storage RLS: authenticated users can upload to post-covers and avatars
+drop policy if exists "Authenticated users can upload images" on storage.objects;
+drop policy if exists "Public read storage objects" on storage.objects;
+drop policy if exists "Users can update own storage objects" on storage.objects;
+drop policy if exists "Users can delete own storage objects" on storage.objects;
+
 create policy "Authenticated users can upload images"
 on storage.objects for insert
 with check (
@@ -245,9 +305,9 @@ using (bucket_id in ('post-covers', 'avatars'));
 
 create policy "Users can update own storage objects"
 on storage.objects for update
-using (auth.uid() = owner)
-with check (auth.uid() = owner);
+using (bucket_id in ('post-covers', 'avatars') and auth.uid() = owner)
+with check (bucket_id in ('post-covers', 'avatars') and auth.uid() = owner);
 
 create policy "Users can delete own storage objects"
 on storage.objects for delete
-using (auth.uid() = owner);
+using (bucket_id in ('post-covers', 'avatars') and auth.uid() = owner);
