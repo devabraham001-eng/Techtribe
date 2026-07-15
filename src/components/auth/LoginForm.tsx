@@ -2,11 +2,25 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LogIn, UserPlus } from "lucide-react";
+import { LogIn, UserPlus, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
+
+async function checkPasswordBreach(password: string): Promise<boolean> {
+  const msgBuffer = new TextEncoder().encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-1", msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+  const prefix = hashHex.slice(0, 5);
+  const suffix = hashHex.slice(5);
+
+  const res = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+  if (!res.ok) return false;
+  const text = await res.text();
+  return text.split("\n").some((line) => line.startsWith(suffix + ":"));
+}
 
 const GOOGLE_ICON = (
   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -54,6 +68,12 @@ export function LoginForm({ configured }: LoginFormProps) {
 
     try {
       if (mode === "signup") {
+        const isPwned = await checkPasswordBreach(password);
+        if (isPwned) {
+          setMessage("This password has appeared in a data breach. Please choose a stronger one.");
+          setLoading(false);
+          return;
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
