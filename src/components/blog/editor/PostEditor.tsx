@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, Save, Loader2, Cloud, RotateCcw, Upload } from "lucide-react";
+import { Eye, Save, Loader2, Cloud, RotateCcw, Upload, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,6 +42,7 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
   const [hasUnsaved, setHasUnsaved] = React.useState(false);
   const [restoreData, setRestoreData] = React.useState<Record<string, string> | null>(null);
   const [uploadingCover, setUploadingCover] = React.useState(false);
+  const [uploadingInline, setUploadingInline] = React.useState(false);
   const autosaveRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const debounceAutosave = React.useCallback(() => {
@@ -193,6 +194,52 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
     }
   }
 
+  async function handleInlineImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !formRef.current) return;
+
+    setUploadingInline(true);
+    setMessage(null);
+
+    try {
+      const formData = new FormData();
+      formData.set("file", file);
+      formData.set("bucket", "post-covers");
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Could not upload the image.");
+      }
+
+      const textarea = formRef.current.elements.namedItem("contentMdx") as HTMLTextAreaElement | null;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const altText = file.name.replace(/\.[^/.]+$/, "");
+        const markdown = `\n![${altText}](${result.url})\n`;
+        const newContent = textarea.value.slice(0, start) + markdown + textarea.value.slice(end);
+        textarea.value = newContent;
+        textarea.dispatchEvent(new Event("input", { bubbles: true }));
+        textarea.focus();
+        textarea.setSelectionRange(start + markdown.length, start + markdown.length);
+      }
+
+      setHasUnsaved(true);
+      setAutosaveIndicator("Image inserted");
+      window.setTimeout(() => setAutosaveIndicator(null), 2000);
+      debounceAutosave();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not upload the image.");
+    } finally {
+      setUploadingInline(false);
+    }
+  }
+
   async function submit(form: HTMLFormElement, status: "draft" | "published") {
     const formData = new FormData(form);
 
@@ -230,6 +277,10 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
       onSaved?.();
       if (status === "published" && !isEditing) {
         router.push(`/blog/${result.post.slug}`);
+        router.refresh();
+      } else if (!isEditing) {
+        // New draft saved - redirect to edit page so user can continue
+        router.push(`/blog/write?id=${result.post.id}`);
         router.refresh();
       } else {
         router.refresh();
@@ -315,7 +366,39 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="contentMdx">Article content</Label>
+          <div className="flex items-center gap-1">
+            <Label htmlFor="contentMdx">Article content</Label>
+            <div className="ml-auto flex items-center gap-1">
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="sr-only"
+                id="inlineImageUpload"
+                onChange={handleInlineImageUpload}
+                disabled={uploadingInline}
+              />
+              <label
+                htmlFor="inlineImageUpload"
+                className={`inline-flex items-center justify-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
+                  uploadingInline
+                    ? "bg-muted border-border text-muted-foreground cursor-wait"
+                    : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                }`}
+              >
+                {uploadingInline ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-3.5 w-3.5" />
+                    Add image
+                  </>
+                )}
+              </label>
+            </div>
+          </div>
           <textarea
             id="contentMdx"
             name="contentMdx"

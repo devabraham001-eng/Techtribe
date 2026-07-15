@@ -11,6 +11,7 @@ import {
   AlertCircle,
   PenLine,
   Plus,
+  BarChart2 as BarChartIcon,
 } from "lucide-react";
 import { DashboardRightPanel } from "./DashboardRightPanel";
 import { Reveal } from "@/components/motion/Reveal";

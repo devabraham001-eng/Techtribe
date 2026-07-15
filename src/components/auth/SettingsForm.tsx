@@ -122,15 +122,28 @@ export function SettingsForm({ author }: SettingsFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="avatar_url">Avatar URL</Label>
-        <Input id="avatar_url" name="avatar_url" type="url" defaultValue={author?.avatar_url ?? ""} placeholder="https://..." />
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">
-          {uploadingAvatar ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        <Label htmlFor="avatar_url">Profile Picture</Label>
+        <div className="flex items-center gap-4 mb-2">
+          {author?.avatar_url ? (
+            <img src={author.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover border border-border" />
           ) : (
-            <Upload className="h-3.5 w-3.5" />
+            <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center border border-border">
+              <span className="text-xl font-bold text-primary">
+                {author?.name?.charAt(0).toUpperCase() ?? "?"}
+              </span>
+            </div>
           )}
-          {uploadingAvatar ? "Uploading avatar..." : "Upload avatar image"}
+          <div className="flex-1 min-w-0">
+            <Input id="avatar_url" name="avatar_url" type="url" defaultValue={author?.avatar_url ?? ""} placeholder="https://..." />
+          </div>
+        </div>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 transition-colors">
+          {uploadingAvatar ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="h-4 w-4" />
+          )}
+          {uploadingAvatar ? "Uploading avatar..." : "Upload new avatar"}
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
@@ -139,6 +152,7 @@ export function SettingsForm({ author }: SettingsFormProps) {
             onChange={(event) => void handleAvatarUpload(event)}
           />
         </label>
+        <p className="text-xs text-muted-foreground">Recommended: 400x400px, max 5MB. JPG, PNG, WebP, or GIF.</p>
       </div>
 
       <fieldset className="rounded-lg border border-border p-5 space-y-4">

@@ -116,7 +116,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const status = requestedStatus === "published" && author.is_staff ? "published" : "draft";
+  const status = requestedStatus === "published" ? "published" : "draft";
   const slug = `${slugify(title)}-${crypto.randomUUID().slice(0, 8)}`;
   const now = new Date().toISOString();
   const payload: PostInsert = {

@@ -64,11 +64,11 @@ export default async function WritePage({
         <div>
           <h1 className="font-heading text-3xl font-bold">{id ? "Edit article" : "Write an article"}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            {id ? "Update your article and save changes." : "Save work as a draft. Staff authors can publish immediately."}
+            {id ? "Update your article and save changes." : "Save as draft or publish to share with the community."}
           </p>
         </div>
       </div>
-      <PostEditor categories={categories} tags={tags} canPublish={Boolean(author?.is_staff)} editId={id ?? null} />
+      <PostEditor categories={categories} tags={tags} canPublish={true} editId={id ?? null} />
     </div>
   );
 }
