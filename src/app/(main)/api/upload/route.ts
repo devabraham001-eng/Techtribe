@@ -52,7 +52,8 @@ export async function POST(request: Request) {
     });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Upload error:", error);
+    return NextResponse.json({ error: error.message, code: error.name, hint: error.cause }, { status: 500 });
   }
 
   const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path);

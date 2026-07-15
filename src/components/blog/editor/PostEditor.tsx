@@ -500,14 +500,9 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
         )}
 
         <div className="flex flex-wrap gap-3 border-t border-border pt-5">
-          <Button type="submit" loading={loading}>
-            <Save className="mr-2 h-4 w-4" />
-            {editId ? "Update draft" : "Save draft"}
-          </Button>
           {canPublish && (
             <Button
               type="button"
-              variant="outline"
               disabled={loading}
               onClick={() => {
                 const form = formRef.current;
@@ -520,6 +515,10 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
               Publish
             </Button>
           )}
+          <Button type="submit" variant="outline" loading={loading}>
+            <Save className="mr-2 h-4 w-4" />
+            {editId ? "Update draft" : "Save draft"}
+          </Button>
         </div>
       </form>
     </>
