@@ -4,6 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useWriteModal } from "./WriteModalContext";
 import {
   LayoutDashboard,
   PenLine,
@@ -25,6 +26,7 @@ const STORAGE_KEY = "techtribe_sidebar_collapsed";
 
 export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarProps) {
   const pathname = usePathname();
+  const { openWriteModal } = useWriteModal();
   const [collapsed, setCollapsed] = React.useState(false);
 
   React.useEffect(() => {
@@ -84,34 +86,40 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
         </div>
 
         {/* Nav items */}
-        <div className="flex-1 space-y-1 px-2 py-4 overflow-y-auto">
+        <div className="flex-1 space-y-1 px-2 py-4 overflow-hidden">
           <Link href="/dashboard" className={linkClass("/dashboard")} title="Dashboard">
             <LayoutDashboard className={iconClass} />
             {!collapsed && <span>Dashboard</span>}
           </Link>
 
-          <Link
-            href="/blog/write"
-            className={linkClass("/blog/write")}
+          <button
+            type="button"
+            onClick={() => openWriteModal()}
+            className={`flex w-full items-center gap-3 rounded-lg transition-colors text-left ${
+              collapsed ? "px-2 py-2.5 justify-center" : "px-3 py-2.5"
+            } text-muted-foreground hover:bg-card hover:text-foreground`}
             title="Write"
           >
             <PenLine className={iconClass} />
             {!collapsed && <span>Write</span>}
-          </Link>
+          </button>
 
           <Link href="/blog" className={linkClass("/blog")} title="Published">
             <CheckCircle className={iconClass} />
             {!collapsed && <span>Published</span>}
           </Link>
 
-          <Link
-            href="/blog/write"
-            className={linkClass("/blog/write")}
+          <button
+            type="button"
+            onClick={() => openWriteModal()}
+            className={`flex w-full items-center gap-3 rounded-lg transition-colors text-left ${
+              collapsed ? "px-2 py-2.5 justify-center" : "px-3 py-2.5"
+            } text-muted-foreground hover:bg-card hover:text-foreground`}
             title="Drafts"
           >
             <FileEdit className={iconClass} />
             {!collapsed && <span>Drafts</span>}
-          </Link>
+          </button>
 
           <Link href="/settings" className={linkClass("/settings")} title="Settings">
             <Settings className={iconClass} />

@@ -13,9 +13,9 @@ import {
   Plus,
   BarChart2 as BarChartIcon,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { DashboardRightPanel } from "./DashboardRightPanel";
 import { Reveal } from "@/components/motion/Reveal";
+import { useWriteModal } from "./WriteModalContext";
 
 interface PostSummary {
   id: string;
@@ -45,7 +45,7 @@ export function AuthorDashboardClient({
   const [error, setError] = React.useState<string | null>(null);
   const [actionError, setActionError] = React.useState<string | null>(null);
   const [deleting, setDeleting] = React.useState<string | null>(null);
-  const router = useRouter();
+  const { openWriteModal } = useWriteModal();
 
   async function loadPosts() {
     setLoading(true);
@@ -165,7 +165,7 @@ export function AuthorDashboardClient({
                 <button
                   key={item.label}
                   type="button"
-                  onClick={() => router.push('/blog/write')}
+                  onClick={() => openWriteModal()}
                   className="hover:opacity-80 transition-opacity text-left"
                 >
                   {content}
@@ -192,13 +192,14 @@ export function AuthorDashboardClient({
         <Reveal direction="up" duration={0.4} delay={0.1}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading text-lg font-bold text-foreground">Your articles</h2>
-          <Link
-            href="/blog/write"
+          <button
+            type="button"
+            onClick={() => openWriteModal()}
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
           >
             <PenLine className="h-3.5 w-3.5" />
             Write
-          </Link>
+          </button>
         </div>
         </Reveal>
 
@@ -235,13 +236,14 @@ export function AuthorDashboardClient({
             <p className="mt-1 text-sm text-muted-foreground">
               Write your first article to see it here.
             </p>
-            <Link
-              href="/blog/write"
+            <button
+              type="button"
+              onClick={() => openWriteModal()}
               className="mt-5 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               <PenLine className="h-4 w-4" />
               Write an article
-            </Link>
+            </button>
           </div>
           </Reveal>
         )}
@@ -281,14 +283,15 @@ export function AuthorDashboardClient({
                       </div>
                     </div>
 
-                    <Link
-                      href={`/blog/write?id=${post.id}`}
+                    <button
+                      type="button"
+                      onClick={() => openWriteModal(post.id)}
                       className="group block w-full text-left"
                     >
                       <h3 className="font-heading text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors leading-snug">
                         {post.title}
                       </h3>
-                    </Link>
+                    </button>
 
                     <div className="flex items-center gap-3 mt-3 pt-3 border-t border-border">
                       <div className="flex items-center gap-1.5 text-xs text-fg-tertiary">
@@ -306,13 +309,14 @@ export function AuthorDashboardClient({
                             <Eye className="h-4 w-4" />
                           </Link>
                         )}
-                        <Link
-                          href={`/blog/write?id=${post.id}`}
+                        <button
+                          type="button"
+                          onClick={() => openWriteModal(post.id)}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background transition-colors"
                           title="Edit article"
                         >
                           <Edit className="h-4 w-4" />
-                        </Link>
+                        </button>
                         <button
                           type="button"
                           disabled={deleting === post.id}

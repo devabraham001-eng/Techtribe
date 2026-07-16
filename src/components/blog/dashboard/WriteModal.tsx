@@ -18,7 +18,7 @@ export function WriteModal() {
   const { open, closeWriteModal, editId } = useWriteModal();
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [tags, setTags] = React.useState<Tag[]>([]);
-  const [canPublish, setCanPublish] = React.useState(false);
+  const [canPublish, setCanPublish] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -31,13 +31,11 @@ export function WriteModal() {
       Promise.all([
         fetch("/api/categories").then((r) => r.json()),
         fetch("/api/tags").then((r) => r.json()),
-        fetch("/api/author/profile").then((r) => r.json()),
       ])
-        .then(([cats, tgs, profile]) => {
+        .then(([cats, tgs]) => {
           if (!active) return;
           setCategories((cats as { categories?: Category[] }).categories ?? (cats as Category[]) ?? []);
           setTags((tgs as { tags?: Tag[] }).tags ?? (tgs as Tag[]) ?? []);
-          setCanPublish((profile as { is_staff?: boolean }).is_staff ?? false);
         })
         .catch(() => {})
         .finally(() => {

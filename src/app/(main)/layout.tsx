@@ -40,7 +40,7 @@ export default async function MainLayout({
           <aside className="flex-shrink-0 hidden lg:block border-r border-border overflow-hidden">
             <DashboardSidebarWrapper />
           </aside>
-          <div className="flex-1 min-w-0 overflow-y-auto pb-16 md:pb-0">
+          <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden pb-16 md:pb-0">
             <PageTransition>
               {children}
             </PageTransition>
