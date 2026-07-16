@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Share2, Copy } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { LiveIndicator, LiveViewCount } from "@/components/blog/live/LiveIndicator";
 import { PostGrid } from "@/components/blog/post/PostGrid";
@@ -20,6 +20,28 @@ interface ArticleViewProps {
 
 export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleViewProps) {
   const { viewCount, refresh } = useRealtimeViewCount(post.slug, post.viewCount);
+
+  async function handleShare() {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    const title = post.title;
+    const text = post.excerpt || title;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url });
+        return;
+      } catch (err) {
+        if ((err as Error).name === "AbortError") return;
+      }
+    }
+    // Fallback: copy to clipboard
+    try {
+      await navigator.clipboard.writeText(url);
+      alert("Link copied to clipboard!");
+    } catch {
+      alert("Could not copy link. Please copy manually: " + url);
+    }
+  }
 
   return (
     <article className="max-w-[720px] mx-auto px-4 sm:px-0 pt-6 lg:pt-8 pb-12">
@@ -200,10 +222,14 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
       <Reveal direction="up" duration={0.4} delay={0.45}>
       <div className="flex flex-wrap items-center justify-between gap-3 mt-8 pt-4 border-t border-border">
-        <div className="flex items-center gap-2">
-          <Share2 className="h-4 w-4 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground">Share</span>
-        </div>
+        <button
+          type="button"
+          onClick={handleShare}
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Share2 className="h-4 w-4" />
+          <span>Share</span>
+        </button>
         <button
           type="button"
           onClick={refresh}
