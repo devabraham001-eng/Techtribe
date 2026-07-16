@@ -140,7 +140,7 @@ async function getSupabaseCollections() {
     supabase.from("tags").select("id, name, slug, description, post_count, created_at").order("name"),
     supabase
       .from("posts")
-      .select("id, slug, title, excerpt, cover_image_url, cover_image_alt, status, visibility, published_at, author_id, category_id, tags, reading_time, view_count, created_at, updated_at")
+      .select("id, slug, title, excerpt, content_mdx, cover_image_url, cover_image_alt, status, visibility, published_at, author_id, category_id, tags, reading_time, view_count, created_at, updated_at")
       .eq("status", "published")
       .eq("visibility", "public")
       .order("published_at", { ascending: false })
