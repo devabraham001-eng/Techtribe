@@ -98,11 +98,11 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
       <Reveal direction="up" duration={0.4} delay={0.3}>
       {post.coverImageUrl ? (
-        <div className="relative aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden mb-8 sm:mb-10">
+        <div className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-card border border-border mb-8 sm:mb-10">
           <img
             src={post.coverImageUrl}
             alt={post.coverImageAlt || post.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="w-full h-auto object-contain"
           />
         </div>
       ) : (
