@@ -103,5 +103,22 @@ export async function POST(request: Request) {
 
   const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path);
 
+  if (bucket === "avatars") {
+    try {
+      const { data: authorData } = await supabase
+        .from("authors")
+        .select("avatar_url")
+        .eq("user_id", user.id)
+        .single();
+      const oldUrl = (authorData as { avatar_url: string | null } | null)?.avatar_url;
+      const storageBase = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/`;
+      if (oldUrl?.startsWith(storageBase)) {
+        const oldPath = oldUrl.slice(storageBase.length);
+        const deleteClient = admin?.storage ?? supabase.storage;
+        await deleteClient.from("avatars").remove([oldPath]).catch(() => {});
+      }
+    } catch { /* ignore — deletion is best-effort */ }
+  }
+
   return NextResponse.json({ url: publicUrl, path: data?.path });
 }
