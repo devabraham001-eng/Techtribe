@@ -15,8 +15,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useWriteModal } from "./WriteModalContext";
-
 interface SidebarProps {
   authorName: string;
   authorAvatar: string | null;
@@ -27,7 +25,6 @@ const STORAGE_KEY = "techtribe_sidebar_collapsed";
 
 export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarProps) {
   const pathname = usePathname();
-  const { openWriteModal } = useWriteModal();
   const [collapsed, setCollapsed] = React.useState(false);
 
   React.useEffect(() => {
@@ -93,34 +90,28 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
             {!collapsed && <span>Dashboard</span>}
           </Link>
 
-          <button
-            type="button"
-            onClick={() => openWriteModal()}
-            className={`flex w-full items-center gap-3 rounded-lg transition-colors text-left ${
-              collapsed ? "px-2 py-2.5 justify-center" : "px-3 py-2.5"
-            } text-muted-foreground hover:bg-card hover:text-foreground`}
+          <Link
+            href="/blog/write"
+            className={linkClass("/blog/write")}
             title="Write"
           >
             <PenLine className={iconClass} />
             {!collapsed && <span>Write</span>}
-          </button>
+          </Link>
 
           <Link href="/blog" className={linkClass("/blog")} title="Published">
             <CheckCircle className={iconClass} />
             {!collapsed && <span>Published</span>}
           </Link>
 
-          <button
-            type="button"
-            onClick={() => openWriteModal()}
-            className={`flex w-full items-center gap-3 rounded-lg transition-colors text-left ${
-              collapsed ? "px-2 py-2.5 justify-center" : "px-3 py-2.5"
-            } text-muted-foreground hover:bg-card hover:text-foreground`}
+          <Link
+            href="/blog/write"
+            className={linkClass("/blog/write")}
             title="Drafts"
           >
             <FileEdit className={iconClass} />
             {!collapsed && <span>Drafts</span>}
-          </button>
+          </Link>
 
           <Link href="/settings" className={linkClass("/settings")} title="Settings">
             <Settings className={iconClass} />

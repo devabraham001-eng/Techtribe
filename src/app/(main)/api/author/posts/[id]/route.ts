@@ -68,10 +68,10 @@ export async function PUT(
 
   const { data: authorData, error: authorError } = await supabase
     .from("authors")
-    .select("id, is_staff")
+    .select("id")
     .eq("user_id", user.id)
     .single();
-  const author = authorData as Pick<PostRow, "id"> & { is_staff: boolean } | null;
+  const author = authorData as Pick<PostRow, "id"> | null;
 
   if (authorError || !author) {
     return NextResponse.json({ error: "Author profile not found." }, { status: 403 });
@@ -128,12 +128,8 @@ export async function PUT(
   }
 
   if (body.status === "published" || body.status === "draft") {
-    const targetStatus = body.status;
-    if (targetStatus === "published" && !author.is_staff && post.status !== "published") {
-      return NextResponse.json({ error: "Only staff authors can publish." }, { status: 403 });
-    }
-    updates.status = targetStatus;
-    if (targetStatus === "published" && post.status !== "published") {
+    updates.status = body.status;
+    if (body.status === "published" && post.status !== "published") {
       updates.published_at = new Date().toISOString();
     }
   }
