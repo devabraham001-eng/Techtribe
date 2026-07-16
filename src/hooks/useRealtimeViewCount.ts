@@ -100,9 +100,17 @@ export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
   }, [fetchLiveCount, slug]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const key = `techtribe_viewed_${slug}`;
+    const alreadyViewed = sessionStorage.getItem(key);
+    if (alreadyViewed) {
+      fetchLiveCount();
+      return;
+    }
+    sessionStorage.setItem(key, "1");
     const timeout = setTimeout(incrementView, 0);
     return () => clearTimeout(timeout);
-  }, [incrementView]);
+  }, [incrementView, fetchLiveCount, slug]);
 
   return {
     viewCount: state.count,
