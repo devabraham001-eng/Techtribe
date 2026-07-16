@@ -125,6 +125,7 @@ export function SettingsForm({ author }: SettingsFormProps) {
         <Label htmlFor="avatar_url">Profile Picture</Label>
         <div className="flex items-center gap-4 mb-2">
           {author?.avatar_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img src={author.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover border border-border" />
           ) : (
             <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center border border-border">

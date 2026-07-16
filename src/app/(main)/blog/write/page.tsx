@@ -5,12 +5,6 @@ import { PostEditor } from "@/components/blog/editor/PostEditor";
 import { getBlogCategories, getBlogTags } from "@/lib/blog-data";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type { Database } from "@/types/database";
-
-type AuthorAccess = Pick<
-  Database["public"]["Tables"]["authors"]["Row"],
-  "is_staff"
->;
 
 export const dynamic = "force-dynamic";
 
@@ -44,12 +38,10 @@ export default async function WritePage({
     redirect("/login?next=/blog/write");
   }
 
-  const [{ data: authorData }, categories, tags] = await Promise.all([
-    supabase.from("authors").select("is_staff").eq("user_id", user.id).single(),
+  const [categories, tags] = await Promise.all([
     getBlogCategories(),
     getBlogTags(),
   ]);
-  const author = authorData as AuthorAccess | null;
 
   return (
     <div className="mx-auto max-w-4xl px-6 pb-20">
