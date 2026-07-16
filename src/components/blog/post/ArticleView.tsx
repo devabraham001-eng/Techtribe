@@ -97,13 +97,23 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       </header>
 
       <Reveal direction="up" duration={0.4} delay={0.3}>
-      <div className="relative aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-secondary to-card border border-border mb-8 sm:mb-10">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-8xl font-heading font-bold text-primary/10 select-none">
-            TT
-          </span>
+      {post.coverImageUrl ? (
+        <div className="relative aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden mb-8 sm:mb-10">
+          <img
+            src={post.coverImageUrl}
+            alt={post.coverImageAlt || post.title}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         </div>
-      </div>
+      ) : (
+        <div className="relative aspect-[2/1] rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-secondary to-card border border-border mb-8 sm:mb-10">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-8xl font-heading font-bold text-primary/10 select-none">
+              TT
+            </span>
+          </div>
+        </div>
+      )}
       </Reveal>
 
       <Reveal direction="up" duration={0.4} delay={0.35}>
