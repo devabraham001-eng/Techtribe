@@ -23,12 +23,23 @@ export async function POST(request: Request) {
 
   const { data: postData } = await supabase
     .from("posts")
-    .select("id")
+    .select("id, author_id")
     .eq("slug", slug)
     .single();
-  const foundPost = postData as { id: string } | null;
+  const foundPost = postData as { id: string; author_id: string } | null;
 
-  if (foundPost) {
+  let isAuthor = false;
+  if (foundPost && user) {
+    const { data: authorData } = await supabase
+      .from("authors")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("id", foundPost.author_id)
+      .single();
+    isAuthor = !!authorData;
+  }
+
+  if (foundPost && !isAuthor) {
     try {
       await supabase.from("post_views").insert({
         post_id: foundPost.id,
@@ -40,7 +51,13 @@ export async function POST(request: Request) {
     } catch { /* best-effort */ }
   }
 
-  const viewCount = await incrementBlogViewCount(slug);
+  let viewCount: number | null;
+  if (isAuthor) {
+    const count = await getBlogViewCount(slug);
+    viewCount = count;
+  } else {
+    viewCount = await incrementBlogViewCount(slug);
+  }
   if (viewCount === null) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
