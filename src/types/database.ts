@@ -90,6 +90,7 @@ export interface Database {
           viewer_ip: string | null;
           user_agent: string | null;
           referer: string | null;
+          viewer_id: string | null;
           viewed_at: string;
         };
         Insert: Omit<Database["public"]["Tables"]["post_views"]["Row"], "id" | "viewed_at">;

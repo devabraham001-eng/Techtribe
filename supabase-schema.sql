@@ -98,6 +98,7 @@ create table if not exists post_views (
   viewer_ip text,
   user_agent text,
   referer text,
+  viewer_id uuid references auth.users(id) on delete set null,
   viewed_at timestamptz default now()
 );
 
@@ -147,6 +148,15 @@ create policy "Users update own author profile" on authors
 
 -- Authenticated insert for view tracking
 create policy "Anyone can insert post views" on post_views for insert with check (true);
+
+create policy "Authors can read own post views" on post_views
+  for select using (
+    post_id in (
+      select id from posts where author_id in (
+        select id from authors where user_id = auth.uid()
+      )
+    )
+  );
 
 -- Authors can manage their own content
 create policy "Authors manage own posts" on posts

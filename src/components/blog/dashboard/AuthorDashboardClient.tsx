@@ -14,6 +14,7 @@ import {
   BarChart2 as BarChartIcon,
 } from "lucide-react";
 import { DashboardRightPanel } from "./DashboardRightPanel";
+import { RecentViewers } from "./RecentViewers";
 import { Reveal } from "@/components/motion/Reveal";
 import { useWriteModal } from "./WriteModalContext";
 
@@ -353,6 +354,9 @@ export function AuthorDashboardClient({
           draftCount={drafts.length}
           totalViews={totalViews}
         />
+        <div className="mt-4">
+          <RecentViewers authorId={""} />
+        </div>
       </aside>
       </Reveal>
     </div>
