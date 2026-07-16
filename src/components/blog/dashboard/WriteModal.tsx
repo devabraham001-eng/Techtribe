@@ -15,7 +15,7 @@ const PostEditor = dynamic(() => import("../editor/PostEditor").then((mod) => mo
 });
 
 export function WriteModal() {
-  const { open, closeWriteModal, editId } = useWriteModal();
+  const { open, closeWriteModal, editId, setEditId } = useWriteModal();
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [tags, setTags] = React.useState<Tag[]>([]);
   const [canPublish, setCanPublish] = React.useState(true);
@@ -90,6 +90,7 @@ export function WriteModal() {
               tags={tags}
               canPublish={canPublish}
               editId={editId}
+              onSaved={(newId) => { if (newId) setEditId(newId); }}
             />
           )}
         </div>

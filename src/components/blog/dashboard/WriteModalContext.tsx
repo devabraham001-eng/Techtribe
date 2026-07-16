@@ -8,6 +8,7 @@ interface WriteModalContextType {
   openWriteModal: (editId?: string) => void;
   closeWriteModal: () => void;
   editId: string | null;
+  setEditId: (id: string | null) => void;
 }
 
 const WriteModalContext = React.createContext<WriteModalContextType | null>(null);
@@ -41,7 +42,7 @@ export function WriteModalProvider({ children }: { children: React.ReactNode }) 
   }, [open, router, pathname]);
 
   return (
-    <WriteModalContext.Provider value={{ open, openWriteModal, closeWriteModal, editId }}>
+    <WriteModalContext.Provider value={{ open, openWriteModal, closeWriteModal, editId, setEditId }}>
       {children}
     </WriteModalContext.Provider>
   );

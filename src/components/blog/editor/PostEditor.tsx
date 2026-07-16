@@ -16,7 +16,7 @@ interface PostEditorProps {
   tags: Tag[];
   canPublish: boolean;
   editId?: string | null;
-  onSaved?: () => void;
+  onSaved?: (newId?: string) => void;
 }
 
 interface EditablePost {
@@ -271,17 +271,11 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
       }
 
       setHasUnsaved(false);
-      setMessage(isEditing ? "Article updated." : status === "published" ? "Article published." : "Draft saved.");
       localStorage.removeItem(AUTOSAVE_KEY);
       window.dispatchEvent(new CustomEvent("techtribe:author-posts-changed"));
-      onSaved?.();
+      onSaved?.(result.post.id);
       if (status === "published" && !isEditing) {
         router.push(`/blog/${result.post.slug}`);
-        router.refresh();
-      } else if (!isEditing) {
-        // New draft saved - redirect to edit page so user can continue
-        router.push(`/blog/write?id=${result.post.id}`);
-        router.refresh();
       } else {
         router.refresh();
       }
@@ -292,16 +286,13 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
     }
   }
 
-  if (initialLoading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
   return (
-    <>
+    <div className="relative">
+      {initialLoading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 rounded-lg min-h-[300px]">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      )}
       {restoreData && (
         <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
           <RotateCcw className="h-4 w-4 text-primary" />
@@ -521,6 +512,6 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
           </Button>
         </div>
       </form>
-    </>
+    </div>
   );
 }
