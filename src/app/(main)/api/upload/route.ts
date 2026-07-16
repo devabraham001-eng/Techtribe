@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createServerSupabaseClient, createAdminSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export async function POST(request: Request) {
@@ -44,16 +44,25 @@ export async function POST(request: Request) {
   const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(path, buffer, {
-      contentType: file.type || `image/${ext}`,
-      upsert: false,
-    });
+  const storage = createAdminSupabaseClient()?.storage.from(bucket) ?? supabase.storage.from(bucket);
+
+  const { data, error } = await storage.upload(path, buffer, {
+    contentType: file.type || `image/${ext}`,
+    upsert: false,
+  });
 
   if (error) {
+    const isBucketMissing = error.message?.toLowerCase().includes("bucket") || error.message?.toLowerCase().includes("not found");
+    const hint = isBucketMissing
+      ? "Storage buckets are missing. Run the storage SQL in your Supabase dashboard SQL editor:\n\n" +
+        "insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)\n" +
+        "values\n" +
+        "  ('post-covers', 'post-covers', true, 5242880, array['image/jpeg','image/png','image/webp','image/gif']),\n" +
+        "  ('avatars', 'avatars', true, 5242880, array['image/jpeg','image/png','image/webp','image/gif'])\n" +
+        "on conflict (id) do update set public = excluded.public, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;"
+      : error.message;
     console.error("Upload error:", error);
-    return NextResponse.json({ error: error.message, code: error.name, hint: error.cause }, { status: 500 });
+    return NextResponse.json({ error: hint, code: error.name }, { status: 500 });
   }
 
   const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path);
