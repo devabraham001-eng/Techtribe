@@ -1,7 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,123 +13,48 @@ export const metadata: Metadata = {
 };
 
 const demoPaths = [
-  {
-    id: "1",
-    title: "Web Development Fundamentals",
-    description: "Learn HTML, CSS, JavaScript and build your first web app from scratch. No experience needed.",
-    slug: "web-development-fundamentals",
-    category: "web-development",
-    lessonCount: 12,
-  },
-  {
-    id: "2",
-    title: "React & Modern Frontend",
-    description: "Master React, Next.js, and modern frontend tooling. Build production-ready interfaces.",
-    slug: "react-modern-frontend",
-    category: "web-development",
-    lessonCount: 18,
-  },
-  {
-    id: "3",
-    title: "Backend Engineering with Node.js",
-    description: "Build scalable APIs, work with databases, and deploy backend services to the cloud.",
-    slug: "backend-engineering-nodejs",
-    category: "backend-devops",
-    lessonCount: 14,
-  },
-  {
-    id: "4",
-    title: "Python & Data Science",
-    description: "From Python basics to data analysis, visualization, and machine learning fundamentals.",
-    slug: "python-data-science",
-    category: "ai-tools",
-    lessonCount: 16,
-  },
-  {
-    id: "5",
-    title: "DevOps & Cloud Infrastructure",
-    description: "Learn Docker, Kubernetes, CI/CD pipelines, and cloud deployment on AWS and GCP.",
-    slug: "devops-cloud-infrastructure",
-    category: "backend-devops",
-    lessonCount: 20,
-  },
-  {
-    id: "6",
-    title: "Mobile Development with React Native",
-    description: "Build cross-platform mobile apps with React Native. Deploy to iOS and Android stores.",
-    slug: "mobile-react-native",
-    category: "mobile",
-    lessonCount: 15,
-  },
-];
-
-const categoryIcons: Record<string, string> = {
-  "web-development": "💻",
-  "backend-devops": "⚙️",
-  "ai-tools": "🤖",
-  "mobile": "📱",
-  "security": "🔒",
-  "career-freelancing": "💼",
-};
-
-const categoryLabels: Record<string, string> = {
-  "web-development": "Web Dev",
-  "backend-devops": "Backend & DevOps",
-  "ai-tools": "AI / ML",
-  "mobile": "Mobile",
-  "security": "Security",
-  "career-freelancing": "Career",
-};
-
-const allCategories = [
-  { slug: "web-development", label: "Web Dev", icon: "💻" },
-  { slug: "backend-devops", label: "Backend & DevOps", icon: "⚙️" },
-  { slug: "ai-tools", label: "AI / ML", icon: "🤖" },
-  { slug: "mobile", label: "Mobile", icon: "📱" },
-  { slug: "security", label: "Security", icon: "🔒" },
-  { slug: "career-freelancing", label: "Career", icon: "💼" },
+  { id: "1", title: "Web Development Fundamentals", slug: "web-development-fundamentals", lessons: 12 },
+  { id: "2", title: "React & Modern Frontend", slug: "react-modern-frontend", lessons: 18 },
+  { id: "3", title: "Backend Engineering with Node.js", slug: "backend-engineering-nodejs", lessons: 14 },
+  { id: "4", title: "Python & Data Science", slug: "python-data-science", lessons: 16 },
+  { id: "5", title: "DevOps & Cloud Infrastructure", slug: "devops-cloud-infrastructure", lessons: 20 },
+  { id: "6", title: "Mobile Development with React Native", slug: "mobile-react-native", lessons: 15 },
 ];
 
 export default async function LearnPage() {
   return (
     <div className="min-h-screen bg-background">
+      {/* ===== PATHS WRAPPER ===== */}
       <div className="paths-wrapper" style={{ position: "relative" }}>
-        {/* Decorative shapes - matching Google Skills style */}
-        <svg
-          className="paths-shape paths-shape-top-full"
-          style={{ position: "absolute", top: 0, left: 0, width: "100%", pointerEvents: "none", zIndex: 0 }}
-          viewBox="0 0 1440 260"
-          fill="none"
-          preserveAspectRatio="none"
-        >
-          <path d="M0 180 C 360 60, 720 220, 1080 120 S 1440 200, 1440 200 L 1440 0 L 0 0 Z" fill="#D0F201" opacity="0.04" />
-        </svg>
-        <svg
-          className="paths-shape paths-shape-middle"
-          style={{ position: "absolute", top: 140, left: 0, width: "100%", pointerEvents: "none", zIndex: 0 }}
-          viewBox="0 0 1440 200"
-          fill="none"
-          preserveAspectRatio="none"
-        >
-          <path d="M0 100 C 480 200, 960 40, 1440 120 L 1440 0 L 0 0 Z" fill="#D0F201" opacity="0.025" />
-        </svg>
 
-        {/* ===== HERO / PATHS INTRO ===== */}
+        {/* ---- Shape top (hexagon/blob) ---- */}
+        <div style={{ position: "absolute", top: -80, right: -120, width: 500, height: 500, pointerEvents: "none", zIndex: 0, opacity: 0.04 }}>
+          <svg width="500" height="500" viewBox="0 0 800 800" fill="none">
+            <path d="M350.94 83.8859C352.08 82.7698 352.649 82.2118 353.143 81.7469C379.465 56.9615 420.536 56.9615 446.857 81.7469C447.351 82.2118 447.921 82.7698 449.06 83.8859C449.743 84.5556 450.085 84.8905 450.41 85.2005C467.253 101.275 491.12 107.67 513.744 102.171C514.18 102.065 514.643 101.946 515.57 101.707C517.115 101.31 517.887 101.112 518.547 100.956C553.735 92.6522 589.304 113.188 599.706 147.813C599.901 148.463 600.116 149.231 600.544 150.767C600.801 151.689 600.93 152.15 601.056 152.581C607.605 174.923 625.077 192.395 647.42 198.944C647.85 199.07 648.311 199.199 649.233 199.456C650.769 199.885 651.537 200.099 652.187 200.294C686.812 210.696 707.348 246.265 699.044 281.453C698.888 282.113 698.69 282.885 698.293 284.43C698.054 285.357 697.935 285.82 697.829 286.256C692.33 308.88 698.725 332.747 714.8 349.59C715.11 349.915 715.444 350.257 716.114 350.94C717.23 352.079 717.788 352.649 718.253 353.143C743.039 379.464 743.039 420.535 718.253 446.857C717.788 447.351 717.23 447.92 716.114 449.06C715.444 449.743 715.11 450.085 714.8 450.41C698.725 467.253 692.33 491.12 697.829 513.744C697.935 514.18 698.054 514.643 698.293 515.57C698.69 517.115 698.888 517.887 699.044 518.547C707.348 553.735 686.812 589.303 652.187 599.706C651.537 599.901 650.769 600.115 649.233 600.544C648.311 600.801 647.85 600.93 647.419 601.056C625.077 607.605 607.605 625.077 601.056 647.419C600.93 647.85 600.801 648.311 600.544 649.233C600.116 650.769 599.901 651.537 599.706 652.186C589.304 686.812 553.735 707.348 518.547 699.044C517.887 698.888 517.115 698.69 515.57 698.293C514.643 698.054 514.18 697.935 513.744 697.829C491.12 692.33 467.253 698.725 450.41 714.799C450.085 715.109 449.743 715.444 449.06 716.114C447.921 717.23 447.351 717.788 446.857 718.253C420.536 743.038 379.465 743.038 353.143 718.253C352.649 717.788 352.08 717.23 350.94 716.114C350.257 715.444 349.915 715.109 349.59 714.799C332.747 698.725 308.88 692.33 286.256 697.829C285.82 697.935 285.357 698.054 284.43 698.293C282.885 698.69 282.113 698.888 281.453 699.044C246.265 707.348 210.697 686.812 200.294 652.186C200.099 651.537 199.885 650.769 199.456 649.233C199.199 648.311 199.071 647.85 198.944 647.419C192.395 625.077 174.923 607.605 152.581 601.056C152.15 600.93 151.689 600.801 150.767 600.544C149.231 600.115 148.463 599.901 147.814 599.706C113.188 589.303 92.6523 553.735 100.956 518.547C101.112 517.887 101.31 517.115 101.707 515.57C101.946 514.643 102.065 514.18 102.171 513.744C107.67 491.12 101.275 467.253 85.2006 450.41C84.8906 450.085 84.5557 449.743 83.886 449.06C82.7699 447.92 82.2119 447.351 81.7471 446.857C56.9616 420.535 56.9616 379.464 81.7471 353.143C82.2119 352.649 82.7699 352.079 83.886 350.94C84.5557 350.257 84.8906 349.915 85.2006 349.59C101.275 332.747 107.67 308.88 102.171 286.256C102.065 285.82 101.946 285.357 101.707 284.43C101.31 282.885 101.112 282.113 100.956 281.453C92.6523 246.265 113.188 210.696 147.814 200.294C148.463 200.099 149.231 199.885 150.767 199.456C151.689 199.199 152.15 199.07 152.581 198.944C174.923 192.395 192.395 174.923 198.944 152.581C199.071 152.15 199.199 151.689 199.456 150.767C199.885 149.231 200.099 148.463 200.294 147.813C210.697 113.188 246.265 92.6522 281.453 100.956C282.113 101.112 282.885 101.31 284.43 101.707C285.357 101.946 285.82 102.065 286.256 102.171C308.88 107.67 332.747 101.275 349.59 85.2005C349.915 84.8905 350.257 84.5556 350.94 83.8859Z" fill="#D0F201" />
+          </svg>
+        </div>
+
+        {/* ---- Shape middle (star) ---- */}
+        <div style={{ position: "absolute", top: 420, left: -60, width: 280, height: 280, pointerEvents: "none", zIndex: 0, opacity: 0.035 }}>
+          <svg width="280" height="280" viewBox="0 0 479 480" fill="none">
+            <path d="M257.761 438.125C249.127 451.853 228.873 451.853 220.239 438.125L199.542 405.22C193.866 396.195 182.414 392.526 172.442 396.537L136.085 411.162C120.917 417.263 104.531 405.523 105.728 389.412L108.598 350.795C109.385 340.203 102.307 330.597 91.8492 328.062L53.7183 318.82C37.8107 314.964 31.5518 295.968 42.1231 283.629L67.4628 254.05C74.4128 245.937 74.4128 234.063 67.4628 225.95L42.1231 196.372C31.5518 184.032 37.8108 165.036 53.7183 161.18L91.8492 151.938C102.307 149.403 109.385 139.797 108.598 129.205L105.728 90.588C104.531 74.4774 120.917 62.7374 136.085 68.8386L172.442 83.4633C182.414 87.4745 193.866 83.8053 199.542 74.7802L220.239 41.8747C228.873 28.1471 249.127 28.1471 257.761 41.8747L278.458 74.7802C284.134 83.8053 295.586 87.4745 305.558 83.4633L341.915 68.8386C357.083 62.7374 373.469 74.4774 372.272 90.588L369.402 129.205C368.615 139.797 375.693 149.403 386.151 151.938L424.282 161.18C440.189 165.036 446.448 184.032 435.877 196.372L410.537 225.95C403.587 234.063 403.587 245.937 410.537 254.05L435.877 283.628C446.448 295.968 440.189 314.964 424.282 318.82L386.151 328.062C375.693 330.597 368.615 340.203 369.402 350.795L372.272 389.412C373.469 405.523 357.083 417.263 341.915 411.162L305.558 396.537C295.586 392.526 284.134 396.195 278.458 405.22L257.761 438.125Z" fill="#D0F201" />
+          </svg>
+        </div>
+
+        {/* ---- Shape bottom (badge) ---- */}
+        <div style={{ position: "absolute", bottom: 360, right: -40, width: 220, height: 220, pointerEvents: "none", zIndex: 0, opacity: 0.03 }}>
+          <svg width="220" height="220" viewBox="0 0 480 480" fill="none">
+            <path d="M429.474 249.023C429.474 348.683 344.643 429.474 240 429.474C135.356 429.474 50.5263 348.683 50.5263 249.023L50.5262 122.707C50.5262 82.8425 84.4583 50.5262 126.316 50.5262C138.722 50.5262 150.433 53.3654 160.77 58.3987C166.037 60.9634 171.292 63.7747 176.569 66.598C195.142 76.5336 213.989 86.6165 234.606 86.6165H245.393C266.011 86.6165 284.858 76.5336 303.431 66.598C308.708 63.7747 313.963 60.9634 319.23 58.3987C329.567 53.3654 341.278 50.5262 353.684 50.5262C395.542 50.5262 429.474 82.8425 429.474 122.707V249.023Z" fill="#D0F201" />
+          </svg>
+        </div>
+
+        {/* ===== HERO / INTRO ===== */}
         <section className="paths-intro" style={{ position: "relative", zIndex: 1 }}>
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8">
-            {/* Breadcrumb */}
-            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs sm:text-sm mb-8" style={{ color: "#636366" }}>
-              <Link href="/" className="hover:opacity-70 transition-opacity">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              </Link>
-              <ChevronRight className="h-3.5 w-3.5" />
-              <span style={{ color: "#98989d" }}>Paths</span>
-            </nav>
-
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8 sm:pb-10">
             <h2 className="paths-headline font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]" style={{ maxWidth: 720 }}>
               Shape <strong className="text-primary">your future</strong> self
             </h2>
-            <p className="paths-description ql-body-large mt-4 text-base sm:text-lg leading-relaxed" style={{ color: "#98989d", maxWidth: 680 }}>
+            <p className="paths-description mt-4 text-base sm:text-lg leading-relaxed" style={{ color: "#98989d", maxWidth: 680 }}>
               Paths are collections of learnings designed to build deep skills in a particular area.
               Whether you&apos;re looking to earn achievements, build a collection of skill badges,
               or prepare for a certification, there are paths right for you. When you&apos;re done,
@@ -150,7 +74,6 @@ export default async function LearnPage() {
                     style={{ background: "#D0F201", color: "#10180B" }}
                   >
                     Get started
-                    <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               </div>
@@ -158,16 +81,24 @@ export default async function LearnPage() {
           </div>
         </section>
 
-        {/* ===== CATEGORY FILTERS ===== */}
+        {/* ===== CATEGORIES ===== */}
         <section className="paths-categories" style={{ position: "relative", zIndex: 1 }}>
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-6">
             <div className="flex flex-wrap gap-4">
-              {allCategories.map((cat) => (
+              {[
+                { slug: "ai", label: "AI / ML", icon: "🤖" },
+                { slug: "agents", label: "Agents", icon: "⚡" },
+                { slug: "data", label: "Data", icon: "📊" },
+                { slug: "devtools", label: "Dev Tools", icon: "🛠️" },
+                { slug: "infrastructure", label: "Infrastructure", icon: "☁️" },
+                { slug: "productivity", label: "Productivity", icon: "⚡" },
+                { slug: "security", label: "Security", icon: "🔒" },
+              ].map((cat) => (
                 <Link
                   key={cat.slug}
                   href={`/learn?category=${cat.slug}`}
-                  className="category-block inline-flex items-center gap-2.5 rounded-xl border border-border px-4 py-3 text-sm font-medium transition-all hover:border-primary/40 hover:bg-primary/[0.03]"
-                  style={{ color: "#98989d", minWidth: 120 }}
+                  className="category-block flex items-center gap-2.5 rounded-lg border px-4 py-3 text-sm font-medium transition-all hover:border-primary/40 hover:bg-primary/[0.03]"
+                  style={{ borderColor: "#38383a", background: "transparent" }}
                 >
                   <span className="category-icon text-lg" role="img" aria-label={cat.label}>{cat.icon}</span>
                   <span className="category-title" style={{ color: "#f5f5f7" }}>{cat.label}</span>
@@ -185,36 +116,17 @@ export default async function LearnPage() {
                 <Link
                   key={track.id}
                   href={`/learn/${track.slug}`}
-                  className="activity-card group relative flex flex-col rounded-xl border transition-all"
-                  style={{
-                    borderColor: "#38383a",
-                    background: "#1c1c1e",
-                  }}
+                  className="activity-card group flex flex-col rounded-xl border transition-all hover:shadow-lg hover:-translate-y-0.5"
+                  style={{ borderColor: "#38383a", background: "#1c1c1e" }}
                 >
                   <div className="p-5 sm:p-6 flex-1">
                     <h3 className="font-heading text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                       {track.title}
                     </h3>
-                    {track.description && (
-                      <p className="mt-2 text-sm leading-relaxed line-clamp-2" style={{ color: "#98989d" }}>
-                        {track.description}
-                      </p>
-                    )}
                   </div>
-                  <div className="px-5 sm:px-6 pb-4 sm:pb-5 flex items-center justify-between">
-                    {track.category && (
-                      <span className="text-xs" style={{ color: "#636366" }}>
-                        {categoryIcons[track.category]} {categoryLabels[track.category] || track.category}
-                      </span>
-                    )}
-                    <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
-                      Start path <ArrowRight className="h-3 w-3 inline" />
-                    </span>
-                  </div>
-                  {/* Metadata bar like Google's "Managed by..." */}
-                  <div className="border-t rounded-b-xl px-5 sm:px-6 py-2.5" style={{ borderColor: "#38383a", background: "rgba(255,255,255,0.02)" }}>
+                  <div className="border-t px-5 sm:px-6 py-3 rounded-b-xl flex items-center" style={{ borderColor: "#38383a", background: "rgba(255,255,255,0.015)" }}>
                     <span className="text-xs" style={{ color: "#636366" }}>
-                      {track.lessonCount} lesson{track.lessonCount !== 1 ? "s" : ""}
+                      {track.lessons} lesson{track.lessons !== 1 ? "s" : ""}
                     </span>
                   </div>
                 </Link>
@@ -231,84 +143,90 @@ export default async function LearnPage() {
             style={{ borderColor: "#38383a", color: "#f5f5f7" }}
           >
             Explore more paths
-            <ArrowRight className="h-4 w-4" />
           </Link>
         </section>
 
-        {/* ===== CREDENTIALS SECTION ===== */}
-        <section className="credentials border-y" style={{ borderColor: "#38383a", background: "#141416", position: "relative", zIndex: 1 }}>
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-                Which credential is right for you?
-              </h2>
-              <p className="mt-3 text-base" style={{ color: "#98989d" }}>
-                Certifications can be a big step, and a big investment. Need to build your skills first?
-                Explore our Skill Badges and Certificates.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-              {/* Certificates */}
-              <div className="rounded-xl border p-6 sm:p-8 text-center transition-all hover:border-primary/30 hover:shadow-lg" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
-                <div className="w-16 h-16 mx-auto mb-5 rounded-xl flex items-center justify-center overflow-hidden" style={{ background: "rgba(208, 242, 1, 0.08)" }}>
-                  <Image src="/ttlg.png" alt="TechTribe" width={36} height={36} className="h-9 w-auto" />
-                </div>
-                <h3 className="font-heading text-lg font-bold text-foreground">Certificates</h3>
-                <p className="mt-2 text-sm leading-relaxed" style={{ color: "#98989d" }}>
-                  Unlock new career paths and gain in-demand skills with certificates.
-                  Complete a certificate learning path to earn a shareable digital credential.
-                  No prerequisites required.
+        {/* ===== CREDENTIALS ===== */}
+        <section className="credentials" style={{ position: "relative", zIndex: 1, background: "#141416" }}>
+          <div className="border-y" style={{ borderColor: "#38383a" }}>
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+              <div className="text-center max-w-2xl mx-auto mb-12">
+                <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+                  Which credential is right for you?
+                </h2>
+                <p className="mt-3 text-base" style={{ color: "#98989d" }}>
+                  Certifications can be a big step, and a big investment. Need to build your skills first?
+                  Explore our Skill Badges and Certificates.
                 </p>
-                <Link href="/learn" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
-                  Explore certificates <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
               </div>
 
-              {/* Skill Badges */}
-              <div className="rounded-xl border p-6 sm:p-8 text-center transition-all hover:border-primary/30 hover:shadow-lg" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
-                <div className="w-16 h-16 mx-auto mb-5 rounded-xl flex items-center justify-center overflow-hidden" style={{ background: "rgba(208, 242, 1, 0.08)" }}>
-                  <Image src="/ttlg.png" alt="TechTribe" width={36} height={36} className="h-9 w-auto" />
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+                {/* Credential images column */}
+                <div className="flex md:flex-col gap-4 md:gap-6 flex-shrink-0 md:w-48">
+                  <div className="rounded-xl border overflow-hidden" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
+                    <Image src="/ttlg.png" alt="TechTribe" width={120} height={120} className="w-full h-auto p-4" />
+                  </div>
+                  <div className="rounded-xl border overflow-hidden" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
+                    <Image src="/ttlg.png" alt="TechTribe" width={120} height={120} className="w-full h-auto p-4" />
+                  </div>
+                  <div className="rounded-xl border overflow-hidden" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
+                    <Image src="/ttlg.png" alt="TechTribe" width={120} height={120} className="w-full h-auto p-4" />
+                  </div>
                 </div>
-                <h3 className="font-heading text-lg font-bold text-foreground">Skill Badges</h3>
-                <p className="mt-2 text-sm leading-relaxed" style={{ color: "#98989d" }}>
-                  Prove your practical, technical skills with skill badges. Complete a series
-                  of lessons, earn a badge, then share your achievements with peers and employers.
-                </p>
-                <Link href="/learn" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
-                  Explore skill badges <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
 
-              {/* Certifications */}
-              <div className="rounded-xl border p-6 sm:p-8 text-center transition-all hover:border-primary/30 hover:shadow-lg" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
-                <div className="w-16 h-16 mx-auto mb-5 rounded-xl flex items-center justify-center overflow-hidden" style={{ background: "rgba(208, 242, 1, 0.08)" }}>
-                  <Image src="/ttlg.png" alt="TechTribe" width={36} height={36} className="h-9 w-auto" />
+                {/* Accordion-style columns */}
+                <div className="flex-1 space-y-6">
+                  {/* Certificates */}
+                  <div className="rounded-xl border p-6 sm:p-8" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
+                    <h3 className="font-heading text-xl font-bold text-foreground">
+                      Kickstart your career with certificates
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed" style={{ color: "#98989d" }}>
+                      Unlock new career paths and gain in-demand skills with certificates.
+                      Complete a certificate learning path on TechTribe to earn a shareable digital credential.
+                      No prerequisites required.
+                    </p>
+                    <Link href="/learn" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+                      Explore certificates
+                    </Link>
+                  </div>
+
+                  {/* Skill Badges */}
+                  <div className="rounded-xl border p-6 sm:p-8" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
+                    <h3 className="font-heading text-xl font-bold text-foreground">
+                      Level up with skill badges
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed" style={{ color: "#98989d" }}>
+                      Prove your practical, technical skills with skill badges. Complete a series
+                      of lessons, earn a badge, then share your achievements with peers and employers.
+                    </p>
+                    <Link href="/learn" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+                      Explore skill badges
+                    </Link>
+                  </div>
+
+                  {/* Certifications */}
+                  <div className="rounded-xl border p-6 sm:p-8" style={{ borderColor: "#38383a", background: "#1c1c1e" }}>
+                    <h3 className="font-heading text-xl font-bold text-foreground">
+                      Prove your expertise with certifications
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed" style={{ color: "#98989d" }}>
+                      Validate your knowledge and skills with industry-recognized certifications.
+                      Prove your ability to solve real-world challenges. The certification process
+                      involves passing a proctored exam.
+                    </p>
+                    <Link href="/learn" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+                      Explore certifications
+                    </Link>
+                  </div>
                 </div>
-                <h3 className="font-heading text-lg font-bold text-foreground">Certifications</h3>
-                <p className="mt-2 text-sm leading-relaxed" style={{ color: "#98989d" }}>
-                  Validate your knowledge and skills with industry-recognized certifications.
-                  Prove your ability to solve real-world challenges. The certification process
-                  involves passing a proctored exam.
-                </p>
-                <Link href="/learn" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
-                  Explore certifications <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ===== CTA SECTION ===== */}
+        {/* ===== CTA ===== */}
         <section className="continue relative overflow-hidden" style={{ position: "relative", zIndex: 1 }}>
-          <svg
-            className="continue-img absolute bottom-0 left-0 w-full pointer-events-none"
-            viewBox="0 0 1440 140"
-            fill="none"
-            preserveAspectRatio="none"
-          >
-            <path d="M0 100 C 480 140, 960 60, 1440 100 L 1440 140 L 0 140 Z" fill="#D0F201" opacity="0.04" />
-          </svg>
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center relative">
             <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
               Continue your learning journey
@@ -322,10 +240,10 @@ export default async function LearnPage() {
               style={{ background: "#D0F201", color: "#10180B" }}
             >
               Visit dashboard
-              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </section>
+
       </div>
     </div>
   );
