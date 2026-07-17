@@ -1,11 +1,12 @@
 import { MetadataRoute } from "next";
-import { getBlogPosts, getBlogCategories, getBlogAuthors } from "@/lib/blog-data";
+import { getBlogPosts, getBlogCategories, getBlogAuthors, getBlogTags } from "@/lib/blog-data";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, categories, authors] = await Promise.all([
+  const [posts, categories, authors, tags] = await Promise.all([
     getBlogPosts().catch(() => [] as never[]),
     getBlogCategories().catch(() => [] as never[]),
     getBlogAuthors().catch(() => [] as never[]),
+    getBlogTags().catch(() => [] as never[]),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -43,5 +44,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-  return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...authorRoutes];
+  const tagRoutes: MetadataRoute.Sitemap = (tags as { slug: string }[])
+    .filter((t) => t.slug)
+    .map((tag) => ({
+      url: `https://techtribe.app/blog/tag/${tag.slug}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    }));
+
+  return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...authorRoutes, ...tagRoutes];
 }

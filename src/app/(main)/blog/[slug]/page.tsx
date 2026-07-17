@@ -4,6 +4,8 @@ import { getBlogPostBySlug, getBlogPosts } from "@/lib/blog-data";
 import type { Metadata } from "next";
 import type { Post } from "@/types/blog";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.app";
+
 export async function generateMetadata({
   params,
 }: {
@@ -16,12 +18,16 @@ export async function generateMetadata({
     return { title: "Article not found" };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe-jade.vercel.app";
-  const ogImage = post.coverImageUrl || `${siteUrl}/og-default.png`;
+  const ogImage = post.coverImageUrl || `${siteUrl}/blog/${post.slug}/opengraph-image`;
 
   return {
     title: post.title,
     description: post.excerpt || post.seoDescription || `Read ${post.title} on TechTribe`,
+    authors: [{ name: post.author.name, url: `${siteUrl}/blog/author/${post.author.slug}` }],
+    keywords: [...post.tags.map((t) => t.name), ...(post.category?.name ? [post.category.name] : [])],
+    alternates: {
+      canonical: post.canonicalUrl || `${siteUrl}/blog/${post.slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt || post.seoDescription || `Read ${post.title} on TechTribe`,
@@ -29,11 +35,15 @@ export async function generateMetadata({
       siteName: "TechTribe",
       type: "article",
       publishedTime: post.publishedAt || post.createdAt,
+      modifiedTime: post.updatedAt,
       authors: [post.author.name],
+      tags: post.tags.map((t) => t.name),
       images: [
         {
           url: ogImage,
           alt: post.coverImageAlt || post.title,
+          width: 1200,
+          height: 630,
         },
       ],
     },
@@ -42,6 +52,37 @@ export async function generateMetadata({
       title: post.title,
       description: post.excerpt || post.seoDescription || `Read ${post.title} on TechTribe`,
       images: [ogImage],
+    },
+  };
+}
+
+function jsonLd(post: Post) {
+  const postUrl = `${siteUrl}/blog/${post.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt || post.seoDescription,
+    url: postUrl,
+    datePublished: post.publishedAt || post.createdAt,
+    dateModified: post.updatedAt,
+    author: {
+      "@type": "Person",
+      name: post.author.name,
+      url: `${siteUrl}/blog/author/${post.author.slug}`,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "TechTribe",
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/ttlg.png`,
+      },
+    },
+    image: post.coverImageUrl || `${siteUrl}/blog/${post.slug}/opengraph-image`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": postUrl,
     },
   };
 }
@@ -73,5 +114,13 @@ export default async function ArticlePage({
   const prevPost: Post | null = currentIndex > 0 ? posts[currentIndex - 1] : null;
   const nextPost: Post | null = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
 
-  return <ArticleView post={post} relatedPosts={relatedPosts} prevPost={prevPost} nextPost={nextPost} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(post)) }}
+      />
+      <ArticleView post={post} relatedPosts={relatedPosts} prevPost={prevPost} nextPost={nextPost} />
+    </>
+  );
 }

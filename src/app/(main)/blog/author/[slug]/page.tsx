@@ -8,6 +8,30 @@ import { Badge } from "@/components/ui/badge";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { getInitials } from "@/lib/utils";
 import { getBlogAuthors, getBlogPosts } from "@/lib/blog-data";
+import type { Metadata } from "next";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.app";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const authors = await getBlogAuthors();
+  const author = authors.find((item) => item.slug === slug);
+  if (!author) return { title: "Author not found" };
+  return {
+    title: `${author.name} — TechTribe Blog`,
+    description: author.bio || `Articles by ${author.name} on TechTribe.`,
+    alternates: { canonical: `${siteUrl}/blog/author/${author.slug}` },
+    openGraph: {
+      title: `${author.name} — TechTribe Blog`,
+      description: author.bio || `Articles by ${author.name} on TechTribe.`,
+      url: `${siteUrl}/blog/author/${author.slug}`,
+    },
+  };
+}
 
 export default async function AuthorPage({
   params,
@@ -25,8 +49,38 @@ export default async function AuthorPage({
     notFound();
   }
 
+  const sameAs = [
+    author.twitter && `https://twitter.com/${author.twitter}`,
+    author.github && `https://github.com/${author.github}`,
+    author.linkedin && `https://linkedin.com/in/${author.linkedin}`,
+    author.website,
+  ].filter(Boolean);
+
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: author.name,
+    url: `${siteUrl}/blog/author/${author.slug}`,
+    ...(author.bio && { description: author.bio }),
+    ...(author.avatarUrl && { image: author.avatarUrl }),
+    ...(sameAs.length > 0 && { sameAs }),
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Blog", item: `${siteUrl}/blog` },
+      { "@type": "ListItem", position: 2, name: "Authors", item: `${siteUrl}/blog/authors` },
+      { "@type": "ListItem", position: 3, name: author.name },
+    ],
+  };
+
   return (
-    <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8">
       <Link
         href="/blog"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -93,5 +147,6 @@ export default async function AuthorPage({
         <PostGrid posts={posts} variant="vertical" columns={3} />
       </div>
     </div>
+    </>
   );
 }

@@ -4,6 +4,23 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { getBlogCategories, getBlogPosts } from "@/lib/blog-data";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const categories = await getBlogCategories();
+  const category = categories.find((item) => item.slug === slug);
+  if (!category) return { title: "Category not found" };
+  return {
+    title: `${category.name} — TechTribe Blog`,
+    description: category.description || `Browse articles in "${category.name}" on TechTribe.`,
+    alternates: { canonical: `https://techtribe.app/blog/category/${category.slug}` },
+  };
+}
 
 export default async function CategoryPage({
   params,
@@ -21,8 +38,20 @@ export default async function CategoryPage({
     notFound();
   }
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Blog", item: "https://techtribe.app/blog" },
+      { "@type": "ListItem", position: 2, name: "Categories", item: "https://techtribe.app/blog/categories" },
+      { "@type": "ListItem", position: 3, name: category.name },
+    ],
+  };
+
   return (
-    <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8">
       <div className="space-y-4">
         <Link
           href="/blog"
@@ -47,5 +76,6 @@ export default async function CategoryPage({
         columns={3}
       />
     </div>
+    </>
   );
 }
