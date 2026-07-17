@@ -276,27 +276,28 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
       {(prevPost || nextPost) && (
         <Reveal direction="up" duration={0.4} delay={0.55}>
-        <nav className="mt-8 sm:mt-12 grid gap-3 sm:gap-4 sm:grid-cols-2" aria-label="Article navigation">
-          {prevPost ? (
+        <nav
+          className="mt-8 sm:mt-12 flex flex-col sm:grid sm:grid-cols-2 gap-3"
+          aria-label="Article navigation"
+        >
+          {prevPost && (
             <Link
               href={`/blog/${prevPost.slug}`}
-              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors w-full min-w-0"
             >
               <ChevronLeft className="h-5 w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="text-xs text-muted-foreground mb-0.5">Previous</div>
                 <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
                   {prevPost.title}
                 </div>
               </div>
             </Link>
-          ) : (
-            <div />
           )}
-          {nextPost ? (
+          {nextPost && (
             <Link
               href={`/blog/${nextPost.slug}`}
-              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors text-right sm:text-left"
+              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors w-full min-w-0"
             >
               <div className="min-w-0 flex-1">
                 <div className="text-xs text-muted-foreground mb-0.5">Next</div>
@@ -306,8 +307,6 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
               </div>
               <ChevronRight className="h-5 w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
-          ) : (
-            <div />
           )}
         </nav>
         </Reveal>
