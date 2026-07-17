@@ -109,7 +109,7 @@ export default async function LearnPage() {
         {/* ===== CATEGORIES ===== */}
         <section className="paths-categories" style={{ position: "relative", zIndex: 1 }}>
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-6">
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               {[
                 { id: "ai", label: "AI / ML", icon: Sparkles },
                 { id: "agents", label: "Agents", icon: Wand2 },
