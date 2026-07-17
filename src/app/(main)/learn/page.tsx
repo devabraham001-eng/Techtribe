@@ -1,7 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Sparkles, Wand2, BarChart3, GitBranch, Server, Zap, Shield, GraduationCap, ArrowRight } from "lucide-react";
+import { Sparkles, Wand2, BarChart3, GitBranch, Server, Zap, Shield, GraduationCap, ArrowRight, Award, BadgeCheck, ScrollText } from "lucide-react";
 import { CredentialsAccordion } from "@/components/learn/CredentialsAccordion";
 
 export const metadata: Metadata = {
@@ -208,7 +208,62 @@ export default async function LearnPage() {
                   Explore our Skill Badges and Certificates.
                 </p>
               </div>
-              <CredentialsAccordion />
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[
+                  {
+                    title: "Certificates",
+                    description: "Kickstart your career with certificates. Complete a certificate learning path to earn a shareable digital credential. No prerequisites required.",
+                    icon: ScrollText,
+                  },
+                  {
+                    title: "Skill Badges",
+                    description: "Level up with skill badges. Prove your practical, technical skills by completing a series of badge courses, then share your achievements with peers and employers.",
+                    icon: BadgeCheck,
+                  },
+                  {
+                    title: "Certifications",
+                    description: "Prove your expertise with industry-recognized certifications. Validate your ability to solve real-world challenges through proctored exams.",
+                    icon: Award,
+                  },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.title}
+                      className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden flex flex-col justify-between p-6 sm:p-10 min-h-[300px] sm:min-h-[380px]"
+                    >
+                      <div className="absolute inset-0 z-0" style={{ background: "#1c1c1e" }} />
+                      <div
+                        className="absolute inset-0 z-0 opacity-60"
+                        style={{
+                          background: "radial-gradient(ellipse at bottom, rgba(208,242,1,0.25) 0%, rgba(16,24,11,0.6) 60%, transparent 100%)",
+                        }}
+                      />
+                      <div className="relative z-10 flex justify-between items-start">
+                        <h3 className="text-2xl font-bold pr-4 leading-tight" style={{ color: "#f5f5f7", letterSpacing: "-0.02em" }}>
+                          {item.title}
+                        </h3>
+                      </div>
+                      <div className="relative z-10 flex items-end justify-between gap-4 mt-12">
+                        <p className="text-base leading-snug font-medium max-w-[80%]" style={{ color: "#98989d" }}>
+                          {item.description}
+                        </p>
+                        <div
+                          className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                          style={{
+                            background: "rgba(208,242,1,0.15)",
+                            backdropFilter: "blur(8px)",
+                            boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                          }}
+                        >
+                          <Icon className="w-5 h-5" style={{ color: "#D0F201" }} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </section>
         </section>
