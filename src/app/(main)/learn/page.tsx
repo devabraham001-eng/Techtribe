@@ -135,30 +135,30 @@ export default async function LearnPage() {
 
         {/* ===== PATHS LIST ===== */}
         <section className="paths-list" style={{ position: "relative", zIndex: 1 }}>
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-12">
-            <div className="paths-grid grid gap-4 sm:grid-cols-2">
+          <div className="mx-auto px-4 sm:px-6 lg:px-8 pb-12" style={{ maxWidth: 832 }}>
+            <div className="paths-grid" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {demoPaths.map((track) => (
                 <a
                   key={track.id}
                   href={`/learn/${track.slug}`}
-                  className="path-card group flex items-start gap-4 rounded-xl border p-4 sm:p-5 transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 hover:border-white/10"
-                  style={{ borderColor: "#38383a", background: "#1c1c1e", textDecoration: "none", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }}
+                  className="path-card group flex items-center justify-between rounded-2xl border p-6 no-underline transition-all duration-200 hover:border-[#4a4a4c] hover:bg-[#222224] hover:shadow-lg"
+                  style={{ borderColor: "#38383a", background: "#1c1c1e", color: "#f5f5f7", boxShadow: "none" }}
                   aria-label={`Path: ${track.title}, ${track.lessons} lessons`}
                 >
-                  <div className="path-card__content flex-1 min-w-0">
-                    <div className="path-card__badge flex items-center gap-1.5 mb-2">
-                      <GraduationCap className="h-4 w-4" style={{ color: "#D0F201" }} />
-                      <span className="text-xs font-medium uppercase tracking-wider" style={{ color: "#636366" }}>Path</span>
+                  <div className="path-card__content flex flex-col gap-2">
+                    <div className="path-card__badge inline-flex items-center gap-1.5" style={{ color: "#98989d", fontSize: 14, fontWeight: 500 }}>
+                      <GraduationCap className="h-[18px] w-[18px]" />
+                      <span>Path</span>
                     </div>
-                    <h3 className="path-card__title font-heading text-sm sm:text-base font-semibold leading-snug text-foreground">
+                    <h3 className="path-card__title m-0 text-lg font-semibold leading-snug" style={{ color: "#f5f5f7" }}>
                       {track.title}
                     </h3>
-                    <p className="path-card__metadata mt-1 text-xs" style={{ color: "#98989d" }}>
+                    <p className="path-card__metadata m-0 text-sm" style={{ color: "#70757a" }}>
                       {track.lessons} lesson{track.lessons !== 1 ? "s" : ""}
                     </p>
                   </div>
-                  <div className="path-card__action mt-1 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1">
-                    <ArrowRight className="h-5 w-5" style={{ color: "#636366" }} />
+                  <div className="path-card__action flex items-center justify-center pl-4 transition-transform duration-200 group-hover:translate-x-1" style={{ color: "#D0F201" }}>
+                    <ArrowRight className="h-5 w-5" />
                   </div>
                 </a>
               ))}
