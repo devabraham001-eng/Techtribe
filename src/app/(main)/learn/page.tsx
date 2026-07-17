@@ -136,7 +136,7 @@ export default async function LearnPage() {
         {/* ===== PATHS LIST ===== */}
         <section className="paths-list" style={{ position: "relative", zIndex: 1 }}>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {demoPaths.map((track) => (
                 <a
                   key={track.id}
