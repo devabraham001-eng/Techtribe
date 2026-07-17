@@ -180,39 +180,35 @@ export default async function LearnPage() {
         </section>
 
         {/* ===== CREDENTIALS ===== */}
-        <section className="credentials" style={{ position: "relative", zIndex: 1 }}>
+        <section className="credentials" style={{ position: "relative", zIndex: 1, background: "#0a0a0a" }}>
           <section className="guest-front-door-block multi-msg-body" id="get-credentialed" tabIndex={0}>
-            <div style={{ background: "#141416" }}>
-              <div className="border-y" style={{ borderColor: "#38383a" }}>
-                <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-                  <div className="text-center max-w-4xl mx-auto mb-16 sm:mb-20">
-                    <h2
-                      className="font-heading font-bold mb-6"
-                      style={{
-                        fontSize: "clamp(36px,5vw,52px)",
-                        letterSpacing: "-0.03em",
-                        lineHeight: 1.1,
-                        color: "#f5f5f7",
-                      }}
-                    >
-                      Which credential is right for you?
-                    </h2>
-                    <p
-                      style={{
-                        color: "#98989d",
-                        fontSize: 20,
-                        lineHeight: 1.5,
-                        maxWidth: "700px",
-                        margin: "0 auto",
-                      }}
-                    >
-                      Certifications can be a big step, and a big investment. Need to build your skills first?
-                      Explore our Skill Badges and Certificates.
-                    </p>
-                  </div>
-                  <CredentialsAccordion />
-                </div>
+            <div className="mx-auto max-w-[1400px] px-6 py-20 md:py-32">
+              <div className="text-center mb-20 max-w-4xl mx-auto">
+                <h2
+                  className="font-heading font-bold mb-6"
+                  style={{
+                    fontSize: "clamp(36px,5vw,52px)",
+                    letterSpacing: "-0.03em",
+                    lineHeight: 1.1,
+                    color: "#f5f5f7",
+                  }}
+                >
+                  Which credential is right for you?
+                </h2>
+                <p
+                  style={{
+                    color: "#98989d",
+                    fontSize: 20,
+                    lineHeight: 1.5,
+                    maxWidth: "700px",
+                    margin: "0 auto",
+                  }}
+                >
+                  Certifications can be a big step, and a big investment. Need to build your skills first?
+                  Explore our Skill Badges and Certificates.
+                </p>
               </div>
+              <CredentialsAccordion />
             </div>
           </section>
         </section>
