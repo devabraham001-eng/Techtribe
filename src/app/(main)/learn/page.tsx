@@ -141,7 +141,7 @@ export default async function LearnPage() {
                 <a
                   key={track.id}
                   href={`/learn/${track.slug}`}
-                  className="group flex h-[380px] w-full flex-col justify-between rounded-2xl border p-6 transition-all duration-200 hover:border-[#4a4a4c] hover:bg-[#222224] hover:shadow-lg"
+                  className="group flex aspect-square w-full flex-col justify-between rounded-2xl border p-6 transition-all duration-200 hover:border-[#4a4a4c] hover:bg-[#222224] hover:shadow-lg"
                   style={{ borderColor: "#38383a", background: "#1c1c1e", textDecoration: "none" }}
                   aria-label={`Path: ${track.title}, ${track.lessons} lessons`}
                 >
