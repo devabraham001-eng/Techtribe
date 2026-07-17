@@ -1,5 +1,4 @@
 import { ImageResponse } from "next/og";
-import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "edge";
 
@@ -19,18 +18,16 @@ export default async function OpenGraphImage({
 
   if (supabaseUrl && supabaseKey) {
     try {
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      const { data: post } = await supabase
-        .from("posts")
-        .select("title, author:author_id(name), category:category_id(name)")
-        .eq("slug", slug)
-        .single();
-
+      const res = await fetch(
+        `${supabaseUrl}/rest/v1/posts?select=title,author:author_id(name),category:category_id(name)&slug=eq.${slug}&limit=1`,
+        { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+      );
+      const posts = await res.json() as { title: string; author: { name: string }[]; category: { name: string }[] }[];
+      const post = posts[0];
       if (post) {
-        const p = post as unknown as { title: string; author: { name: string }[]; category: { name: string }[] };
-        title = p.title;
-        authorName = p.author?.[0]?.name ?? "";
-        categoryName = p.category?.[0]?.name ?? "";
+        title = post.title;
+        authorName = post.author?.[0]?.name ?? "";
+        categoryName = post.category?.[0]?.name ?? "";
       }
     } catch {
       // fallback below
