@@ -277,18 +277,18 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       {(prevPost || nextPost) && (
         <Reveal direction="up" duration={0.4} delay={0.55}>
         <nav
-          className="mt-8 sm:mt-12 flex flex-col sm:grid sm:grid-cols-2 gap-3"
+          className="mt-8 sm:mt-12 flex flex-col sm:grid sm:grid-cols-2 gap-2 sm:gap-3 w-full overflow-hidden"
           aria-label="Article navigation"
         >
           {prevPost && (
             <Link
               href={`/blog/${prevPost.slug}`}
-              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors w-full min-w-0"
+              className="flex items-center gap-2 sm:gap-3 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors w-full overflow-hidden"
             >
-              <ChevronLeft className="h-5 w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
-              <div className="min-w-0 flex-1">
-                <div className="text-xs text-muted-foreground mb-0.5">Previous</div>
-                <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">Previous</div>
+                <div className="text-xs sm:text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap group-hover:text-primary transition-colors">
                   {prevPost.title}
                 </div>
               </div>
@@ -297,15 +297,15 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
           {nextPost && (
             <Link
               href={`/blog/${nextPost.slug}`}
-              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors w-full min-w-0"
+              className="flex items-center gap-2 sm:gap-3 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors w-full overflow-hidden"
             >
-              <div className="min-w-0 flex-1">
-                <div className="text-xs text-muted-foreground mb-0.5">Next</div>
-                <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">Next</div>
+                <div className="text-xs sm:text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap group-hover:text-primary transition-colors">
                   {nextPost.title}
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
           )}
         </nav>
