@@ -141,15 +141,15 @@ export default async function LearnPage() {
                 <a
                   key={track.id}
                   href={`/learn/${track.slug}`}
-                  className="activity-card block rounded-xl border transition-all hover:shadow-md"
+                  className="activity-card block rounded-xl border transition-all duration-200 hover:shadow-lg hover:border-white/10"
                   style={{ borderColor: "#38383a", background: "#1c1c1e", textDecoration: "none" }}
                 >
-                  <div className="p-5 sm:p-6">
-                    <h3 className="font-heading text-base sm:text-lg font-semibold text-foreground">
+                  <div className="p-4 sm:p-5">
+                    <h3 className="font-heading text-sm sm:text-base font-medium leading-snug text-foreground">
                       {track.title}
                     </h3>
                   </div>
-                  <div className="border-t px-5 sm:px-6 py-3 rounded-b-xl" style={{ borderColor: "#38383a", background: "rgba(255,255,255,0.015)" }}>
+                  <div className="rounded-b-xl px-4 sm:px-5 py-2.5" style={{ background: "rgba(255,255,255,0.02)" }}>
                     <span className="text-xs" style={{ color: "#636366" }}>
                       {track.lessons} lesson{track.lessons !== 1 ? "s" : ""}
                     </span>
