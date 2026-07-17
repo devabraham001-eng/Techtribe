@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   PenLine,
   CheckCircle,
+  BookOpen,
   FileEdit,
   Settings,
   Shield,
@@ -107,6 +108,11 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
           <Link href="/blog" className={linkClass("/blog")} title="Published">
             <CheckCircle className={iconClass} />
             {!collapsed && <span>Published</span>}
+          </Link>
+
+          <Link href="/learn" className={linkClass("/learn")} title="Learn">
+            <BookOpen className={iconClass} />
+            {!collapsed && <span>Learn</span>}
           </Link>
 
           <button
