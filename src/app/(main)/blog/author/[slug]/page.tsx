@@ -1,9 +1,10 @@
 import * as React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Globe, Code2 } from "lucide-react";
+import { ArrowLeft, Globe, Code2, Briefcase, Users, Code } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { getInitials } from "@/lib/utils";
 import { getBlogAuthors, getBlogPosts } from "@/lib/blog-data";
@@ -42,6 +43,28 @@ export default async function AuthorPage({
           </Avatar>
           <div className="flex-1">
             <h1 className="font-heading text-3xl font-bold">{author.name}</h1>
+            {author.status && (
+              <Badge variant="secondary" className="mt-2 gap-1">
+                {author.status === "open_to_work" && (
+                  <>
+                    <Briefcase className="h-3 w-3" />
+                    Open to Work
+                  </>
+                )}
+                {author.status === "hiring" && (
+                  <>
+                    <Users className="h-3 w-3" />
+                    Hiring
+                  </>
+                )}
+                {(author.status === "mentoring" || author.status === "open_for_mentorship") && (
+                  <>
+                    <Code className="h-3 w-3" />
+                    Mentoring
+                  </>
+                )}
+              </Badge>
+            )}
             <p className="text-muted-foreground mt-2 max-w-2xl">{author.bio}</p>
             <div className="flex gap-3 mt-4">
               {author.twitter && (

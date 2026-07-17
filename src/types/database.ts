@@ -31,6 +31,7 @@ export interface Database {
           ad_enabled: boolean;
           is_featured: boolean;
           is_trending: boolean;
+          post_type: string;
           created_at: string;
           updated_at: string;
         };
@@ -52,12 +53,13 @@ export interface Database {
         Insert: Omit<Database["public"]["Tables"]["categories"]["Row"], "id" | "created_at" | "updated_at" | "post_count">;
         Update: Partial<Database["public"]["Tables"]["categories"]["Insert"]>;
       };
-      tags: {
+tags: {
         Row: {
           id: string;
           name: string;
           slug: string;
           description: string | null;
+          type: string;
           post_count: number;
           created_at: string;
         };
@@ -77,6 +79,7 @@ export interface Database {
           linkedin: string | null;
           website: string | null;
           is_staff: boolean;
+          status: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -111,6 +114,42 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["ad_slots"]["Row"], "id" | "created_at">;
         Update: Partial<Database["public"]["Tables"]["ad_slots"]["Insert"]>;
+      };
+      post_reactions: {
+        Row: {
+          id: string;
+          post_id: string;
+          user_id: string;
+          reaction: 'ship_it' | 'mind_blown' | 'learned_something';
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["post_reactions"]["Row"], "id" | "created_at">;
+        Update: never;
+      };
+      post_annotations: {
+        Row: {
+          id: string;
+          post_id: string;
+          user_id: string;
+          quote: string;
+          comment: string;
+          start_offset: number;
+          end_offset: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["post_annotations"]["Row"], "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<Database["public"]["Tables"]["post_annotations"]["Row"], "id" | "created_at" | "post_id" | "user_id">>;
+      };
+      post_collaborators: {
+        Row: {
+          id: string;
+          post_id: string;
+          author_id: string;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["post_collaborators"]["Row"], "id" | "created_at">;
+        Update: never;
       };
     };
     Functions: {

@@ -1,4 +1,4 @@
-import type { Author, Category, Post } from "@/types/blog";
+import type { Author, Category, Post, Tag } from "@/types/blog";
 
 export const DEMO_CATEGORIES: Category[] = [
   { id: "cat1", name: "Web Dev", slug: "web-development", description: "Frontend, backend, and full-stack development", icon: "💻", postCount: 24, createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-07-01T00:00:00Z" },
@@ -8,22 +8,22 @@ export const DEMO_CATEGORIES: Category[] = [
   { id: "cat5", name: "Productivity", slug: "productivity", description: "Workflow optimization and productivity", icon: "⚡", postCount: 9, createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-07-01T00:00:00Z" },
 ];
 
-export const DEMO_TAGS = [
-  { id: "t1", name: "React", slug: "react", postCount: 15, createdAt: "2026-01-01T00:00:00Z" },
-  { id: "t2", name: "TypeScript", slug: "typescript", postCount: 20, createdAt: "2026-01-01T00:00:00Z" },
-  { id: "t3", name: "Next.js", slug: "nextjs", postCount: 18, createdAt: "2026-01-01T00:00:00Z" },
-  { id: "t4", name: "Freelancing", slug: "freelancing", postCount: 12, createdAt: "2026-01-01T00:00:00Z" },
-  { id: "t5", name: "Career", slug: "career", postCount: 25, createdAt: "2026-01-01T00:00:00Z" },
-  { id: "t10", name: "Docker", slug: "docker", postCount: 11, createdAt: "2026-01-01T00:00:00Z" },
-  { id: "t13", name: "AI", slug: "ai", postCount: 16, createdAt: "2026-01-01T00:00:00Z" },
-  { id: "t21", name: "Tailwind", slug: "tailwind-css", postCount: 10, createdAt: "2026-01-01T00:00:00Z" },
-  { id: "t24", name: "Supabase", slug: "supabase", postCount: 7, createdAt: "2026-01-01T00:00:00Z" },
+export const DEMO_TAGS: Tag[] = [
+  { id: "t1", name: "React", slug: "react", postCount: 15, createdAt: "2026-01-01T00:00:00Z", type: "tech" },
+  { id: "t2", name: "TypeScript", slug: "typescript", postCount: 20, createdAt: "2026-01-01T00:00:00Z", type: "tech" },
+  { id: "t3", name: "Next.js", slug: "nextjs", postCount: 18, createdAt: "2026-01-01T00:00:00Z", type: "tech" },
+  { id: "t4", name: "Freelancing", slug: "freelancing", postCount: 12, createdAt: "2026-01-01T00:00:00Z", type: "general" },
+  { id: "t5", name: "Career", slug: "career", postCount: 25, createdAt: "2026-01-01T00:00:00Z", type: "general" },
+  { id: "t10", name: "Docker", slug: "docker", postCount: 11, createdAt: "2026-01-01T00:00:00Z", type: "tech" },
+  { id: "t13", name: "AI", slug: "ai", postCount: 16, createdAt: "2026-01-01T00:00:00Z", type: "tech" },
+  { id: "t21", name: "Tailwind", slug: "tailwind-css", postCount: 10, createdAt: "2026-01-01T00:00:00Z", type: "tech" },
+  { id: "t24", name: "Supabase", slug: "supabase", postCount: 7, createdAt: "2026-01-01T00:00:00Z", type: "tech" },
 ];
 
 export const DEMO_AUTHORS: Author[] = [
-  { id: "a1", name: "Alex Johnson", slug: "alex-johnson", bio: "Senior frontend developer. Building the future of web apps.", avatarUrl: "", isStaff: true, createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-07-01T00:00:00Z" },
-  { id: "a2", name: "Sarah Chen", slug: "sarah-chen", bio: "Full-stack developer & freelancing coach.", avatarUrl: "", isStaff: true, createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-07-01T00:00:00Z" },
-  { id: "a3", name: "Marcus Williams", slug: "marcus-williams", bio: "DevOps engineer & cloud infrastructure specialist.", avatarUrl: "", isStaff: false, createdAt: "2026-02-01T00:00:00Z", updatedAt: "2026-06-01T00:00:00Z" },
+  { id: "a1", name: "Alex Johnson", slug: "alex-johnson", bio: "Senior frontend developer. Building the future of web apps.", avatarUrl: "", isStaff: true, status: "open_to_work", twitter: "", github: "", linkedin: "", website: "", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-07-01T00:00:00Z" },
+  { id: "a2", name: "Sarah Chen", slug: "sarah-chen", bio: "Full-stack developer & freelancing coach.", avatarUrl: "", isStaff: true, status: "mentoring", twitter: "", github: "", linkedin: "", website: "", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-07-01T00:00:00Z" },
+  { id: "a3", name: "Marcus Williams", slug: "marcus-williams", bio: "DevOps engineer & cloud infrastructure specialist.", avatarUrl: "", isStaff: false, status: "hiring", twitter: "", github: "", linkedin: "", website: "", createdAt: "2026-02-01T00:00:00Z", updatedAt: "2026-06-01T00:00:00Z" },
 ];
 
 export const DEMO_POSTS: Post[] = [
@@ -31,7 +31,7 @@ export const DEMO_POSTS: Post[] = [
     id: "1", slug: "building-scalable-react-apps",
     title: "Building Scalable React Applications: A Complete Guide",
     excerpt: "Learn the best practices for building large-scale React applications with proper state management, code splitting, and performance optimization techniques.",
-    contentMdx: "", status: "published", visibility: "public",
+    contentMdx: "", status: "published", visibility: "public", postType: "article",
     publishedAt: "2026-07-04T08:00:00Z", readingTime: 12, viewCount: 1847, adEnabled: true,
     createdAt: "2026-07-01T08:00:00Z", updatedAt: "2026-07-04T08:00:00Z",
     author: DEMO_AUTHORS[0], category: DEMO_CATEGORIES[0],
@@ -41,7 +41,7 @@ export const DEMO_POSTS: Post[] = [
     id: "2", slug: "freelance-developer-rates-2026",
     title: "Freelance Developer Rates: How to Price Your Services in 2026",
     excerpt: "A comprehensive breakdown of freelance rates for developers at every experience level, with tips on negotiating with clients and building long-term relationships.",
-    contentMdx: "", status: "published", visibility: "public",
+    contentMdx: "", status: "published", visibility: "public", postType: "article",
     publishedAt: "2026-07-02T10:00:00Z", readingTime: 8, viewCount: 2156, adEnabled: true,
     createdAt: "2026-06-28T10:00:00Z", updatedAt: "2026-07-02T10:00:00Z",
     author: DEMO_AUTHORS[1], category: DEMO_CATEGORIES[1],
@@ -51,7 +51,7 @@ export const DEMO_POSTS: Post[] = [
     id: "3", slug: "nextjs-vs-remix-2026-comparison",
     title: "Next.js vs Remix: The Ultimate Framework Comparison for 2026",
     excerpt: "Compare Next.js and Remix across performance, developer experience, deployment, and ecosystem. Find out which framework suits your next project best.",
-    contentMdx: "", status: "published", visibility: "public",
+    contentMdx: "", status: "published", visibility: "public", postType: "article",
     publishedAt: "2026-06-30T14:00:00Z", readingTime: 10, viewCount: 3421, adEnabled: true,
     createdAt: "2026-06-25T14:00:00Z", updatedAt: "2026-06-30T14:00:00Z",
     author: DEMO_AUTHORS[0], category: DEMO_CATEGORIES[0],
@@ -61,7 +61,7 @@ export const DEMO_POSTS: Post[] = [
     id: "4", slug: "docker-compose-for-development",
     title: "Docker Compose for Local Development: A Practical Guide",
     excerpt: "Set up a complete local development environment with Docker Compose. Includes multi-service setups, hot reloading, and production parity tips.",
-    contentMdx: "", status: "published", visibility: "public",
+    contentMdx: "", status: "published", visibility: "public", postType: "project",
     publishedAt: "2026-06-28T09:00:00Z", readingTime: 7, viewCount: 1289, adEnabled: true,
     createdAt: "2026-06-24T09:00:00Z", updatedAt: "2026-06-28T09:00:00Z",
     author: DEMO_AUTHORS[2], category: DEMO_CATEGORIES[2],
@@ -71,7 +71,7 @@ export const DEMO_POSTS: Post[] = [
     id: "5", slug: "ai-tools-for-developers-2026",
     title: "10 AI Tools Every Developer Should Use in 2026",
     excerpt: "From code completion to automated testing, these AI tools will supercharge your development workflow and help you ship faster.",
-    contentMdx: "", status: "published", visibility: "public",
+    contentMdx: "", status: "published", visibility: "public", postType: "article",
     publishedAt: "2026-06-26T11:00:00Z", readingTime: 6, viewCount: 4567, adEnabled: true,
     createdAt: "2026-06-22T11:00:00Z", updatedAt: "2026-06-26T11:00:00Z",
     author: DEMO_AUTHORS[1], category: DEMO_CATEGORIES[3],
@@ -81,17 +81,17 @@ export const DEMO_POSTS: Post[] = [
     id: "6", slug: "postgresql-performance-tuning",
     title: "PostgreSQL Performance Tuning: From Slow Queries to Lightning Fast",
     excerpt: "Master PostgreSQL performance tuning with indexing strategies, query optimization, connection pooling, and monitoring tools.",
-    contentMdx: "", status: "published", visibility: "public",
+    contentMdx: "", status: "published", visibility: "public", postType: "article",
     publishedAt: "2026-06-24T13:00:00Z", readingTime: 15, viewCount: 2345, adEnabled: true,
     createdAt: "2026-06-20T13:00:00Z", updatedAt: "2026-06-24T13:00:00Z",
     author: DEMO_AUTHORS[2], category: DEMO_CATEGORIES[2],
-    tags: [{ id: "t16", name: "PostgreSQL", slug: "postgresql", postCount: 8, createdAt: "2026-01-01T00:00:00Z" }],
+    tags: [{ id: "t16", name: "PostgreSQL", slug: "postgresql", postCount: 8, createdAt: "2026-01-01T00:00:00Z", type: "tech" }],
   },
   {
     id: "7", slug: "building-portfolio-with-nextjs",
     title: "Build a Developer Portfolio with Next.js That Gets You Hired",
     excerpt: "A step-by-step guide to creating a standout developer portfolio using Next.js, including project showcases, blog integration, and SEO optimization.",
-    contentMdx: "", status: "published", visibility: "public",
+    contentMdx: "", status: "published", visibility: "public", postType: "project",
     publishedAt: "2026-06-22T15:00:00Z", readingTime: 11, viewCount: 3120, adEnabled: true,
     createdAt: "2026-06-18T15:00:00Z", updatedAt: "2026-06-22T15:00:00Z",
     author: DEMO_AUTHORS[0], category: DEMO_CATEGORIES[1],
@@ -101,7 +101,7 @@ export const DEMO_POSTS: Post[] = [
     id: "8", slug: "tailwind-css-best-practices",
     title: "Tailwind CSS Best Practices for Production Applications",
     excerpt: "Learn how to structure Tailwind CSS in large projects with custom design systems, component patterns, and performance optimization.",
-    contentMdx: "", status: "published", visibility: "public",
+    contentMdx: "", status: "published", visibility: "public", postType: "article",
     publishedAt: "2026-06-20T10:00:00Z", readingTime: 9, viewCount: 1890, adEnabled: true,
     createdAt: "2026-06-16T10:00:00Z", updatedAt: "2026-06-20T10:00:00Z",
     author: DEMO_AUTHORS[1], category: DEMO_CATEGORIES[0],
@@ -111,7 +111,7 @@ export const DEMO_POSTS: Post[] = [
     id: "9", slug: "supabase-vs-firebase-2026",
     title: "Supabase vs Firebase: Choosing the Right BaaS for Your Project",
     excerpt: "An in-depth comparison of Supabase and Firebase covering features, pricing, scalability, and developer experience.",
-    contentMdx: "", status: "published", visibility: "public",
+    contentMdx: "", status: "published", visibility: "public", postType: "article",
     publishedAt: "2026-06-18T12:00:00Z", readingTime: 10, viewCount: 2876, adEnabled: true,
     createdAt: "2026-06-14T12:00:00Z", updatedAt: "2026-06-18T12:00:00Z",
     author: DEMO_AUTHORS[2], category: DEMO_CATEGORIES[2],

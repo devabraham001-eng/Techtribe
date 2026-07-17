@@ -4,8 +4,9 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Clock, Eye } from "lucide-react";
+import { Clock, Eye, Briefcase, Code } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import type { PostCardProps } from "@/types/blog";
 
 const cardVariants = {
@@ -220,7 +221,7 @@ export function PostCard({
     );
   }
 
-  if (prefersReduced) {
+if (prefersReduced) {
     return (
       <Link href={`/blog/${post.slug}`} className="group block">
         <article className={cn("bg-card border border-border rounded-xl hover:border-primary/20 hover:bg-card-hover transition-all duration-150 flex flex-col h-full", className)}>
@@ -242,16 +243,46 @@ export function PostCard({
             {showCategory && post.category && (
               <span className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-background/80 backdrop-blur text-[10px] font-medium text-muted-foreground uppercase tracking-wider border border-border">{post.category.name}</span>
             )}
+            {post.postType === "project" && (
+              <Badge variant="secondary" className="absolute top-3 right-3 gap-1 text-[10px]">
+                <Briefcase className="h-2.5 w-2.5" />
+                Project
+              </Badge>
+            )}
           </div>
           <div className="flex flex-col flex-1 p-4">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-tertiary mb-2.5">
+              {post.postType === "project" && (
+                <Badge variant="outline" className="gap-1 text-[10px] h-4">
+                  <Briefcase className="h-2.5 w-2.5" />
+                  Project
+                </Badge>
+              )}
               <span>{post.author.name}</span>
               <span>·</span>
               <span>{formatDate(post.publishedAt || post.createdAt)}</span>
-              {showReadingTime && (<><span>·</span><div className="flex items-center gap-1"><Clock className="h-3 w-3" /><span>{post.readingTime} min</span></div></>)}
+              {showReadingTime && (
+                <>
+                  <span>·</span>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    <span>{post.readingTime} min</span>
+                  </div>
+                </>
+              )}
             </div>
             <h3 className="font-heading font-semibold text-base leading-snug line-clamp-2 mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
             {post.excerpt && <p className="text-sm text-muted-foreground line-clamp-2 mb-3 leading-relaxed">{post.excerpt}</p>}
+            {post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-2">
+                {post.tags.filter((t) => t.type === "tech").slice(0, 2).map((tag) => (
+                  <Badge key={tag.id} variant="secondary" className="gap-1 text-[10px] h-4">
+                    <Code className="h-2.5 w-2.5" />
+                    {tag.name}
+                  </Badge>
+                ))}
+              </div>
+            )}
             <div className="flex items-center justify-between mt-auto pt-3 border-t border-border">
               <div className="flex items-center gap-1.5 text-[11px] text-fg-tertiary"><Eye className="h-3 w-3" /><span>{post.viewCount} views</span></div>
               <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">Read →</span>
@@ -285,9 +316,21 @@ export function PostCard({
               {post.category.name}
             </span>
           )}
+          {post.postType === "project" && (
+            <Badge variant="secondary" className="absolute top-3 right-3 gap-1 text-[10px]">
+              <Briefcase className="h-2.5 w-2.5" />
+              Project
+            </Badge>
+          )}
         </div>
         <div className="flex flex-col flex-1 p-4">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-tertiary mb-2.5">
+            {post.postType === "project" && (
+              <Badge variant="secondary" className="gap-1 text-[10px] h-4">
+                <Briefcase className="h-2.5 w-2.5" />
+                Project
+              </Badge>
+            )}
             <span>{post.author.name}</span>
             <span>·</span>
             <span>{formatDate(post.publishedAt || post.createdAt)}</span>
@@ -308,6 +351,16 @@ export function PostCard({
             <p className="text-sm text-muted-foreground line-clamp-2 mb-3 leading-relaxed">
               {post.excerpt}
             </p>
+          )}
+          {post.tags.filter((t) => t.type === "tech").length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {post.tags.filter((t) => t.type === "tech").slice(0, 2).map((tag) => (
+                <Badge key={tag.id} variant="outline" className="gap-1 text-[10px] h-4 px-2">
+                  <Code className="h-2 w-2" />
+                  {tag.name}
+                </Badge>
+              ))}
+            </div>
           )}
           <div className="flex items-center justify-between mt-auto pt-3 border-t border-border">
             <div className="flex items-center gap-1.5 text-[11px] text-fg-tertiary">

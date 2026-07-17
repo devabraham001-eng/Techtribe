@@ -24,6 +24,7 @@ create table if not exists tags (
   name text not null,
   slug text not null unique,
   description text,
+  type text not null default 'general' check (type in ('tech', 'general')),
   post_count int default 0,
   created_at timestamptz default now()
 );
@@ -40,6 +41,7 @@ create table if not exists authors (
   github text,
   linkedin text,
   website text,
+  status text check (status in ('open_to_work', 'hiring', 'mentoring', 'open_for_mentorship')),
   is_staff boolean default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -57,6 +59,7 @@ create table if not exists posts (
   cover_image_alt text,
   status text not null default 'draft' check (status in ('draft', 'review', 'scheduled', 'published', 'archived')),
   visibility text not null default 'public' check (visibility in ('public', 'unlisted', 'private')),
+  post_type text not null default 'article' check (post_type in ('article', 'project')),
   published_at timestamptz,
   scheduled_at timestamptz,
   author_id uuid references authors(id) on delete set null,
@@ -370,3 +373,107 @@ with check (bucket_id in ('post-covers', 'avatars') and auth.uid() = owner);
 create policy "Users can delete own storage objects"
 on storage.objects for delete
 using (bucket_id in ('post-covers', 'avatars') and auth.uid() = owner);
+
+-- =============================================
+-- Phase 1 Migrations: Add new columns to existing tables
+-- Run these if updating an existing database
+-- =============================================
+
+-- Add type column to tags
+alter table if exists tags add column if not exists type text not null default 'general' check (type in ('tech', 'general'));
+
+-- Update existing tags: mark tech tags
+update tags set type = 'tech' where slug in ('react', 'typescript', 'nextjs', 'docker', 'postgresql', 'ai', 'tailwind-css', 'supabase', 'css', 'devops');
+
+-- Add status column to authors
+alter table if exists authors add column if not exists status text check (status in ('open_to_work', 'hiring', 'mentoring', 'open_for_mentorship'));
+
+-- Add post_type column to posts
+alter table if exists posts add column if not exists post_type text not null default 'article' check (post_type in ('article', 'project'));
+
+-- =============================================
+-- Phase 3: Social & Collaboration Tables
+-- =============================================
+
+-- Post reactions (Ship It, Mind Blown, Learned Something)
+create table if not exists post_reactions (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references posts(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  reaction text not null check (reaction in ('ship_it', 'mind_blown', 'learned_something')),
+  created_at timestamptz default now(),
+  unique(post_id, user_id, reaction)
+);
+
+-- Inline annotations (highlight + comment on specific text)
+create table if not exists post_annotations (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references posts(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  quote text not null,
+  comment text not null,
+  start_offset int not null,
+  end_offset int not null,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Post collaborators (tag co-creators)
+create table if not exists post_collaborators (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references posts(id) on delete cascade,
+  author_id uuid not null references authors(id) on delete cascade,
+  created_at timestamptz default now(),
+  unique(post_id, author_id)
+);
+
+-- Indexes
+create index if not exists idx_post_reactions_post on post_reactions(post_id);
+create index if not exists idx_post_reactions_user on post_reactions(user_id);
+create index if not exists idx_post_annotations_post on post_annotations(post_id);
+create index if not exists idx_post_collaborators_post on post_collaborators(post_id);
+
+-- RLS
+alter table post_reactions enable row level security;
+alter table post_annotations enable row level security;
+alter table post_collaborators enable row level security;
+
+-- Policies: anyone can read reactions/annotations/collaborators
+drop policy if exists "Public read post_reactions" on post_reactions;
+create policy "Public read post_reactions" on post_reactions for select using (true);
+
+drop policy if exists "Public read post_annotations" on post_annotations;
+create policy "Public read post_annotations" on post_annotations for select using (true);
+
+drop policy if exists "Public read post_collaborators" on post_collaborators;
+create policy "Public read post_collaborators" on post_collaborators for select using (true);
+
+-- Authenticated users can insert/update/delete their own reactions
+drop policy if exists "Users manage own reactions" on post_reactions;
+create policy "Users manage own reactions" on post_reactions
+  for all using (user_id = auth.uid())
+  with check (user_id = auth.uid());
+
+-- Authenticated users can insert/update/delete their own annotations
+drop policy if exists "Users manage own annotations" on post_annotations;
+create policy "Users manage own annotations" on post_annotations
+  for all using (user_id = auth.uid())
+  with check (user_id = auth.uid());
+
+-- Authenticated users can manage collaborators on their own posts
+drop policy if exists "Authors manage own post collaborators" on post_collaborators;
+create policy "Authors manage own post collaborators" on post_collaborators
+  for all using (
+    post_id in (
+      select id from posts where author_id in (
+        select id from authors where user_id = auth.uid()
+      )
+    )
+  )
+  with check (
+    post_id in (
+      select id from posts where author_id in (
+        select id from authors where user_id = auth.uid()
+      )
+    )
+  );

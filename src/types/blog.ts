@@ -15,6 +15,7 @@ export interface Tag {
   name: string;
   slug: string;
   description?: string;
+  type?: 'tech' | 'general';
   postCount: number;
   createdAt: string;
 }
@@ -30,6 +31,7 @@ export interface Author {
   linkedin?: string;
   website?: string;
   isStaff: boolean;
+  status?: 'open_to_work' | 'hiring' | 'mentoring' | 'open_for_mentorship';
   createdAt: string;
   updatedAt: string;
 }
@@ -45,11 +47,13 @@ export interface Post {
   coverImageAlt?: string;
   status: "draft" | "review" | "scheduled" | "published" | "archived";
   visibility: "public" | "unlisted" | "private";
+  postType?: 'article' | 'project';
   publishedAt?: string;
   scheduledAt?: string;
   author: Author;
   category?: Category;
   tags: Tag[];
+  collaborators?: Author[];
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string[];
@@ -61,6 +65,29 @@ export interface Post {
   adSlots?: AdSlot[];
   createdAt: string;
   updatedAt: string;
+}
+
+export type ReactionType = 'ship_it' | 'mind_blown' | 'learned_something';
+
+export interface PostReaction {
+  id: string;
+  postId: string;
+  userId: string;
+  reaction: ReactionType;
+  createdAt: string;
+}
+
+export interface PostAnnotation {
+  id: string;
+  postId: string;
+  userId: string;
+  quote: string;
+  comment: string;
+  startOffset: number;
+  endOffset: number;
+  createdAt: string;
+  updatedAt: string;
+  author?: Author;
 }
 
 export interface AdSlot {

@@ -64,6 +64,7 @@ function mapAuthor(row: AuthorRow): Author {
     linkedin: row.linkedin ?? undefined,
     website: row.website ?? undefined,
     isStaff: row.is_staff,
+    status: (row.status as 'open_to_work' | 'hiring' | 'mentoring' | 'open_for_mentorship') ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -91,6 +92,7 @@ function mapTag(row: TagRow): Tag {
     description: row.description ?? undefined,
     postCount: row.post_count,
     createdAt: row.created_at,
+    type: (row.type as 'tech' | 'general') ?? 'general',
   };
 }
 
@@ -114,6 +116,7 @@ function mapPost(
     coverImageAlt: row.cover_image_alt ?? undefined,
     status: row.status,
     visibility: row.visibility,
+    postType: (row.post_type as 'article' | 'project') ?? 'article',
     publishedAt: row.published_at ?? undefined,
     scheduledAt: row.scheduled_at ?? undefined,
     author,
@@ -212,19 +215,19 @@ export async function getBlogPostBySlug(slug: string) {
   return posts.find((post) => post.slug === slug) ?? null;
 }
 
-export async function getBlogCategories() {
+export async function getBlogCategories(): Promise<Category[]> {
   const { categories } = await getCollections();
-  return categories;
+  return categories as Category[];
 }
 
-export async function getBlogTags() {
+export async function getBlogTags(): Promise<Tag[]> {
   const { tags } = await getCollections();
-  return tags;
+  return tags as Tag[];
 }
 
-export async function getBlogAuthors() {
+export async function getBlogAuthors(): Promise<Author[]> {
   const { authors } = await getCollections();
-  return authors;
+  return authors as Author[];
 }
 
 export async function searchBlogPosts(query: string) {

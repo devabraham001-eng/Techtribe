@@ -4,9 +4,6 @@ import nextDynamic from "next/dynamic";
 import { ArrowLeft, Database as DatabaseIcon } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import type { Database } from "@/types/database";
-
-type AuthorRow = Database["public"]["Tables"]["authors"]["Row"];
 
 const SettingsForm = nextDynamic(() => import("@/components/auth/SettingsForm").then((mod) => mod.SettingsForm), {
   loading: () => <div className="flex items-center justify-center h-48"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>,
@@ -35,11 +32,17 @@ export default async function SettingsPage() {
 
   const { data: authorData } = await supabase
     .from("authors")
-    .select("id, name, slug, bio, avatar_url, twitter, github, linkedin, website, is_staff, created_at, updated_at")
+    .select("id, name, slug, bio, avatar_url, twitter, github, linkedin, website, is_staff, status, created_at, updated_at")
     .eq("user_id", user.id)
     .single();
 
-  const author = authorData as AuthorRow | null;
+  const author = authorData as {
+    id: string; name: string; slug: string; bio: string | null;
+    avatar_url: string | null; twitter: string | null; github: string | null;
+    linkedin: string | null; website: string | null; is_staff: boolean;
+    status: 'open_to_work' | 'hiring' | 'mentoring' | 'open_for_mentorship' | null;
+    created_at: string; updated_at: string;
+  } | null;
 
   return (
     <div className="mx-auto max-w-2xl px-4 sm:px-6 pb-10 sm:pb-20 pt-6">

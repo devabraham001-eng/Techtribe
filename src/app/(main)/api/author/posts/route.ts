@@ -15,7 +15,9 @@ interface CreatePostBody {
   coverImageAlt?: unknown;
   categoryId?: unknown;
   tagIds?: unknown;
+  collaboratorIds?: unknown;
   status?: unknown;
+  postType?: unknown;
 }
 
 export async function GET(request: Request) {
@@ -84,7 +86,11 @@ export async function POST(request: Request) {
   const tagIds = Array.isArray(body.tagIds)
     ? body.tagIds.filter((tag): tag is string => typeof tag === "string")
     : [];
+  const collaboratorIds = Array.isArray(body.collaboratorIds)
+    ? body.collaboratorIds.filter((id): id is string => typeof id === "string")
+    : [];
   const requestedStatus = body.status === "published" ? "published" : "draft";
+  const postType = (body.postType === "project" ? "project" : "article") as "article" | "project";
 
   if (title.length < 5 || !contentMdx) {
     return NextResponse.json(
@@ -129,6 +135,7 @@ export async function POST(request: Request) {
     cover_image_alt: coverImageAlt || null,
     status,
     visibility: "public",
+    post_type: postType,
     published_at: status === "published" ? now : null,
     scheduled_at: null,
     author_id: author.id,
@@ -153,6 +160,13 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  if (collaboratorIds.length > 0 && post) {
+    const postId = (post as { id: string }).id;
+    await supabase.from("post_collaborators").insert(
+      collaboratorIds.map((author_id) => ({ post_id: postId, author_id })) as never
+    );
   }
 
   return NextResponse.json({ post }, { status: 201 });

@@ -1,1 +1,16 @@
-{"projectId":"prj_QYK3cyL5OlLiKsWzE5siOcZEdQBJ","orgId":"team_yIjYgQTOLlR3ybA2PlZnXafN","projectName":"techtribe"}
+{
+  "projectId": "prj_QYK3cyL5OlLiKsWzE5siOcZEdQBJ",
+  "orgId": "team_yIjYgQTOLlR3ybA2PlZnXafN",
+  "projectName": "techtribe",
+  "settings": {
+    "createdAt": 1783471243012,
+    "framework": "nextjs",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}

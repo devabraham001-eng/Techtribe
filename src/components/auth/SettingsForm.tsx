@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Save, Upload } from "lucide-react";
+import { Loader2, Save, Upload, Briefcase, Users, Code } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ interface AuthorProfile {
   github?: string | null;
   linkedin?: string | null;
   website?: string | null;
+  status?: 'open_to_work' | 'hiring' | 'mentoring' | 'open_for_mentorship' | null;
 }
 
 interface SettingsFormProps {
@@ -177,6 +178,58 @@ export function SettingsForm({ author }: SettingsFormProps) {
         <div className="space-y-2">
           <Label htmlFor="website">Website</Label>
           <Input id="website" name="website" type="url" defaultValue={author?.website ?? ""} placeholder="https://..." />
+        </div>
+      </fieldset>
+
+      <fieldset className="rounded-lg border border-border p-5 space-y-4">
+        <legend className="text-sm font-medium px-1">Profile Status</legend>
+        <p className="text-xs text-muted-foreground">
+          Show a badge on your profile and articles to let others know your availability.
+        </p>
+        <div className="space-y-2">
+          <label className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:bg-muted cursor-pointer">
+            <input
+              type="radio"
+              name="status"
+              value="open_to_work"
+              defaultChecked={author?.status === "open_to_work"}
+              className="sr-only"
+            />
+            <Briefcase className="h-4 w-4" />
+            <span>Open to Work</span>
+          </label>
+          <label className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:bg-muted cursor-pointer">
+            <input
+              type="radio"
+              name="status"
+              value="hiring"
+              defaultChecked={author?.status === "hiring"}
+              className="sr-only"
+            />
+            <Users className="h-4 w-4" />
+            <span>Hiring</span>
+          </label>
+          <label className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:bg-muted cursor-pointer">
+            <input
+              type="radio"
+              name="status"
+              value="mentoring"
+              defaultChecked={author?.status === "mentoring" || author?.status === "open_for_mentorship"}
+              className="sr-only"
+            />
+            <Code className="h-4 w-4" />
+            <span>Mentoring</span>
+          </label>
+          <label className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:bg-muted cursor-pointer">
+            <input
+              type="radio"
+              name="status"
+              value=""
+              defaultChecked={!author?.status}
+              className="sr-only"
+            />
+            <span>No status</span>
+          </label>
         </div>
       </fieldset>
 

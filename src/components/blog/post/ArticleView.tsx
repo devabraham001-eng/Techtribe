@@ -1,12 +1,17 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Share2, Copy } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Share2, Copy, Tag, Briefcase, Code, Users } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { LiveIndicator, LiveViewCount } from "@/components/blog/live/LiveIndicator";
 import { PostGrid } from "@/components/blog/post/PostGrid";
+import { MdxRenderer } from "@/components/markdown/MdxRenderer";
+import { ReactionBar } from "@/components/blog/post/ReactionBar";
+import { AnnotationLayer } from "@/components/blog/post/AnnotationLayer";
 import { Reveal } from "@/components/motion/Reveal";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { useRealtimeViewCount } from "@/hooks/useRealtimeViewCount";
 import { formatDate } from "@/lib/utils";
 import type { Post } from "@/types/blog";
@@ -20,6 +25,7 @@ interface ArticleViewProps {
 
 export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleViewProps) {
   const { viewCount, refresh } = useRealtimeViewCount(post.slug, post.viewCount);
+  const contentRef = React.useRef<HTMLDivElement>(null);
 
   async function handleShare() {
     const url = typeof window !== "undefined" ? window.location.href : "";
@@ -57,13 +63,19 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
       <header className="mb-8">
         <Reveal direction="up" duration={0.4}>
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3 mb-3 flex-wrap">
           {post.category && (
             <Link href={`/blog/category/${post.category.slug}`}>
               <span className="text-xs font-medium text-primary uppercase tracking-wider">
                 {post.category.name}
               </span>
             </Link>
+          )}
+          {post.postType === "project" && (
+            <Badge variant="secondary" className="gap-1">
+              <Briefcase className="h-2.5 w-2.5" />
+              Project
+            </Badge>
           )}
           <span className="text-xs text-muted-foreground">
             {formatDate(post.publishedAt || post.createdAt)}
@@ -139,64 +151,9 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       </Reveal>
 
       <Reveal direction="up" duration={0.4} delay={0.35}>
-      <div className="prose-custom max-w-none">
+      <div ref={contentRef}>
         {post.contentMdx ? (
-          post.contentMdx.split("\n").map((line, index) => {
-            if (line.startsWith("## ")) {
-              return (
-                <h2
-                  key={index}
-                  className="font-heading text-xl sm:text-2xl font-semibold tracking-tight mt-8 sm:mt-10 mb-4 text-foreground"
-                >
-                  {line.slice(3)}
-                </h2>
-              );
-            }
-            if (line.startsWith("### ")) {
-              return (
-                <h3
-                  key={index}
-                  className="font-heading text-lg sm:text-xl font-semibold tracking-tight mt-6 sm:mt-8 mb-3 text-foreground"
-                >
-                  {line.slice(4)}
-                </h3>
-              );
-            }
-            if (line.startsWith("> ")) {
-              return (
-                <blockquote
-                  key={index}
-                  className="border-l-2 border-primary pl-4 sm:pl-5 italic text-muted-foreground my-6 sm:my-8"
-                >
-                  {line.slice(2)}
-                </blockquote>
-              );
-            }
-            if (line.startsWith("---")) {
-              return <Separator key={index} className="my-8 sm:my-10" />;
-            }
-            if (line.trim() === "") {
-              return <div key={index} className="h-3 sm:h-4" />;
-            }
-            if (line.match(/^[*-] /)) {
-              return (
-                <li
-                  key={index}
-                  className="text-sm sm:text-base leading-relaxed mb-2 ml-4 list-disc text-muted-foreground"
-                >
-                  {line.slice(2)}
-                </li>
-              );
-            }
-            return (
-              <p
-                key={index}
-                className="mb-5 sm:mb-6 leading-relaxed text-sm sm:text-base text-muted-foreground break-words"
-              >
-                {line}
-              </p>
-            );
-          })
+          <MdxRenderer content={post.contentMdx} />
         ) : (
           <p className="text-sm text-muted-foreground">
             This article is being prepared for publication.
@@ -208,14 +165,30 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       {post.tags.length > 0 && (
         <Reveal direction="up" duration={0.4} delay={0.4}>
         <div className="flex flex-wrap gap-2 mt-8 sm:mt-10 pt-6 border-t border-border">
-          <span className="text-xs text-muted-foreground w-full sm:w-auto mb-1 sm:mb-0">Tags:</span>
-          {post.tags.map((tag) => (
-            <Link key={tag.id} href={`/blog/tag/${tag.slug}`}>
-              <span className="px-3 py-1 rounded-md text-xs font-medium bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors inline-block">
-                #{tag.name}
-              </span>
-            </Link>
-          ))}
+          {post.tags.filter((t) => t.type === "tech").length > 0 && (
+            <div className="w-full sm:w-auto mb-2 sm:mb-0 mr-4">
+              <span className="text-xs text-primary font-medium mr-2">Tech Stack:</span>
+              {post.tags.filter((t) => t.type === "tech").map((tag) => (
+                <Link key={tag.id} href={`/blog/tag/${tag.slug}`}>
+                  <span className="px-3 py-1 rounded-md text-xs font-medium bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-colors inline-block">
+                    {tag.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+          {post.tags.filter((t) => t.type === "general").length > 0 && (
+            <div className="w-full sm:w-auto">
+              <span className="text-xs text-muted-foreground mr-2">Tags:</span>
+              {post.tags.filter((t) => t.type === "general").map((tag) => (
+                <Link key={tag.id} href={`/blog/tag/${tag.slug}`}>
+                  <span className="px-3 py-1 rounded-md text-xs font-medium bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors inline-block">
+                    #{tag.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
         </Reveal>
       )}
@@ -240,25 +213,54 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       </div>
       </Reveal>
 
+      <Reveal direction="up" duration={0.4} delay={0.48}>
+      <ReactionBar slug={post.slug} />
+      <AnnotationLayer slug={post.slug} contentRef={contentRef} />
+      </Reveal>
+
       <Reveal direction="up" duration={0.4} delay={0.5}>
       <Separator className="my-8 sm:my-10" />
       </Reveal>
 
       <Reveal direction="up" duration={0.4} delay={0.5}>
       <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
-        <div className="flex items-start gap-3 sm:gap-4">
+        <div className="flex items-start gap-3 sm:gap-4 flex-wrap">
           <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
             <span className="text-sm sm:font-bold text-primary">
               {post.author.name.charAt(0)}
             </span>
           </div>
-          <div className="min-w-0 flex-1">
-            <Link
-              href={`/blog/author/${post.author.slug}`}
-              className="font-heading font-semibold text-sm text-foreground hover:text-primary transition-colors"
-            >
-              {post.author.name}
-            </Link>
+          <div className="min-w-0 flex-1 flex flex-col gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Link
+                href={`/blog/author/${post.author.slug}`}
+                className="font-heading font-semibold text-sm text-foreground hover:text-primary transition-colors"
+              >
+                {post.author.name}
+              </Link>
+              {post.author.status && (
+                <Badge variant="secondary" className="gap-1 text-xs">
+                  {post.author.status === "open_to_work" && (
+                    <>
+                      <Briefcase className="h-2.5 w-2.5" />
+                      Open to Work
+                    </>
+                  )}
+                  {post.author.status === "hiring" && (
+                    <>
+                      <Users className="h-2.5 w-2.5" />
+                      Hiring
+                    </>
+                  )}
+                  {(post.author.status === "mentoring" || post.author.status === "open_for_mentorship") && (
+                    <>
+                      <Code className="h-2.5 w-2.5" />
+                      Mentoring
+                    </>
+                  )}
+                </Badge>
+              )}
+            </div>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">
               {post.author.bio}
             </p>

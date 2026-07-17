@@ -12,9 +12,13 @@ import {
   PenLine,
   Plus,
   BarChart2 as BarChartIcon,
+  Briefcase,
+  Code,
+  Filter,
 } from "lucide-react";
 import { DashboardRightPanel } from "./DashboardRightPanel";
 import { RecentViewers } from "./RecentViewers";
+import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/motion/Reveal";
 import { useWriteModal } from "./WriteModalContext";
 
@@ -26,6 +30,7 @@ interface PostSummary {
   view_count: number;
   published_at: string | null;
   created_at: string;
+  post_type: string;
 }
 
 interface DashboardProps {
@@ -46,6 +51,7 @@ export function AuthorDashboardClient({
   const [error, setError] = React.useState<string | null>(null);
   const [actionError, setActionError] = React.useState<string | null>(null);
   const [deleting, setDeleting] = React.useState<string | null>(null);
+  const [postTypeFilter, setPostTypeFilter] = React.useState<"all" | "article" | "project">("all");
   const { openWriteModal } = useWriteModal();
 
   async function loadPosts() {
@@ -252,14 +258,55 @@ export function AuthorDashboardClient({
         {/* Post feed - Instagram style cards */}
         {!loading && !error && posts.length > 0 && (
           <Reveal direction="up" duration={0.4} delay={0.2}>
+          {/* Post Type Filter */}
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <div className="flex gap-1 bg-muted p-1 rounded-lg">
+              <button
+                onClick={() => setPostTypeFilter("all")}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  postTypeFilter === "all"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setPostTypeFilter("article")}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  postTypeFilter === "article"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <FileText className="h-3 w-3 inline mr-1" />
+                Articles
+              </button>
+              <button
+                onClick={() => setPostTypeFilter("project")}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  postTypeFilter === "project"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Briefcase className="h-3 w-3 inline mr-1" />
+                Projects
+              </button>
+            </div>
+          </div>
+
           <div className="space-y-3">
-            {posts.map((post) => {
-              const statusColor =
-                post.status === "published"
-                  ? "text-green-500 bg-green-500/10 border-green-500/20"
-                  : post.status === "draft"
-                  ? "text-yellow-500 bg-yellow-500/10 border-yellow-500/20"
-                  : "text-muted-foreground bg-card border-border";
+            {posts
+              .filter((post) => postTypeFilter === "all" || post.post_type === postTypeFilter)
+              .map((post) => {
+                const statusColor =
+                  post.status === "published"
+                    ? "text-green-500 bg-green-500/10 border-green-500/20"
+                    : post.status === "draft"
+                    ? "text-yellow-500 bg-yellow-500/10 border-yellow-500/20"
+                    : "text-muted-foreground bg-card border-border";
 
               return (
                 <article
@@ -274,6 +321,12 @@ export function AuthorDashboardClient({
                         >
                           {post.status}
                         </span>
+                        {post.post_type === "project" && (
+                          <Badge variant="secondary" className="gap-1 text-[10px] h-4 px-2">
+                            <Briefcase className="h-2.5 w-2.5" />
+                            Project
+                          </Badge>
+                        )}
                         <span className="text-xs text-fg-tertiary">
                           {new Date(post.created_at).toLocaleDateString("en-US", {
                             month: "short",

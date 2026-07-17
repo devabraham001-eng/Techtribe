@@ -48,6 +48,11 @@ export async function PUT(request: Request) {
   if (typeof body.github === "string") updates.github = body.github.trim() || null;
   if (typeof body.linkedin === "string") updates.linkedin = body.linkedin.trim() || null;
   if (typeof body.website === "string") updates.website = body.website.trim() || null;
+  if (typeof body.status === "string" && ["open_to_work", "hiring", "mentoring", "open_for_mentorship"].includes(body.status)) {
+    updates.status = body.status;
+  } else if (body.status === null || body.status === "") {
+    updates.status = null;
+  }
   updates.updated_at = new Date().toISOString();
 
   const { data, error } = await supabase

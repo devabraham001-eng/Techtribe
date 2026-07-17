@@ -126,6 +126,9 @@ export async function PUT(
   if (Array.isArray(body.tagIds)) {
     updates.tags = body.tagIds.filter((t: unknown) => typeof t === "string");
   }
+  if (body.postType === "article" || body.postType === "project") {
+    updates.post_type = body.postType;
+  }
 
   if (body.status === "published" || body.status === "draft") {
     updates.status = body.status;
@@ -144,6 +147,16 @@ export async function PUT(
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  if (Array.isArray(body.collaboratorIds)) {
+    const collabIds: string[] = body.collaboratorIds.filter((t: unknown) => typeof t === "string");
+    await supabase.from("post_collaborators").delete().eq("post_id", id);
+    if (collabIds.length > 0) {
+      await supabase.from("post_collaborators").insert(
+        collabIds.map((author_id) => ({ post_id: id, author_id })) as never
+      );
+    }
   }
 
   return NextResponse.json({ post: updated });
