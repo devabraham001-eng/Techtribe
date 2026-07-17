@@ -187,11 +187,13 @@ export default async function LearnPage() {
                 <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
                   <div className="multi-msg-body__header text-center max-w-2xl mx-auto mb-12">
                     <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-                      Which credential is right for you?
+                      Learning Paths
                     </h2>
-                    <p className="mt-3 text-base" style={{ color: "#98989d" }}>
-                      Certifications can be a big step, and a big investment. Need to build your skills first?
-                      Explore our Skill Badges and Certificates.
+                    <p className="mt-2 text-base" style={{ color: "#98989d" }}>
+                      Choose your track
+                    </p>
+                    <p className="mt-1 text-base" style={{ color: "#70757a" }}>
+                      Structured paths designed to take you from beginner to job-ready.
                     </p>
                   </div>
                   <CredentialsAccordion />
