@@ -141,19 +141,19 @@ export default async function LearnPage() {
                 <a
                   key={track.id}
                   href={`/learn/${track.slug}`}
-                  className="path-card group flex items-center justify-between rounded-2xl border p-6 no-underline transition-all duration-200 hover:border-[#4a4a4c] hover:bg-[#222224] hover:shadow-lg"
+                  className="path-card group mx-auto flex w-full max-w-[800px] items-center justify-between rounded-2xl border p-6 no-underline transition-all duration-200 hover:border-[#4a4a4c] hover:bg-[#222224] hover:shadow-lg"
                   style={{ borderColor: "#38383a", background: "#1c1c1e", color: "#f5f5f7", boxShadow: "none" }}
                   aria-label={`Path: ${track.title}, ${track.lessons} lessons`}
                 >
-                  <div className="path-card__content flex flex-col gap-2">
+                  <div className="path-card__content flex flex-1 flex-col gap-2">
                     <div className="path-card__badge inline-flex items-center gap-1.5" style={{ color: "#98989d", fontSize: 14, fontWeight: 500 }}>
                       <GraduationCap className="h-[18px] w-[18px]" />
                       <span>Path</span>
                     </div>
-                    <h3 className="path-card__title m-0 text-lg font-semibold leading-snug" style={{ color: "#f5f5f7" }}>
+                    <h3 className="path-card__title text-lg font-semibold leading-snug" style={{ color: "#f5f5f7" }}>
                       {track.title}
                     </h3>
-                    <p className="path-card__metadata m-0 text-sm" style={{ color: "#70757a" }}>
+                    <p className="path-card__metadata text-sm" style={{ color: "#70757a" }}>
                       {track.lessons} lesson{track.lessons !== 1 ? "s" : ""}
                     </p>
                   </div>
