@@ -1,6 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Sparkles, Wand2, BarChart3, GitBranch, Server, Zap, Shield } from "lucide-react";
 import { CredentialsAccordion } from "@/components/learn/CredentialsAccordion";
 
 export const metadata: Metadata = {
@@ -92,11 +93,11 @@ export default async function LearnPage() {
 
         {/* ===== INTRO ===== */}
         <section className="paths-intro" style={{ position: "relative", zIndex: 1 }}>
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-6">
-            <h2 className="paths-headline font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]" style={{ maxWidth: 720 }}>
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-6 text-center">
+            <h2 className="paths-headline font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1] mx-auto" style={{ maxWidth: 720 }}>
               Shape <strong className="text-primary">your future</strong> self
             </h2>
-            <p className="paths-description mt-4 text-base sm:text-lg leading-relaxed" style={{ color: "#98989d", maxWidth: 680 }}>
+            <p className="paths-description mt-4 text-base sm:text-lg leading-relaxed mx-auto" style={{ color: "#98989d", maxWidth: 680 }}>
               Paths are collections of learnings designed to build deep skills in a particular area.
               Whether you&apos;re looking to earn achievements, build a collection of skill badges,
               or prepare for a certification, there are paths right for you. When you&apos;re done,
@@ -110,21 +111,24 @@ export default async function LearnPage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-6">
             <div className="flex flex-wrap gap-4">
               {[
-                { id: "ai", label: "AI / ML", icon: "🤖" },
-                { id: "agents", label: "Agents", icon: "⚡" },
-                { id: "data", label: "Data", icon: "📊" },
-                { id: "devtools", label: "Dev Tools", icon: "🛠️" },
-                { id: "infrastructure", label: "Infrastructure", icon: "☁️" },
-                { id: "productivity", label: "Productivity", icon: "⚡" },
-                { id: "security", label: "Security", icon: "🔒" },
-              ].map((cat) => (
-                <a key={cat.id} href={`/learn?category=${cat.id}`} style={{ textDecoration: "none" }}>
-                  <div className="category-block flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all hover:bg-white/[0.03]" style={{ background: "transparent" }}>
-                    <span className="category-icon text-lg" role="img" aria-label={cat.label}>{cat.icon}</span>
-                    <p className="category-title text-sm font-medium" style={{ color: "#f5f5f7" }}>{cat.label}</p>
-                  </div>
-                </a>
-              ))}
+                { id: "ai", label: "AI / ML", icon: Sparkles },
+                { id: "agents", label: "Agents", icon: Wand2 },
+                { id: "data", label: "Data", icon: BarChart3 },
+                { id: "devtools", label: "Dev Tools", icon: GitBranch },
+                { id: "infrastructure", label: "Infrastructure", icon: Server },
+                { id: "productivity", label: "Productivity", icon: Zap },
+                { id: "security", label: "Security", icon: Shield },
+              ].map((cat) => {
+                const Icon = cat.icon;
+                return (
+                  <a key={cat.id} href={`/learn?category=${cat.id}`} style={{ textDecoration: "none" }}>
+                    <div className="category-block flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all hover:bg-white/[0.03]" style={{ background: "transparent" }}>
+                      <Icon className="category-icon h-5 w-5" style={{ color: "#D0F201" }} />
+                      <p className="category-title text-sm font-medium" style={{ color: "#f5f5f7" }}>{cat.label}</p>
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>
