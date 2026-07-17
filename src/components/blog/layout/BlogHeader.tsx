@@ -41,6 +41,7 @@ export function BlogHeader() {
 
         <nav className="hidden lg:flex items-center gap-6" style={{ fontSize: 14, fontWeight: 500, color: "#f5f5f7" }} aria-label="Main">
           <Link href="/blog" className="hover:opacity-70">Blog</Link>
+          <Link href="/learn" className="hover:opacity-70">Learn</Link>
           <Link href="/blog/categories" className="hover:opacity-70">Categories</Link>
           <Link href="/blog/authors" className="hover:opacity-70">Authors</Link>
           {authed && (
@@ -70,7 +71,7 @@ export function BlogHeader() {
               className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all"
               style={{ background: "#D0F201", color: "#10180B", padding: "10px 20px", fontSize: 14 }}
             >
-              Start Learning Free
+              Join
               <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Link>
           )}
@@ -150,7 +151,7 @@ export function BlogHeader() {
               style={{ background: "#D0F201", color: "#10180B", padding: "10px 20px", fontSize: 14 }}
               onClick={() => setMenuOpen(false)}
             >
-              {authed ? "Continue Learning" : "Start Learning Free"}
+              {authed ? "Continue Learning" : "Join"}
               <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Link>
           </div>
