@@ -276,37 +276,28 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
       {(prevPost || nextPost) && (
         <Reveal direction="up" duration={0.4} delay={0.55}>
-        <nav
-          className="mt-8 sm:mt-12 flex flex-col sm:grid sm:grid-cols-2 gap-2 sm:gap-3 w-full overflow-hidden"
-          aria-label="Article navigation"
-        >
-          {prevPost && (
+        <nav className="mt-8 sm:mt-12 flex items-center justify-between gap-3" aria-label="Article navigation">
+          {prevPost ? (
             <Link
               href={`/blog/${prevPost.slug}`}
-              className="flex items-center gap-2 sm:gap-3 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors w-full overflow-hidden"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:text-primary hover:border-primary/30 transition-colors"
             >
-              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
-              <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">Previous</div>
-                <div className="text-xs sm:text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap group-hover:text-primary transition-colors">
-                  {prevPost.title}
-                </div>
-              </div>
+              <ChevronLeft className="h-3.5 w-3.5" />
+              Previous
             </Link>
+          ) : (
+            <div />
           )}
-          {nextPost && (
+          {nextPost ? (
             <Link
               href={`/blog/${nextPost.slug}`}
-              className="flex items-center gap-2 sm:gap-3 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors w-full overflow-hidden"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:text-primary hover:border-primary/30 transition-colors ml-auto"
             >
-              <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">Next</div>
-                <div className="text-xs sm:text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap group-hover:text-primary transition-colors">
-                  {nextPost.title}
-                </div>
-              </div>
-              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+              Next
+              <ChevronRight className="h-3.5 w-3.5" />
             </Link>
+          ) : (
+            <div />
           )}
         </nav>
         </Reveal>
