@@ -1,7 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Sparkles, Wand2, BarChart3, GitBranch, Server, Zap, Shield } from "lucide-react";
+import { Sparkles, Wand2, BarChart3, GitBranch, Server, Zap, Shield, GraduationCap, ArrowRight } from "lucide-react";
 import { CredentialsAccordion } from "@/components/learn/CredentialsAccordion";
 
 export const metadata: Metadata = {
@@ -136,23 +136,29 @@ export default async function LearnPage() {
         {/* ===== PATHS LIST ===== */}
         <section className="paths-list" style={{ position: "relative", zIndex: 1 }}>
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-12">
-            <div className="learning-plans-grid grid gap-5 sm:grid-cols-2">
+            <div className="paths-grid grid gap-4 sm:grid-cols-2">
               {demoPaths.map((track) => (
                 <a
                   key={track.id}
                   href={`/learn/${track.slug}`}
-                  className="activity-card block rounded-xl border transition-all duration-200 hover:shadow-lg hover:border-white/10"
-                  style={{ borderColor: "#38383a", background: "#1c1c1e", textDecoration: "none" }}
+                  className="path-card group flex items-start gap-4 rounded-xl border p-4 sm:p-5 transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 hover:border-white/10"
+                  style={{ borderColor: "#38383a", background: "#1c1c1e", textDecoration: "none", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }}
+                  aria-label={`Path: ${track.title}, ${track.lessons} lessons`}
                 >
-                  <div className="p-4 sm:p-5">
-                    <h3 className="font-heading text-sm sm:text-base font-medium leading-snug text-foreground">
+                  <div className="path-card__content flex-1 min-w-0">
+                    <div className="path-card__badge flex items-center gap-1.5 mb-2">
+                      <GraduationCap className="h-4 w-4" style={{ color: "#D0F201" }} />
+                      <span className="text-xs font-medium uppercase tracking-wider" style={{ color: "#636366" }}>Path</span>
+                    </div>
+                    <h3 className="path-card__title font-heading text-sm sm:text-base font-semibold leading-snug text-foreground">
                       {track.title}
                     </h3>
-                  </div>
-                  <div className="rounded-b-xl px-4 sm:px-5 py-2.5" style={{ background: "rgba(255,255,255,0.02)" }}>
-                    <span className="text-xs" style={{ color: "#636366" }}>
+                    <p className="path-card__metadata mt-1 text-xs" style={{ color: "#98989d" }}>
                       {track.lessons} lesson{track.lessons !== 1 ? "s" : ""}
-                    </span>
+                    </p>
+                  </div>
+                  <div className="path-card__action mt-1 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1">
+                    <ArrowRight className="h-5 w-5" style={{ color: "#636366" }} />
                   </div>
                 </a>
               ))}
