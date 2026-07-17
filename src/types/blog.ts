@@ -129,3 +129,44 @@ export interface PaginationProps {
   baseUrl: string;
   className?: string;
 }
+
+// Learning Platform Types
+export interface LearningTrack {
+  id: string;
+  title: string;
+  description?: string;
+  slug: string;
+  coverImageUrl?: string;
+  category?: string;
+  lessonCount: number;
+  createdAt: string;
+}
+
+export interface TrackModule {
+  id: string;
+  trackId: string;
+  title: string;
+  description?: string;
+  sortOrder: number;
+  lessons: Lesson[];
+  createdAt: string;
+}
+
+export interface Lesson {
+  id: string;
+  moduleId: string;
+  title: string;
+  content?: string;
+  isProject: boolean;
+  projectPrompt?: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface UserLessonProgress {
+  id: string;
+  userId: string;
+  lessonId: string;
+  completedAt: string;
+  submittedProjectArticleId?: string | null;
+}

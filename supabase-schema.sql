@@ -503,3 +503,115 @@ drop policy if exists "Users manage own comments" on post_comments;
 create policy "Users manage own comments" on post_comments
   for all using (user_id = auth.uid())
   with check (user_id = auth.uid());
+
+-- =============================================
+-- Learning Platform (Tracks, Modules, Lessons, Progress)
+-- =============================================
+
+create table if not exists learning_tracks (
+  id uuid primary key default gen_random_uuid(),
+  title varchar(255) not null,
+  description text,
+  slug varchar(255) unique not null,
+  cover_image_url text,
+  category varchar(100),
+  lesson_count int default 0,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_learning_tracks_slug on learning_tracks(slug);
+
+alter table learning_tracks enable row level security;
+
+drop policy if exists "Public read learning_tracks" on learning_tracks;
+create policy "Public read learning_tracks" on learning_tracks for select using (true);
+
+drop policy if exists "Admins manage learning_tracks" on learning_tracks;
+create policy "Admins manage learning_tracks" on learning_tracks
+  for all using (
+    exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
+  )
+  with check (
+    exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
+  );
+
+create table if not exists track_modules (
+  id uuid primary key default gen_random_uuid(),
+  track_id uuid not null references learning_tracks(id) on delete cascade,
+  title varchar(255) not null,
+  description text,
+  sort_order int not null,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_track_modules_track on track_modules(track_id);
+
+alter table track_modules enable row level security;
+
+drop policy if exists "Public read track_modules" on track_modules;
+create policy "Public read track_modules" on track_modules for select using (true);
+
+drop policy if exists "Admins manage track_modules" on track_modules;
+create policy "Admins manage track_modules" on track_modules
+  for all using (
+    exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
+  )
+  with check (
+    exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
+  );
+
+create table if not exists lessons (
+  id uuid primary key default gen_random_uuid(),
+  module_id uuid not null references track_modules(id) on delete cascade,
+  title varchar(255) not null,
+  content text,
+  is_project boolean default false,
+  project_prompt text,
+  sort_order int not null,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_lessons_module on lessons(module_id);
+
+alter table lessons enable row level security;
+
+drop policy if exists "Public read lessons" on lessons;
+create policy "Public read lessons" on lessons for select using (true);
+
+drop policy if exists "Admins manage lessons" on lessons;
+create policy "Admins manage lessons" on lessons
+  for all using (
+    exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
+  )
+  with check (
+    exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
+  );
+
+create table if not exists user_lesson_progress (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  lesson_id uuid not null references lessons(id) on delete cascade,
+  completed_at timestamptz default now(),
+  submitted_project_article_id uuid references posts(id) on delete set null,
+  unique(user_id, lesson_id)
+);
+
+create index if not exists idx_user_lesson_progress_user on user_lesson_progress(user_id);
+create index if not exists idx_user_lesson_progress_lesson on user_lesson_progress(lesson_id);
+
+alter table user_lesson_progress enable row level security;
+
+drop policy if exists "Users read own progress" on user_lesson_progress;
+create policy "Users read own progress" on user_lesson_progress
+  for select using (user_id = auth.uid());
+
+drop policy if exists "Users insert own progress" on user_lesson_progress;
+create policy "Users insert own progress" on user_lesson_progress
+  for insert with check (user_id = auth.uid());
+
+drop policy if exists "Users update own progress" on user_lesson_progress;
+create policy "Users update own progress" on user_lesson_progress
+  for update using (user_id = auth.uid())
+  with check (user_id = auth.uid());
+
+

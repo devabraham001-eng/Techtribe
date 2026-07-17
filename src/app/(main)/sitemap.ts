@@ -1,17 +1,20 @@
 import { MetadataRoute } from "next";
 import { getBlogPosts, getBlogCategories, getBlogAuthors, getBlogTags } from "@/lib/blog-data";
+import { getLearningTracks } from "@/lib/learning-data";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, categories, authors, tags] = await Promise.all([
+  const [posts, categories, authors, tags, tracks] = await Promise.all([
     getBlogPosts().catch(() => [] as never[]),
     getBlogCategories().catch(() => [] as never[]),
     getBlogAuthors().catch(() => [] as never[]),
     getBlogTags().catch(() => [] as never[]),
+    getLearningTracks().catch(() => [] as never[]),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: "https://techtribe.app", changeFrequency: "weekly", priority: 1 },
     { url: "https://techtribe.app/blog", changeFrequency: "daily", priority: 0.9 },
+    { url: "https://techtribe.app/learn", changeFrequency: "daily", priority: 0.9 },
     { url: "https://techtribe.app/blog/authors", changeFrequency: "weekly", priority: 0.5 },
     { url: "https://techtribe.app/blog/categories", changeFrequency: "weekly", priority: 0.5 },
     { url: "https://techtribe.app/blog/tags", changeFrequency: "weekly", priority: 0.5 },
@@ -52,5 +55,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     }));
 
-  return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...authorRoutes, ...tagRoutes];
+  const trackRoutes: MetadataRoute.Sitemap = (tracks as { slug: string }[])
+    .filter((t) => t.slug)
+    .map((track) => ({
+      url: `https://techtribe.app/learn/${track.slug}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }));
+
+  return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...authorRoutes, ...tagRoutes, ...trackRoutes];
 }

@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 
 const navLinks = [
   { name: "Blog", href: "/blog" },
+  { name: "Learn", href: "/learn" },
   { name: "Categories", href: "/blog/categories" },
   { name: "Authors", href: "/blog/authors" },
 ];
@@ -54,14 +55,25 @@ export function BlogHeader() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-4">
-          <Link
-            href="/login"
-            className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all"
-            style={{ background: "#D0F201", color: "#10180B", padding: "10px 20px", fontSize: 14 }}
-          >
-            Start Learning Free
-            <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-          </Link>
+          {authed ? (
+            <Link
+              href="/learn"
+              className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all"
+              style={{ background: "#D0F201", color: "#10180B", padding: "10px 20px", fontSize: 14 }}
+            >
+              Continue Learning
+              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+            </Link>
+          ) : (
+            <Link
+              href="/learn"
+              className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all"
+              style={{ background: "#D0F201", color: "#10180B", padding: "10px 20px", fontSize: 14 }}
+            >
+              Start Learning Free
+              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+            </Link>
+          )}
         </div>
 
         <button className="lg:hidden flex items-center justify-center" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
@@ -133,12 +145,12 @@ export function BlogHeader() {
               </Link>
             )}
             <Link
-              href="/login"
+              href="/learn"
               className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all mt-3"
               style={{ background: "#D0F201", color: "#10180B", padding: "10px 20px", fontSize: 14 }}
               onClick={() => setMenuOpen(false)}
             >
-              Start Learning Free
+              {authed ? "Continue Learning" : "Start Learning Free"}
               <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Link>
           </div>

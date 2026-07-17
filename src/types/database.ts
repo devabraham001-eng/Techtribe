@@ -164,6 +164,57 @@ tags: {
         Insert: Omit<Database["public"]["Tables"]["post_comments"]["Row"], "id" | "created_at" | "updated_at">;
         Update: Partial<Pick<Database["public"]["Tables"]["post_comments"]["Row"], "content">>;
       };
+      learning_tracks: {
+        Row: {
+          id: string;
+          title: string;
+          description: string | null;
+          slug: string;
+          cover_image_url: string | null;
+          category: string | null;
+          lesson_count: number;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["learning_tracks"]["Row"], "id" | "created_at" | "lesson_count">;
+        Update: Partial<Database["public"]["Tables"]["learning_tracks"]["Insert"]>;
+      };
+      track_modules: {
+        Row: {
+          id: string;
+          track_id: string;
+          title: string;
+          description: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["track_modules"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["track_modules"]["Insert"]>;
+      };
+      lessons: {
+        Row: {
+          id: string;
+          module_id: string;
+          title: string;
+          content: string | null;
+          is_project: boolean;
+          project_prompt: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["lessons"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["lessons"]["Insert"]>;
+      };
+      user_lesson_progress: {
+        Row: {
+          id: string;
+          user_id: string;
+          lesson_id: string;
+          completed_at: string;
+          submitted_project_article_id: string | null;
+        };
+        Insert: Omit<Database["public"]["Tables"]["user_lesson_progress"]["Row"], "id" | "completed_at">;
+        Update: Partial<Pick<Database["public"]["Tables"]["user_lesson_progress"]["Row"], "submitted_project_article_id">>;
+      };
     };
     Functions: {
       increment_post_views: {
