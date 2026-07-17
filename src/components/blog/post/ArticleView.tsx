@@ -9,6 +9,7 @@ import { PostGrid } from "@/components/blog/post/PostGrid";
 import { MdxRenderer } from "@/components/markdown/MdxRenderer";
 import { ReactionBar } from "@/components/blog/post/ReactionBar";
 import { AnnotationLayer } from "@/components/blog/post/AnnotationLayer";
+import { CommentSection } from "@/components/blog/post/CommentSection";
 import { Reveal } from "@/components/motion/Reveal";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -218,11 +219,15 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       <AnnotationLayer slug={post.slug} contentRef={contentRef} />
       </Reveal>
 
-      <Reveal direction="up" duration={0.4} delay={0.5}>
+      <Reveal direction="up" duration={0.4} delay={0.52}>
+      <CommentSection slug={post.slug} />
+      </Reveal>
+
+      <Reveal direction="up" duration={0.4} delay={0.56}>
       <Separator className="my-8 sm:my-10" />
       </Reveal>
 
-      <Reveal direction="up" duration={0.4} delay={0.5}>
+      <Reveal direction="up" duration={0.4} delay={0.6}>
       <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
         <div className="flex items-start gap-3 sm:gap-4 flex-wrap">
           <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">

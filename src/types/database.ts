@@ -151,6 +151,19 @@ tags: {
         Insert: Omit<Database["public"]["Tables"]["post_collaborators"]["Row"], "id" | "created_at">;
         Update: never;
       };
+      post_comments: {
+        Row: {
+          id: string;
+          post_id: string;
+          user_id: string;
+          content: string;
+          parent_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["post_comments"]["Row"], "id" | "created_at" | "updated_at">;
+        Update: Partial<Pick<Database["public"]["Tables"]["post_comments"]["Row"], "content">>;
+      };
     };
     Functions: {
       increment_post_views: {

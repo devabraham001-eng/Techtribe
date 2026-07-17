@@ -90,6 +90,18 @@ export interface PostAnnotation {
   author?: Author;
 }
 
+export interface PostComment {
+  id: string;
+  postId: string;
+  userId: string;
+  content: string;
+  parentId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  author?: Pick<Author, "id" | "name" | "slug" | "avatarUrl">;
+  replies?: PostComment[];
+}
+
 export interface AdSlot {
   id: string;
   name: string;

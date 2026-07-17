@@ -477,3 +477,29 @@ create policy "Authors manage own post collaborators" on post_collaborators
       )
     )
   );
+
+-- =============================================
+-- Post Comments (traditional comment section)
+-- =============================================
+create table if not exists post_comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references posts(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  content text not null,
+  parent_id uuid references post_comments(id) on delete cascade,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists idx_post_comments_post on post_comments(post_id);
+create index if not exists idx_post_comments_parent on post_comments(parent_id);
+
+alter table post_comments enable row level security;
+
+drop policy if exists "Public read post_comments" on post_comments;
+create policy "Public read post_comments" on post_comments for select using (true);
+
+drop policy if exists "Users manage own comments" on post_comments;
+create policy "Users manage own comments" on post_comments
+  for all using (user_id = auth.uid())
+  with check (user_id = auth.uid());
