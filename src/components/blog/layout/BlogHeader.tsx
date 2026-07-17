@@ -67,7 +67,7 @@ export function BlogHeader() {
             </Link>
           ) : (
             <Link
-              href="/learn"
+              href="/login"
               className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all"
               style={{ background: "#D0F201", color: "#10180B", padding: "10px 20px", fontSize: 14 }}
             >
@@ -146,7 +146,7 @@ export function BlogHeader() {
               </Link>
             )}
             <Link
-              href="/learn"
+              href={authed ? "/learn" : "/login"}
               className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all mt-3"
               style={{ background: "#D0F201", color: "#10180B", padding: "10px 20px", fontSize: 14 }}
               onClick={() => setMenuOpen(false)}
