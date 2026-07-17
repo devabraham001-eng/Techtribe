@@ -135,113 +135,38 @@ export default async function LearnPage() {
 
         {/* ===== PATHS LIST ===== */}
         <section className="paths-list" style={{ position: "relative", zIndex: 1 }}>
-          <div className="mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-            <div className="paths-grid">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {demoPaths.map((track) => (
                 <a
                   key={track.id}
                   href={`/learn/${track.slug}`}
-                  className="path-card"
+                  className="group flex h-[380px] w-full flex-col justify-between rounded-2xl border p-6 transition-all duration-200 hover:border-[#4a4a4c] hover:bg-[#222224] hover:shadow-lg"
+                  style={{ borderColor: "#38383a", background: "#1c1c1e", textDecoration: "none" }}
                   aria-label={`Path: ${track.title}, ${track.lessons} lessons`}
                 >
-                  <div className="path-card__content">
-                    <div className="path-card__badge">
-                      <GraduationCap className="path-card__icon" aria-hidden="true" />
-                      <span className="path-card__type">Path</span>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-1.5 text-sm font-medium" style={{ color: "#98989d" }}>
+                      <GraduationCap className="h-4 w-4" />
+                      <span>Path</span>
                     </div>
-                    <h3 className="path-card__title">{track.title}</h3>
-                    <p className="path-card__metadata">{track.lessons} lesson{track.lessons !== 1 ? "s" : ""}</p>
+                    <h3 className="text-xl font-bold leading-snug" style={{ color: "#f5f5f7" }}>
+                      {track.title}
+                    </h3>
                   </div>
-                  <div className="path-card__action" aria-hidden="true">
-                    <ArrowRight />
+                  <div className="mt-auto flex items-center justify-between pt-6" style={{ borderTop: "1px solid #38383a" }}>
+                    <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "#70757a" }}>
+                      {track.lessons} lesson{track.lessons !== 1 ? "s" : ""}
+                    </p>
+                    <div className="flex items-center justify-center rounded-full p-2 transition-transform duration-200 group-hover:translate-x-1" style={{ background: "rgba(208, 242, 1, 0.1)" }}>
+                      <ArrowRight className="h-5 w-5" style={{ color: "#D0F201" }} />
+                    </div>
                   </div>
                 </a>
               ))}
             </div>
           </div>
         </section>
-
-        <style>{`
-          .paths-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            max-width: 800px;
-            margin: 0 auto;
-          }
-
-          .path-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 24px;
-            background-color: #1c1c1e;
-            border: 1px solid #38383a;
-            border-radius: 16px;
-            text-decoration: none;
-            color: #f5f5f7;
-            transition: all 0.2s ease-in-out;
-            width: 100%;
-            max-width: 800px;
-            box-sizing: border-box;
-          }
-
-          .path-card:hover {
-            border-color: #4a4a4c;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            background-color: #222224;
-          }
-
-          .path-card__content {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-grow: 1;
-          }
-
-          .path-card__badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #98989d;
-            font-size: 14px;
-            font-weight: 500;
-          }
-
-          .path-card__icon {
-            width: 18px;
-            height: 18px;
-          }
-
-          .path-card__title {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 600;
-            line-height: 1.4;
-            color: #f5f5f7;
-          }
-
-          .path-card__metadata {
-            margin: 0;
-            font-size: 14px;
-            color: #70757a;
-          }
-
-          .path-card__action {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #D0F201;
-            padding-left: 16px;
-            transition: transform 0.2s ease;
-            width: 20px;
-            height: 20px;
-          }
-
-          .path-card:hover .path-card__action {
-            transform: translateX(4px);
-          }
-        `}</style>
 
         {/* ===== EXPLORE ===== */}
         <section className="explore text-center pb-16" style={{ position: "relative", zIndex: 1 }}>
