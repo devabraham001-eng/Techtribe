@@ -185,11 +185,27 @@ export default async function LearnPage() {
             <div style={{ background: "#141416" }}>
               <div className="border-y" style={{ borderColor: "#38383a" }}>
                 <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-                  <div className="multi-msg-body__header text-center max-w-2xl mx-auto mb-12">
-                    <h2 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+                  <div className="text-center max-w-4xl mx-auto mb-16 sm:mb-20">
+                    <h2
+                      className="font-heading font-bold mb-6"
+                      style={{
+                        fontSize: "clamp(36px,5vw,52px)",
+                        letterSpacing: "-0.03em",
+                        lineHeight: 1.1,
+                        color: "#f5f5f7",
+                      }}
+                    >
                       Which credential is right for you?
                     </h2>
-                    <p className="mt-3 text-base" style={{ color: "#98989d" }}>
+                    <p
+                      style={{
+                        color: "#98989d",
+                        fontSize: 20,
+                        lineHeight: 1.5,
+                        maxWidth: "700px",
+                        margin: "0 auto",
+                      }}
+                    >
                       Certifications can be a big step, and a big investment. Need to build your skills first?
                       Explore our Skill Badges and Certificates.
                     </p>
