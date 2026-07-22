@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { MessageSquare, X, Send, Loader2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/lib/utils";
 import type { PostAnnotation } from "@/types/blog";
 
 interface AnnotationLayerProps {
@@ -150,11 +152,12 @@ export function AnnotationLayer({ slug, contentRef }: AnnotationLayerProps) {
             {annotations.map((a) => (
               <div key={a.id} className="rounded-lg border border-border bg-card p-3">
                 <div className="flex items-start gap-2">
-                  <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-[10px] font-bold text-primary">
-                      {(a.author?.name ?? "A").charAt(0)}
-                    </span>
-                  </div>
+                  <Avatar className="h-6 w-6 mt-0.5">
+                    <AvatarImage src={a.author?.avatarUrl || ""} alt={a.author?.name || ""} />
+                    <AvatarFallback className="text-[10px] font-bold text-primary bg-primary/20">
+                      {getInitials(a.author?.name ?? "A")}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs font-medium text-foreground">

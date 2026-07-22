@@ -31,7 +31,7 @@ export default async function AuthorsPage() {
           >
             <div className="flex flex-col items-center text-center">
               <Avatar className="h-20 w-20 mb-4">
-                <AvatarImage src="" alt={author.name} />
+                <AvatarImage src={author.avatarUrl || ""} alt={author.name} />
                 <AvatarFallback className="text-xl">{getInitials(author.name)}</AvatarFallback>
               </Avatar>
               <h2 className="font-heading font-semibold text-lg group-hover:text-primary transition-colors">

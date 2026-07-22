@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Clock, Eye, Briefcase, Code } from "lucide-react";
-import { cn, formatDate } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn, formatDate, getInitials } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import type { PostCardProps } from "@/types/blog";
 
@@ -57,7 +58,7 @@ export function PostCard({
               )}
               <h3 className="font-heading font-semibold text-sm leading-snug line-clamp-2 group-hover:text-primary transition-colors">{post.title}</h3>
               <div className="flex items-center gap-3 mt-1.5 text-xs text-fg-tertiary">
-                <span>{post.author.name}</span>
+                <span className="inline-flex items-center gap-1.5"><Avatar className="h-5 w-5"><AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} /><AvatarFallback className="text-[9px]">{getInitials(post.author.name)}</AvatarFallback></Avatar>{post.author.name}</span>
                 {showReadingTime && (<><span>·</span><span>{post.readingTime} min read</span></>)}
               </div>
             </div>
@@ -94,7 +95,7 @@ export function PostCard({
               {post.title}
             </h3>
             <div className="flex items-center gap-3 mt-1.5 text-xs text-fg-tertiary">
-              <span>{post.author.name}</span>
+              <span className="inline-flex items-center gap-1.5"><Avatar className="h-5 w-5"><AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} /><AvatarFallback className="text-[9px]">{getInitials(post.author.name)}</AvatarFallback></Avatar>{post.author.name}</span>
               {showReadingTime && (
                 <>
                   <span>·</span>
@@ -140,7 +141,7 @@ export function PostCard({
                 {post.excerpt && <p className="text-sm text-muted-foreground leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>}
                 <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-tertiary">
-                    <span>{post.author.name}</span>
+                    <span className="inline-flex items-center gap-1.5"><Avatar className="h-5 w-5"><AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} /><AvatarFallback className="text-[9px]">{getInitials(post.author.name)}</AvatarFallback></Avatar>{post.author.name}</span>
                     <span>·</span>
                     <div className="flex items-center gap-1"><Eye className="h-3 w-3" /><span>{post.viewCount}</span></div>
                     {showReadingTime && (<><span>·</span><div className="flex items-center gap-1"><Clock className="h-3 w-3" /><span>{post.readingTime} min</span></div></>)}
@@ -193,7 +194,7 @@ export function PostCard({
               )}
               <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-tertiary">
-                  <span>{post.author.name}</span>
+                  <span className="inline-flex items-center gap-1.5"><Avatar className="h-5 w-5"><AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} /><AvatarFallback className="text-[9px]">{getInitials(post.author.name)}</AvatarFallback></Avatar>{post.author.name}</span>
                   <span className="hidden sm:inline">·</span>
                   <div className="flex items-center gap-1">
                     <Eye className="h-3 w-3" />
@@ -258,7 +259,7 @@ if (prefersReduced) {
                   Project
                 </Badge>
               )}
-              <span>{post.author.name}</span>
+              <span className="inline-flex items-center gap-1.5"><Avatar className="h-5 w-5"><AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} /><AvatarFallback className="text-[9px]">{getInitials(post.author.name)}</AvatarFallback></Avatar>{post.author.name}</span>
               <span>·</span>
               <span>{formatDate(post.publishedAt || post.createdAt)}</span>
               {showReadingTime && (
@@ -331,7 +332,7 @@ if (prefersReduced) {
                 Project
               </Badge>
             )}
-            <span>{post.author.name}</span>
+            <span className="inline-flex items-center gap-1.5"><Avatar className="h-5 w-5"><AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} /><AvatarFallback className="text-[9px]">{getInitials(post.author.name)}</AvatarFallback></Avatar>{post.author.name}</span>
             <span>·</span>
             <span>{formatDate(post.publishedAt || post.createdAt)}</span>
             {showReadingTime && (

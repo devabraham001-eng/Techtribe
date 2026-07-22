@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { MessageCircle, Send, Loader2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/lib/utils";
 import type { PostComment } from "@/types/blog";
 
 interface CommentSectionProps {
@@ -40,11 +42,12 @@ function CommentThread({ comment, slug, onReply }: {
   return (
     <div className="pl-4 border-l-2 border-border">
       <div className="flex items-start gap-2 mb-2">
-        <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-          <span className="text-[10px] font-bold text-primary">
-            {(comment.author?.name ?? "A").charAt(0)}
-          </span>
-        </div>
+        <Avatar className="h-7 w-7 mt-0.5">
+          <AvatarImage src={comment.author?.avatarUrl || ""} alt={comment.author?.name || ""} />
+          <AvatarFallback className="text-[10px] font-bold text-primary bg-primary/20">
+            {getInitials(comment.author?.name ?? "A")}
+          </AvatarFallback>
+        </Avatar>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-foreground">

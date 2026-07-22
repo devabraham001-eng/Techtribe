@@ -92,7 +92,7 @@ export default async function AuthorPage({
       <div className="rounded-2xl border border-border bg-muted/30 p-8">
         <div className="flex flex-col sm:flex-row items-start gap-6">
           <Avatar className="h-20 w-20">
-            <AvatarImage src="" alt={author.name} />
+            <AvatarImage src={author.avatarUrl || ""} alt={author.name} />
             <AvatarFallback className="text-2xl">{getInitials(author.name)}</AvatarFallback>
           </Avatar>
           <div className="flex-1">

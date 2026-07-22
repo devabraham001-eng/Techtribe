@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Share2, Copy, Tag, Briefcase, Code, Users } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LiveIndicator, LiveViewCount } from "@/components/blog/live/LiveIndicator";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { MdxRenderer } from "@/components/markdown/MdxRenderer";
@@ -102,11 +103,12 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
         <Reveal direction="up" duration={0.4} delay={0.25}>
         <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-5 pt-4 border-t border-border">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-              <span className="text-xs font-bold text-primary">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} />
+              <AvatarFallback className="text-xs font-bold text-primary bg-primary/20">
                 {post.author.name.charAt(0)}
-              </span>
-            </div>
+              </AvatarFallback>
+            </Avatar>
             <Link
               href={`/blog/author/${post.author.slug}`}
               className="text-sm font-medium text-foreground hover:text-primary transition-colors"
@@ -228,13 +230,14 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       </Reveal>
 
       <Reveal direction="up" duration={0.4} delay={0.6}>
-      <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
+          <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
         <div className="flex items-start gap-3 sm:gap-4 flex-wrap">
-          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-            <span className="text-sm sm:font-bold text-primary">
+          <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
+            <AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} />
+            <AvatarFallback className="text-sm sm:font-bold text-primary bg-primary/20">
               {post.author.name.charAt(0)}
-            </span>
-          </div>
+            </AvatarFallback>
+          </Avatar>
           <div className="min-w-0 flex-1 flex flex-col gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <Link
