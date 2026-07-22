@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
+import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 import "./globals.css";
 
 const inter = Inter({
@@ -110,6 +111,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
+        <AnalyticsTracker />
         {children}
       </body>
     </html>

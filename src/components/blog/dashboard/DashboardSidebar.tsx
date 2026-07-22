@@ -13,6 +13,7 @@ import {
   FileEdit,
   Settings,
   Shield,
+  BarChart3,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -133,10 +134,16 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
           </Link>
 
           {isStaff && (
-            <Link href="/admin" className={linkClass("/admin")} title="Admin">
-              <Shield className={iconClass} />
-              {!collapsed && <span>Admin</span>}
-            </Link>
+            <>
+              <Link href="/admin" className={linkClass("/admin")} title="Admin">
+                <Shield className={iconClass} />
+                {!collapsed && <span>Admin</span>}
+              </Link>
+              <Link href="/admin/analytics" className={linkClass("/admin/analytics")} title="Analytics">
+                <BarChart3 className={iconClass} />
+                {!collapsed && <span>Analytics</span>}
+              </Link>
+            </>
           )}
         </div>
 

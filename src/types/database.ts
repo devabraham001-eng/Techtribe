@@ -215,6 +215,20 @@ tags: {
         Insert: Omit<Database["public"]["Tables"]["user_lesson_progress"]["Row"], "id" | "completed_at">;
         Update: Partial<Pick<Database["public"]["Tables"]["user_lesson_progress"]["Row"], "submitted_project_article_id">>;
       };
+      page_views: {
+        Row: {
+          id: string;
+          path: string;
+          user_id: string | null;
+          is_authenticated: boolean;
+          hashed_ip: string | null;
+          referrer: string | null;
+          user_agent: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["page_views"]["Row"], "id" | "created_at">;
+        Update: never;
+      };
     };
     Functions: {
       increment_post_views: {

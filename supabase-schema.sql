@@ -599,6 +599,48 @@ create table if not exists user_lesson_progress (
 create index if not exists idx_user_lesson_progress_user on user_lesson_progress(user_id);
 create index if not exists idx_user_lesson_progress_lesson on user_lesson_progress(lesson_id);
 
+-- =============================================
+-- Analytics: Page Views
+-- =============================================
+
+create table if not exists page_views (
+  id uuid primary key default gen_random_uuid(),
+  path text not null,
+  user_id uuid references auth.users(id) on delete set null,
+  is_authenticated boolean not null default false,
+  hashed_ip text,
+  referrer text,
+  user_agent text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_page_views_created_at on page_views(created_at desc);
+create index if not exists idx_page_views_path on page_views(path);
+
+
+alter table page_views enable row level security;
+
+-- Anyone can insert page views (tracking)
+drop policy if exists "Anyone can insert page views" on page_views;
+create policy "Anyone can insert page views" on page_views for insert with check (true);
+
+-- Staff can read all page views
+drop policy if exists "Staff read page views" on page_views;
+create policy "Staff read page views" on page_views
+  for select using (
+    exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
+  );
+
+-- Auto-prune function: deletes rows older than 6 months
+create or replace function prune_page_views()
+returns void
+language plpgsql
+as $$
+begin
+  delete from page_views where created_at < now() - interval '6 months';
+end;
+$$;
+
 alter table user_lesson_progress enable row level security;
 
 drop policy if exists "Users read own progress" on user_lesson_progress;
