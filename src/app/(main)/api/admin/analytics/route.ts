@@ -25,7 +25,7 @@ export async function GET() {
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
   const [{ count: totalViews }, { count: todayViews }, { count: monthViews }] = await Promise.all([
     supabase.from("page_views").select("*", { count: "exact", head: true }),
@@ -44,34 +44,42 @@ export async function GET() {
     .not("hashed_ip", "is", null)
     .gte("created_at", todayStart);
 
-  const authData = (await supabase
+  const { data: authData } = await supabase
     .from("page_views")
-    .select("is_authenticated")
-  ).data as { is_authenticated: boolean }[] | null;
+    .select("is_authenticated");
 
-  const totalAuthed = authData?.filter((r) => r.is_authenticated).length ?? 0;
-  const totalAnon = authData?.filter((r) => !r.is_authenticated).length ?? 0;
+  const totalAuthed = (authData as { is_authenticated: boolean }[] | null)?.filter((r) => r.is_authenticated).length ?? 0;
+  const totalAnon = (authData as { is_authenticated: boolean }[] | null)?.filter((r) => !r.is_authenticated).length ?? 0;
 
   const dailyRaw = (await supabase
     .from("page_views")
-    .select("created_at")
-    .gte("created_at", thirtyDaysAgo)
+    .select("created_at, is_authenticated")
+    .gte("created_at", ninetyDaysAgo)
     .order("created_at", { ascending: true })
-  ).data as { created_at: string }[] | null;
+  ).data as { created_at: string; is_authenticated: boolean }[] | null;
 
-  const dailyMap = new Map<string, number>();
+  const authDailyMap = new Map<string, number>();
+  const anonDailyMap = new Map<string, number>();
   if (dailyRaw) {
     for (const row of dailyRaw) {
       const day = row.created_at.slice(0, 10);
-      dailyMap.set(day, (dailyMap.get(day) ?? 0) + 1);
+      if (row.is_authenticated) {
+        authDailyMap.set(day, (authDailyMap.get(day) ?? 0) + 1);
+      } else {
+        anonDailyMap.set(day, (anonDailyMap.get(day) ?? 0) + 1);
+      }
     }
   }
 
-  const dailyViews: { date: string; count: number }[] = [];
-  for (let i = 29; i >= 0; i--) {
+  const dailyViews: { date: string; authenticated: number; anonymous: number }[] = [];
+  for (let i = 89; i >= 0; i--) {
     const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
     const key = d.toISOString().slice(0, 10);
-    dailyViews.push({ date: key, count: dailyMap.get(key) ?? 0 });
+    dailyViews.push({
+      date: key,
+      authenticated: authDailyMap.get(key) ?? 0,
+      anonymous: anonDailyMap.get(key) ?? 0,
+    });
   }
 
   const topPagesRaw = (await supabase
