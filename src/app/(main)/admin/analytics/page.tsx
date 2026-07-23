@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import nextDynamic from "next/dynamic";
-import { ArrowLeft, Database as DatabaseIcon, ShieldAlert, BarChart3 } from "lucide-react";
+import { ArrowLeft, Database as DatabaseIcon, ShieldAlert, Loader2 } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
-const AnalyticsDashboard = nextDynamic(() => import("@/components/admin/AnalyticsDashboard"), {
-  loading: () => <div className="flex items-center justify-center h-48"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>,
+const AnalyticsClient = nextDynamic(() => import("@/components/analytics-client"), {
+  loading: () => (
+    <div className="flex items-center justify-center h-48">
+      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+    </div>
+  ),
 });
 
 export const dynamic = "force-dynamic";
@@ -57,26 +61,10 @@ export default async function AdminAnalyticsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 pb-20 pt-6">
-      <div className="mb-8 flex flex-col sm:flex-row items-start justify-between gap-4">
-        <div>
-          <Link
-            href="/admin"
-            className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to admin
-          </Link>
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold mt-2 flex items-center gap-2">
-            <BarChart3 className="h-7 w-7 text-primary" />
-            Analytics
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Page views, visitors, and traffic insights. Signed in as {author?.name}.
-          </p>
-        </div>
+    <div className="@container/main flex flex-1 flex-col gap-2">
+      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+        <AnalyticsClient />
       </div>
-      <AnalyticsDashboard />
     </div>
   );
 }
