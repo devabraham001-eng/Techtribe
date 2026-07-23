@@ -1,18 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell,
-} from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, BarChart, Bar, Cell } from "recharts";
 import {
   Eye,
   Users,
@@ -23,6 +12,22 @@ import {
   Download,
   Trash2,
 } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Reveal } from "@/components/motion/Reveal";
 
 interface DailyView {
@@ -49,11 +54,22 @@ interface AnalyticsData {
 
 const COLORS = ["#00FC90", "#3b82f6", "#a78bfa", "#f59e0b", "#ef4444", "#ec4899"];
 
+const chartConfig = {
+  views: {
+    label: "Page Views",
+  },
+  count: {
+    label: "Views",
+    color: "var(--color-chart-1)",
+  },
+} satisfies ChartConfig;
+
 export default function AnalyticsDashboard() {
   const [data, setData] = React.useState<AnalyticsData | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [pruning, setPruning] = React.useState(false);
+  const [timeRange, setTimeRange] = React.useState("30d");
 
   async function loadAnalytics() {
     setLoading(true);
@@ -135,6 +151,22 @@ export default function AnalyticsDashboard() {
 
   if (!data) return null;
 
+  const referenceDate = data.dailyViews.length > 0
+    ? new Date(data.dailyViews[data.dailyViews.length - 1].date + "T00:00:00")
+    : new Date();
+
+  let daysToSubtract = 30;
+  if (timeRange === "7d") daysToSubtract = 7;
+  else if (timeRange === "90d") daysToSubtract = 90;
+
+  const startDate = new Date(referenceDate);
+  startDate.setDate(startDate.getDate() - daysToSubtract);
+
+  const filteredData = data.dailyViews.filter((item) => {
+    const date = new Date(item.date + "T00:00:00");
+    return date >= startDate;
+  });
+
   const total = data.authCount + data.anonCount;
   const authPct = total > 0 ? Math.round((data.authCount / total) * 100) : 0;
   const anonPct = total > 0 ? Math.round((data.anonCount / total) * 100) : 0;
@@ -184,128 +216,172 @@ export default function AnalyticsDashboard() {
         </Reveal>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Reveal direction="up" duration={0.4} delay={0.1}>
-          <div className="rounded-xl border border-border bg-card p-5 lg:col-span-2">
-            <h3 className="font-heading font-semibold text-sm text-muted-foreground mb-4">
-              Views (Last 30 Days)
-            </h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data.dailyViews}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis
-                    dataKey="date"
-                    tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                    tickFormatter={(val: string) => {
-                      const d = new Date(val + "T00:00:00");
-                      return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                    }}
-                    interval="preserveStartEnd"
-                  />
-                  <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      fontSize: "13px",
-                    }}
-                    labelFormatter={(val) => {
-                      if (typeof val !== "string") return val;
-                      const d = new Date(val + "T00:00:00");
-                      return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="count"
-                    stroke={COLORS[0]}
-                    strokeWidth={2}
-                    dot={false}
-                    activeDot={{ r: 4, fill: COLORS[0] }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+      <Reveal direction="up" duration={0.4} delay={0.1}>
+        <Card className="pt-0">
+          <CardHeader className="flex items-center gap-2 space-y-0 border-b border-border py-5 sm:flex-row">
+            <div className="grid flex-1 gap-1">
+              <CardTitle>Page Views Over Time</CardTitle>
+              <CardDescription>
+                Showing total page views for the selected period
+              </CardDescription>
             </div>
-          </div>
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger
+                className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
+                aria-label="Select a time range"
+              >
+                <SelectValue placeholder="Last 30 days" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="90d" className="rounded-lg">Last 3 months</SelectItem>
+                <SelectItem value="30d" className="rounded-lg">Last 30 days</SelectItem>
+                <SelectItem value="7d" className="rounded-lg">Last 7 days</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardHeader>
+          <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+            <ChartContainer
+              config={chartConfig}
+              className="aspect-auto h-[250px] w-full"
+            >
+              <AreaChart data={filteredData}>
+                <defs>
+                  <linearGradient id="fillViews" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-count)" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="var(--color-count)" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  minTickGap={32}
+                  tickFormatter={(value: string) => {
+                    const date = new Date(value + "T00:00:00");
+                    return date.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    });
+                  }}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(value: unknown) => {
+                        if (typeof value !== "string") return value;
+                        const date = new Date(value + "T00:00:00");
+                        return date.toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        });
+                      }}
+                      indicator="dot"
+                    />
+                  }
+                />
+                <Area
+                  dataKey="count"
+                  type="natural"
+                  fill="url(#fillViews)"
+                  stroke="var(--color-count)"
+                  stackId="a"
+                />
+                <ChartLegend content={<ChartLegendContent />} />
+              </AreaChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </Reveal>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Reveal direction="up" duration={0.4} delay={0.15}>
+          <Card className="pt-0 lg:col-span-2">
+            <CardHeader className="border-b border-border py-4">
+              <CardTitle className="text-sm font-semibold text-muted-foreground">
+                Top Pages
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="px-4 py-3 text-left font-medium text-muted-foreground">#</th>
+                      <th className="px-4 py-3 text-left font-medium text-muted-foreground">Path</th>
+                      <th className="px-4 py-3 text-right font-medium text-muted-foreground">Views</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.topPages.length === 0 && (
+                      <tr>
+                        <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
+                          No page views yet.
+                        </td>
+                      </tr>
+                    )}
+                    {data.topPages.map((page, idx) => (
+                      <tr key={page.path} className="border-b border-border last:border-0 hover:bg-muted/20">
+                        <td className="px-4 py-2.5 text-muted-foreground w-8">{idx + 1}</td>
+                        <td className="px-4 py-2.5 font-mono text-xs truncate max-w-[400px]">{page.path}</td>
+                        <td className="px-4 py-2.5 text-right font-medium">{page.count.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         </Reveal>
 
-        <Reveal direction="up" duration={0.4} delay={0.15}>
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-heading font-semibold text-sm text-muted-foreground mb-4">
-              Auth vs Anonymous
-            </h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={authAnonData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-                  <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }} width={100} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      fontSize: "13px",
-                    }}
-                  />
-                  <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                    {authAnonData.map((entry, idx) => (
-                      <Cell key={idx} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="flex items-center justify-center gap-6 mt-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLORS[0] }} />
-                Authenticated: {authPct}%
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLORS[4] }} />
-                Anonymous: {anonPct}%
-              </span>
-            </div>
-          </div>
+        <Reveal direction="up" duration={0.4} delay={0.2}>
+          <Card className="pt-0">
+            <CardHeader className="border-b border-border py-4">
+              <CardTitle className="text-sm font-semibold text-muted-foreground">
+                Auth vs Anonymous
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="h-48">
+                <ChartContainer
+                  config={{
+                    authenticated: { label: "Authenticated", color: COLORS[0] },
+                    anonymous: { label: "Anonymous", color: COLORS[4] },
+                  }}
+                  className="h-full w-full"
+                >
+                  <BarChart data={authAnonData} layout="vertical" margin={{ left: 0, right: 0, top: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+                    <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} axisLine={false} tickLine={false} />
+                    <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }} width={100} axisLine={false} tickLine={false} />
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent indicator="dot" />}
+                    />
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                      {authAnonData.map((entry, idx) => (
+                        <Cell key={idx} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ChartContainer>
+              </div>
+              <div className="flex items-center justify-center gap-6 mt-2 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLORS[0] }} />
+                  Authenticated: {authPct}%
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLORS[4] }} />
+                  Anonymous: {anonPct}%
+                </span>
+              </div>
+            </CardContent>
+          </Card>
         </Reveal>
       </div>
-
-      <Reveal direction="up" duration={0.4} delay={0.2}>
-        <div className="rounded-xl border border-border bg-card p-5">
-          <h3 className="font-heading font-semibold text-sm text-muted-foreground mb-4">
-            Top Pages
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="pb-2 text-left font-medium text-muted-foreground">#</th>
-                  <th className="pb-2 text-left font-medium text-muted-foreground">Path</th>
-                  <th className="pb-2 text-right font-medium text-muted-foreground">Views</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.topPages.length === 0 && (
-                  <tr>
-                    <td colSpan={3} className="pt-4 pb-8 text-center text-muted-foreground">
-                      No page views yet.
-                    </td>
-                  </tr>
-                )}
-                {data.topPages.map((page, idx) => (
-                  <tr key={page.path} className="border-b border-border last:border-0 hover:bg-muted/20">
-                    <td className="py-2.5 pr-4 text-muted-foreground w-8">{idx + 1}</td>
-                    <td className="py-2.5 font-mono text-xs truncate max-w-[400px]">{page.path}</td>
-                    <td className="py-2.5 text-right font-medium">{page.count.toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </Reveal>
 
       <Reveal direction="up" duration={0.4} delay={0.25}>
         <div className="flex items-center justify-between rounded-xl border border-border bg-card p-4">
