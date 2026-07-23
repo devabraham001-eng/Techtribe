@@ -143,6 +143,10 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
                 <BarChart3 className={iconClass} />
                 {!collapsed && <span>Analytics</span>}
               </Link>
+              <Link href="/admin/learning" className={linkClass("/admin/learning")} title="Learning">
+                <BookOpen className={iconClass} />
+                {!collapsed && <span>Learning</span>}
+              </Link>
             </>
           )}
         </div>
