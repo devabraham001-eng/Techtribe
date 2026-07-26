@@ -14,21 +14,15 @@ export default async function MainLayout({
   let isStaff = false;
   try {
     const supabase = await createServerSupabaseClient();
-    const userResult = await Promise.race([
-      supabase.auth.getUser(),
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Auth timeout")), 4000)
-      ),
-    ]);
-    const user = (userResult as Awaited<ReturnType<typeof supabase.auth.getUser>>).data?.user ?? null;
+    const userResult = await supabase.auth.getUser();
+    const user = userResult.data?.user ?? null;
     isAuthenticated = !!user;
     if (user) {
-      const authorResult = await Promise.race([
-        supabase.from("authors").select("is_staff").eq("user_id", user.id).single(),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("Author query timeout")), 3000)
-        ),
-      ]);
+      const authorResult = await supabase
+        .from("authors")
+        .select("is_staff")
+        .eq("user_id", user.id)
+        .single();
       isStaff = (authorResult as { data: { is_staff: boolean } | null }).data?.is_staff ?? false;
     }
   } catch {}
