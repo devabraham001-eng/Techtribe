@@ -215,6 +215,37 @@ tags: {
         Insert: Omit<Database["public"]["Tables"]["user_lesson_progress"]["Row"], "id" | "completed_at">;
         Update: Partial<Pick<Database["public"]["Tables"]["user_lesson_progress"]["Row"], "submitted_project_article_id">>;
       };
+      lesson_challenges: {
+        Row: {
+          id: string;
+          lesson_id: string;
+          title: string;
+          description: string | null;
+          starter_code: string;
+          solution_code: string | null;
+          test_code: string | null;
+          language: string;
+          difficulty: string | null;
+          order_index: number;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["lesson_challenges"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["lesson_challenges"]["Insert"]>;
+      };
+      user_challenge_submissions: {
+        Row: {
+          id: string;
+          user_id: string;
+          challenge_id: string;
+          code: string;
+          passed: boolean;
+          test_results: Json | null;
+          output: string | null;
+          submitted_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["user_challenge_submissions"]["Row"], "id" | "submitted_at">;
+        Update: never;
+      };
       page_views: {
         Row: {
           id: string;

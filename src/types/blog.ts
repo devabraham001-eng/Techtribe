@@ -163,6 +163,37 @@ export interface Lesson {
   createdAt: string;
 }
 
+export interface LessonChallenge {
+  id: string;
+  lessonId: string;
+  title: string;
+  description?: string;
+  starterCode: string;
+  solutionCode?: string;
+  testCode?: string;
+  language: string;
+  difficulty?: string;
+  orderIndex: number;
+  createdAt: string;
+}
+
+export interface TestResult {
+  name: string;
+  passed: boolean;
+  output?: string;
+}
+
+export interface ChallengeSubmission {
+  id: string;
+  userId: string;
+  challengeId: string;
+  code: string;
+  passed: boolean;
+  testResults?: TestResult[];
+  output?: string;
+  submittedAt: string;
+}
+
 export interface UserLessonProgress {
   id: string;
   userId: string;

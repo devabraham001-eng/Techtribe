@@ -631,6 +631,66 @@ create policy "Staff read page views" on page_views
     exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
   );
 
+-- =============================================
+-- Code Challenges (per lesson)
+-- =============================================
+
+create table if not exists lesson_challenges (
+  id uuid primary key default gen_random_uuid(),
+  lesson_id uuid not null references lessons(id) on delete cascade,
+  title varchar(255) not null,
+  description text,
+  starter_code text not null default '',
+  solution_code text,
+  test_code text,
+  language varchar(50) not null default 'javascript',
+  difficulty varchar(50) default 'beginner',
+  order_index int default 0,
+  created_at timestamptz default now()
+);
+
+create table if not exists user_challenge_submissions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  challenge_id uuid not null references lesson_challenges(id) on delete cascade,
+  code text not null,
+  passed boolean not null default false,
+  test_results jsonb,
+  output text,
+  submitted_at timestamptz default now()
+);
+
+create index if not exists idx_lesson_challenges_lesson on lesson_challenges(lesson_id);
+create index if not exists idx_user_challenge_submissions_user on user_challenge_submissions(user_id);
+create index if not exists idx_user_challenge_submissions_challenge on user_challenge_submissions(challenge_id);
+
+alter table lesson_challenges enable row level security;
+alter table user_challenge_submissions enable row level security;
+
+-- Public read challenges
+drop policy if exists "Public read lesson_challenges" on lesson_challenges;
+create policy "Public read lesson_challenges" on lesson_challenges for select using (true);
+
+-- Admins manage challenges
+drop policy if exists "Admins manage lesson_challenges" on lesson_challenges;
+create policy "Admins manage lesson_challenges" on lesson_challenges
+  for all using (
+    exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
+  )
+  with check (
+    exists (select 1 from authors where authors.user_id = auth.uid() and authors.is_staff = true)
+  );
+
+-- Users read own submissions
+drop policy if exists "Users read own submissions" on user_challenge_submissions;
+create policy "Users read own submissions" on user_challenge_submissions
+  for select using (user_id = auth.uid());
+
+-- Users insert own submissions
+drop policy if exists "Users insert own submissions" on user_challenge_submissions;
+create policy "Users insert own submissions" on user_challenge_submissions
+  for insert with check (user_id = auth.uid());
+
 -- Auto-prune function: deletes rows older than 6 months
 create or replace function prune_page_views()
 returns void

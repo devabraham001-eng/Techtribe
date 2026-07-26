@@ -15,6 +15,8 @@ import {
   BookOpen,
   FileText,
   FolderOpen,
+  Code,
+  Play,
 } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 
@@ -68,6 +70,11 @@ export default function LearningAdmin() {
   const [savingId, setSavingId] = React.useState<string | null>(null);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
   const [movingId, setMovingId] = React.useState<string | null>(null);
+  const [challengesMap, setChallengesMap] = React.useState<Record<string, { id: string; title: string; language: string; difficulty: string }[]>>({});
+  const [challengeDetail, setChallengeDetail] = React.useState<Record<string, { title: string; description: string; starter_code: string; solution_code: string; test_code: string; language: string; difficulty: string } | null>>({});
+  const [expandedChallenges, setExpandedChallenges] = React.useState<Set<string>>(new Set());
+  const [editingChallenge, setEditingChallenge] = React.useState<{ lessonId: string; id: string } | null>(null);
+  const [addingChallenge, setAddingChallenge] = React.useState<string | null>(null);
 
   async function loadTracks() {
     setLoading(true);
@@ -122,6 +129,28 @@ export default function LearningAdmin() {
       const data = await res.json().catch(() => ({}));
       throw new Error((data as Record<string, unknown>).error as string || "Failed to delete");
     }
+  }
+
+  async function loadChallenges(lessonId: string) {
+    try {
+      const res = await fetch(`/api/admin/learning/challenges?lessonId=${lessonId}`);
+      if (res.ok) {
+        const data = await res.json() as { id: string; title: string; language: string; difficulty: string }[];
+        setChallengesMap((prev) => ({ ...prev, [lessonId]: data }));
+      }
+    } catch {}
+  }
+
+  function toggleChallenges(lessonId: string) {
+    setExpandedChallenges((prev) => {
+      const next = new Set(prev);
+      if (next.has(lessonId)) next.delete(lessonId);
+      else {
+        next.add(lessonId);
+        if (!challengesMap[lessonId]) void loadChallenges(lessonId);
+      }
+      return next;
+    });
   }
 
   async function handleReorder(type: "module" | "lesson", items: { id: string; sort_order: number }[]) {
@@ -512,6 +541,111 @@ export default function LearningAdmin() {
                                     />
                                   </div>
                                 )}
+
+                                {/* Challenges */}
+                                <div className="ml-6 mt-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleChallenges(lesson.id)}
+                                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                                  >
+                                    <Code className="h-3.5 w-3.5" />
+                                    Challenges {challengesMap[lesson.id] ? `(${challengesMap[lesson.id].length})` : ""}
+                                    {expandedChallenges.has(lesson.id) ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                                  </button>
+
+                                  {expandedChallenges.has(lesson.id) && (
+                                    <div className="mt-1 space-y-1">
+                                      {addingChallenge === lesson.id && (
+                                        <ChallengeForm
+                                          lessonId={lesson.id}
+                                          onSave={async (vals) => {
+                                            await fetch("/api/admin/learning/challenges", {
+                                              method: "POST",
+                                              headers: { "Content-Type": "application/json" },
+                                              body: JSON.stringify({ ...vals, lesson_id: lesson.id }),
+                                            });
+                                            setAddingChallenge(null);
+                                            void loadChallenges(lesson.id);
+                                          }}
+                                          onCancel={() => setAddingChallenge(null)}
+                                        />
+                                      )}
+
+                                      {(challengesMap[lesson.id] || []).length === 0 && (
+                                        <p className="py-1 text-[11px] text-muted-foreground">No challenges yet.</p>
+                                      )}
+
+                                      {(challengesMap[lesson.id] || []).map((ch) => (
+                                        <div key={ch.id} className="flex items-center gap-2 rounded border border-border/40 px-2 py-1">
+                                          <Code className="h-3 w-3 flex-shrink-0 text-muted-foreground" />
+                                          <span className="text-xs flex-1 truncate">{ch.title}</span>
+                                          <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">{ch.language}</span>
+                                          <button
+                                            type="button"
+                                            onClick={async () => {
+                                              setEditingChallenge({ lessonId: lesson.id, id: ch.id });
+                                              try {
+                                                const res = await fetch(`/api/admin/learning/challenges?lessonId=${lesson.id}`);
+                                                if (res.ok) {
+                                                  const all = await res.json() as { id: string; title: string; description: string; starter_code: string; solution_code: string; test_code: string; language: string; difficulty: string }[];
+                                                  const found = all.find((x) => x.id === ch.id);
+                                                  if (found) {
+                                                    setChallengeDetail((prev) => ({ ...prev, [ch.id]: found }));
+                                                  }
+                                                }
+                                              } catch {}
+                                            }}
+                                            className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                            title="Edit challenge"
+                                          >
+                                            <Edit className="h-3 w-3" />
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={async () => {
+                                              if (!confirm(`Delete challenge "${ch.title}"?`)) return;
+                                              await fetch(`/api/admin/learning/challenges/${ch.id}`, { method: "DELETE" });
+                                              void loadChallenges(lesson.id);
+                                            }}
+                                            className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                            title="Delete challenge"
+                                          >
+                                            <Trash2 className="h-3 w-3" />
+                                          </button>
+                                        </div>
+                                      ))}
+
+                                      {editingChallenge && editingChallenge.lessonId === lesson.id && (
+                                        <ChallengeForm
+                                          lessonId={lesson.id}
+                                          initial={challengeDetail[editingChallenge.id] ?? undefined}
+                                          onSave={async (vals) => {
+                                            await fetch(`/api/admin/learning/challenges/${editingChallenge.id}`, {
+                                              method: "PUT",
+                                              headers: { "Content-Type": "application/json" },
+                                              body: JSON.stringify(vals),
+                                            });
+                                            setEditingChallenge(null);
+                                            void loadChallenges(lesson.id);
+                                          }}
+                                          onCancel={() => setEditingChallenge(null)}
+                                        />
+                                      )}
+
+                                      {addingChallenge !== lesson.id && (
+                                        <button
+                                          type="button"
+                                          onClick={() => setAddingChallenge(lesson.id)}
+                                          className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                                        >
+                                          <Plus className="h-3 w-3" />
+                                          Add Challenge
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
                               </React.Fragment>
                             ))}
                           </div>
@@ -770,6 +904,194 @@ function LessonForm({
           Cancel
         </button>
       </div>
+      {error && <p className="rounded border border-destructive/30 bg-destructive/5 px-2.5 py-1.5 text-xs text-destructive">{error}</p>}
+    </form>
+  );
+}
+
+function ChallengeForm({
+  lessonId,
+  initial,
+  onSave,
+  onCancel,
+}: {
+  lessonId: string;
+  initial?: {
+    id?: string;
+    title: string;
+    description: string;
+    starter_code: string;
+    solution_code: string;
+    test_code: string;
+    language: string;
+    difficulty: string;
+  };
+  onSave: (vals: Record<string, unknown>) => Promise<void>;
+  onCancel: () => void;
+}) {
+  const [title, setTitle] = React.useState(initial?.title ?? "");
+  const [description, setDescription] = React.useState(initial?.description ?? "");
+  const [starterCode, setStarterCode] = React.useState(initial?.starter_code ?? "");
+  const [solutionCode, setSolutionCode] = React.useState(initial?.solution_code ?? "");
+  const [testCode, setTestCode] = React.useState(initial?.test_code ?? "");
+  const [language, setLanguage] = React.useState(initial?.language ?? "javascript");
+  const [difficulty, setDifficulty] = React.useState(initial?.difficulty ?? "beginner");
+  const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [testing, setTesting] = React.useState(false);
+  const [testOutput, setTestOutput] = React.useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!title.trim()) return;
+    setSaving(true);
+    setError(null);
+    try {
+      await onSave({
+        lesson_id: lessonId,
+        title: title.trim(),
+        description: description || null,
+        starter_code: starterCode,
+        solution_code: solutionCode || null,
+        test_code: testCode || null,
+        language,
+        difficulty,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleTest() {
+    if (!initial?.id) return;
+    setTesting(true);
+    setTestOutput(null);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/learning/challenges/${initial.id}/test`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: solutionCode || starterCode,
+          test_code: testCode,
+          language,
+        }),
+      });
+      if (!res.ok) throw new Error("Test failed");
+      const data = await res.json();
+      setTestOutput(data.stdout || data.stderr || data.output || "(no output)");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Test failed");
+    } finally {
+      setTesting(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mb-2 space-y-2 rounded-lg bg-muted/30 p-2.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div>
+          <label className="block text-xs text-muted-foreground mb-0.5">Title *</label>
+          <input
+            className="h-7 w-full rounded-md border border-border bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="block text-xs text-muted-foreground mb-0.5">Language</label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="h-7 w-full rounded-md border border-border bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <option value="javascript">JavaScript</option>
+              <option value="typescript">TypeScript</option>
+              <option value="python">Python</option>
+              <option value="go">Go</option>
+              <option value="rust">Rust</option>
+              <option value="cpp">C++</option>
+              <option value="java">Java</option>
+              <option value="ruby">Ruby</option>
+              <option value="bash">Bash</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-muted-foreground mb-0.5">Difficulty</label>
+            <select
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              className="h-7 w-full rounded-md border border-border bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label className="block text-xs text-muted-foreground mb-0.5">Description</label>
+        <textarea
+          className="min-h-[60px] w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Describe the challenge..."
+        />
+      </div>
+      <div>
+        <label className="block text-xs text-muted-foreground mb-0.5">Starter Code</label>
+        <textarea
+          className="min-h-[100px] w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          value={starterCode}
+          onChange={(e) => setStarterCode(e.target.value)}
+          placeholder="// Code the student starts with"
+        />
+      </div>
+      <div>
+        <label className="block text-xs text-muted-foreground mb-0.5">Solution Code</label>
+        <textarea
+          className="min-h-[100px] w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          value={solutionCode}
+          onChange={(e) => setSolutionCode(e.target.value)}
+          placeholder="// Reference solution (optional)"
+        />
+      </div>
+      <div>
+        <label className="block text-xs text-muted-foreground mb-0.5">Test Code</label>
+        <textarea
+          className="min-h-[100px] w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          value={testCode}
+          onChange={(e) => setTestCode(e.target.value)}
+          placeholder="// Tests run against user code"
+        />
+      </div>
+      <div className="flex gap-1 flex-wrap">
+        <button type="submit" disabled={saving} className="inline-flex h-7 items-center gap-1 rounded-md bg-primary/10 px-2.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors disabled:opacity-50">
+          {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+          Save
+        </button>
+        {initial?.id && (
+          <button type="button" onClick={handleTest} disabled={testing} className="inline-flex h-7 items-center gap-1 rounded-md bg-[#00FC90]/10 px-2.5 text-xs font-medium text-[#00FC90] hover:bg-[#00FC90]/20 transition-colors disabled:opacity-50">
+            {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
+            Test
+          </button>
+        )}
+        <button type="button" onClick={onCancel} disabled={saving} className="inline-flex h-7 items-center gap-1 rounded-md px-2.5 text-xs text-muted-foreground hover:bg-muted transition-colors disabled:opacity-50">
+          <X className="h-3.5 w-3.5" />
+          Cancel
+        </button>
+      </div>
+      {testOutput && (
+        <div className="rounded border border-border bg-background p-2">
+          <p className="text-[11px] font-medium text-muted-foreground mb-1">Test Output:</p>
+          <pre className="text-xs font-mono whitespace-pre-wrap overflow-x-auto">{testOutput}</pre>
+        </div>
+      )}
       {error && <p className="rounded border border-destructive/30 bg-destructive/5 px-2.5 py-1.5 text-xs text-destructive">{error}</p>}
     </form>
   );
