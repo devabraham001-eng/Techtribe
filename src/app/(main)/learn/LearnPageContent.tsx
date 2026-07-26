@@ -3,16 +3,16 @@
 import * as React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles, Wand2, BarChart3, GitBranch, Server, Zap, Shield, GraduationCap, ArrowRight, Award, BadgeCheck, ScrollText } from "lucide-react";
+import { Sparkles, Wand2, BarChart3, GitBranch, Server, Zap, Shield, GraduationCap, ArrowRight, Award, BadgeCheck, ScrollText, Loader2 } from "lucide-react";
 
-const demoPaths = [
-  { id: "1", title: "Web Development Fundamentals", slug: "web-development-fundamentals", lessons: 12 },
-  { id: "2", title: "React & Modern Frontend", slug: "react-modern-frontend", lessons: 18 },
-  { id: "3", title: "Backend Engineering with Node.js", slug: "backend-engineering-nodejs", lessons: 14 },
-  { id: "4", title: "Python & Data Science", slug: "python-data-science", lessons: 16 },
-  { id: "5", title: "DevOps & Cloud Infrastructure", slug: "devops-cloud-infrastructure", lessons: 20 },
-  { id: "6", title: "Mobile Development with React Native", slug: "mobile-react-native", lessons: 15 },
-];
+interface TrackItem {
+  id: string;
+  title: string;
+  description?: string;
+  slug: string;
+  moduleCount?: number;
+  lessonCount: number;
+}
 
 const credentialItems = [
   {
@@ -50,6 +50,35 @@ const stagger = {
 };
 
 export function LearnPageContent() {
+  const [tracks, setTracks] = React.useState<TrackItem[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    fetch("/api/learn/tracks")
+      .then((res) => res.json())
+      .then((data: { id: string; title: string; description: string | null; slug: string; lesson_count: number }[]) => {
+        setTracks(
+          data.map((t) => ({
+            id: t.id,
+            title: t.title,
+            description: t.description ?? undefined,
+            slug: t.slug,
+            lessonCount: t.lesson_count,
+          }))
+        );
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* ===== PAGE HEADER (breadcrumb + free trial) ===== */}
@@ -196,35 +225,42 @@ export function LearnPageContent() {
               whileInView="visible"
               viewport={{ once: true, margin: "-40px" }}
             >
-              {demoPaths.map((track) => (
-                <motion.a
-                  key={track.id}
-                  href={`/learn/${track.slug}`}
-                  className="group flex aspect-square w-full flex-col justify-between rounded-2xl border p-6 transition-all duration-200 hover:border-[#4a4a4c] hover:bg-[#222224] hover:shadow-lg"
-                  style={{ borderColor: "#38383a", background: "#1c1c1e", textDecoration: "none" }}
-                  aria-label={`Path: ${track.title}, ${track.lessons} lessons`}
-                  variants={fadeUp}
-                  custom={0}
-                >
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-1.5 text-sm font-medium" style={{ color: "#98989d" }}>
-                      <GraduationCap className="h-4 w-4" />
-                      <span>Path</span>
+              {tracks.length === 0 ? (
+                <div className="col-span-full text-center py-16" style={{ color: "#98989d" }}>
+                  <p className="text-lg">No learning paths available yet.</p>
+                  <p className="text-sm mt-2">Check back soon for new content.</p>
+                </div>
+              ) : (
+                tracks.map((track) => (
+                  <motion.a
+                    key={track.id}
+                    href={`/learn/${track.slug}`}
+                    className="group flex aspect-square w-full flex-col justify-between rounded-2xl border p-6 transition-all duration-200 hover:border-[#4a4a4c] hover:bg-[#222224] hover:shadow-lg"
+                    style={{ borderColor: "#38383a", background: "#1c1c1e", textDecoration: "none" }}
+                    aria-label={`Path: ${track.title}, ${track.lessonCount} lessons`}
+                    variants={fadeUp}
+                    custom={0}
+                  >
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-1.5 text-sm font-medium" style={{ color: "#98989d" }}>
+                        <GraduationCap className="h-4 w-4" />
+                        <span>Path</span>
+                      </div>
+                      <h3 className="text-xl font-bold leading-snug" style={{ color: "#f5f5f7" }}>
+                        {track.title}
+                      </h3>
                     </div>
-                    <h3 className="text-xl font-bold leading-snug" style={{ color: "#f5f5f7" }}>
-                      {track.title}
-                    </h3>
-                  </div>
-                  <div className="mt-auto flex items-center justify-between pt-6" style={{ borderTop: "1px solid #38383a" }}>
-                    <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "#70757a" }}>
-                      {track.lessons} lesson{track.lessons !== 1 ? "s" : ""}
-                    </p>
-                    <div className="flex items-center justify-center rounded-full p-2 transition-transform duration-200 group-hover:translate-x-1" style={{ background: "rgba(208, 242, 1, 0.1)" }}>
-                      <ArrowRight className="h-5 w-5" style={{ color: "#D0F201" }} />
+                    <div className="mt-auto flex items-center justify-between pt-6" style={{ borderTop: "1px solid #38383a" }}>
+                      <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "#70757a" }}>
+                        {track.lessonCount} lesson{track.lessonCount !== 1 ? "s" : ""}
+                      </p>
+                      <div className="flex items-center justify-center rounded-full p-2 transition-transform duration-200 group-hover:translate-x-1" style={{ background: "rgba(208, 242, 1, 0.1)" }}>
+                        <ArrowRight className="h-5 w-5" style={{ color: "#D0F201" }} />
+                      </div>
                     </div>
-                  </div>
-                </motion.a>
-              ))}
+                  </motion.a>
+                ))
+              )}
             </motion.div>
           </div>
         </motion.section>
