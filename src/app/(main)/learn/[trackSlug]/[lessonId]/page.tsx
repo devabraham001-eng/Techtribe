@@ -12,7 +12,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.app";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string; lessonId: string }>;
+  params: Promise<{ trackSlug: string; lessonId: string }>;
 }): Promise<Metadata> {
   const { lessonId } = await params;
   const lesson = await getLessonById(lessonId);
@@ -26,11 +26,11 @@ export async function generateMetadata({
 export default async function LessonPage({
   params,
 }: {
-  params: Promise<{ slug: string; lessonId: string }>;
+  params: Promise<{ trackSlug: string; lessonId: string }>;
 }) {
-  const { slug, lessonId } = await params;
+  const { trackSlug, lessonId } = await params;
   const [track, lesson] = await Promise.all([
-    getLearningTrackBySlug(slug),
+    getLearningTrackBySlug(trackSlug),
     getLessonById(lessonId),
   ]);
 

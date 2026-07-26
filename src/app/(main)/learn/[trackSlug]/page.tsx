@@ -12,10 +12,10 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.app";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ trackSlug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const track = await getLearningTrackBySlug(slug);
+  const { trackSlug } = await params;
+  const track = await getLearningTrackBySlug(trackSlug);
   if (!track) return { title: "Path not found" };
   return {
     title: `${track.title} — TechTribe`,
@@ -38,10 +38,10 @@ function ProgressBar({ percentage }: { percentage: number }) {
 export default async function TrackDetailPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ trackSlug: string }>;
 }) {
-  const { slug } = await params;
-  const track = await getLearningTrackBySlug(slug);
+  const { trackSlug } = await params;
+  const track = await getLearningTrackBySlug(trackSlug);
   if (!track) notFound();
 
   const modules = await getTrackModulesWithLessons(track.id);
