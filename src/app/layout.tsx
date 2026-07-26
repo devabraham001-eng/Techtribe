@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Script from "next/script";
+import { Suspense } from "react";
 import { Inter, Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 import "./globals.css";
@@ -105,18 +105,16 @@ export default function RootLayout({
       className={`${inter.variable} ${bricolageGrotesque.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
-        <AnalyticsTracker />
+        <Suspense fallback={null}>
+          <AnalyticsTracker />
+        </Suspense>
         {children}
-        <Script
-          id="schema-org-organization"
+        <script
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        <Script
-          id="schema-org-website"
+        <script
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </body>
