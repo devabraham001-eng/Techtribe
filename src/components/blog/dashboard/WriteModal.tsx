@@ -70,7 +70,7 @@ export function WriteModal() {
           <button
             type="button"
             onClick={closeWriteModal}
-            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-card transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-card transition-colors"
             aria-label="Close"
           >
             <X className="h-5 w-5" />

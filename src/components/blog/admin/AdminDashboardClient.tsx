@@ -74,10 +74,10 @@ function EditForm({
           </div>
         ))}
         <div className="flex gap-1">
-          <button type="submit" disabled={saving} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-green-500 hover:bg-green-500/10 disabled:opacity-50">
+          <button type="submit" disabled={saving} className="inline-flex h-10 w-10 items-center justify-center rounded-md text-green-500 hover:bg-green-500/10 disabled:opacity-50">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           </button>
-          <button type="button" onClick={onCancel} disabled={saving} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted disabled:opacity-50">
+          <button type="button" onClick={onCancel} disabled={saving} className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:bg-muted disabled:opacity-50">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -328,7 +328,7 @@ export function AdminDashboardClient() {
                   <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{new Date(post.created_at).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-right">
                     {post.status === "published" && (
-                      <Link href={`/blog/${post.slug}`} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="View">
+                      <Link href={`/blog/${post.slug}`} className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="View">
                         <Eye className="h-4 w-4" />
                       </Link>
                     )}
@@ -386,14 +386,14 @@ export function AdminDashboardClient() {
                       <td className="px-4 py-3 text-muted-foreground">{cat.slug}</td>
                       <td className="px-4 py-3 text-muted-foreground hidden md:table-cell truncate max-w-[200px]">{cat.description}</td>
                       <td className="px-4 py-3 text-right">
-                        <button type="button" onClick={() => setEditing(editing === cat.id ? null : cat.id)} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="Edit">
+                        <button type="button" onClick={() => setEditing(editing === cat.id ? null : cat.id)} className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="Edit">
                           <Edit className="h-4 w-4" />
                         </button>
                         <button
                           type="button"
                           onClick={() => void deleteCategory(cat.id)}
                           disabled={deletingItem === cat.id}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
                           title="Delete"
                         >
                           {deletingItem === cat.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
@@ -469,14 +469,14 @@ export function AdminDashboardClient() {
                       <td className="px-4 py-3 text-muted-foreground">{tag.slug}</td>
                       <td className="px-4 py-3 text-muted-foreground hidden md:table-cell truncate max-w-[200px]">{tag.description}</td>
                       <td className="px-4 py-3 text-right">
-                        <button type="button" onClick={() => setEditing(editing === tag.id ? null : tag.id)} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="Edit">
+                        <button type="button" onClick={() => setEditing(editing === tag.id ? null : tag.id)} className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="Edit">
                           <Edit className="h-4 w-4" />
                         </button>
                         <button
                           type="button"
                           onClick={() => void deleteTag(tag.id)}
                           disabled={deletingItem === tag.id}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
                           title="Delete"
                         >
                           {deletingItem === tag.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}

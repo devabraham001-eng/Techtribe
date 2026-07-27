@@ -573,7 +573,7 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
                   setPreviewContent(e.target.value);
                   handleFieldChange();
                 }}
-                className="w-full rounded-md border border-border bg-background px-3 py-3 font-mono text-sm leading-relaxed placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-y min-h-[400px]"
+                className="w-full rounded-md border border-border bg-background px-3 py-3 font-mono text-sm leading-relaxed placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-y min-h-[200px] md:min-h-[400px]"
                 placeholder="Write in Markdown..."
               />
               {splitView && (

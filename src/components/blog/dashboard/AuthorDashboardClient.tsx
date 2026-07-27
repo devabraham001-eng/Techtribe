@@ -351,7 +351,7 @@ export function AuthorDashboardClient({
                         {post.status === "published" && (
                           <Link
                             href={`/blog/${post.slug}`}
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background transition-colors"
+                            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background transition-colors"
                             title="View article"
                           >
                             <Eye className="h-4 w-4" />
@@ -360,7 +360,7 @@ export function AuthorDashboardClient({
                         <button
                           type="button"
                           onClick={() => openWriteModal(post.id)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background transition-colors"
+                          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background transition-colors"
                           title="Edit article"
                         >
                           <Edit className="h-4 w-4" />
@@ -369,7 +369,7 @@ export function AuthorDashboardClient({
                           type="button"
                           disabled={deleting === post.id}
                           onClick={() => void handleDelete(post.id)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
                           title="Delete article"
                         >
                           {deleting === post.id ? (
@@ -387,6 +387,21 @@ export function AuthorDashboardClient({
           </div>
           </Reveal>
         )}
+
+        {/* Author profile card + RecentViewers — visible on mobile/tablet (below xl) */}
+        <div className="xl:hidden border-t border-border pt-6 mt-6">
+          <DashboardRightPanel
+            authorName={authorName}
+            authorBio={authorBio}
+            authorAvatar={authorAvatar}
+            publishedCount={published.length}
+            draftCount={drafts.length}
+            totalViews={totalViews}
+          />
+          <div className="mt-4">
+            <RecentViewers authorId={""} />
+          </div>
+        </div>
           </div>
         </div>
 

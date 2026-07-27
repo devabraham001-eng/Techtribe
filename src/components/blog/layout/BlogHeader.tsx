@@ -77,7 +77,7 @@ export function BlogHeader() {
           )}
         </div>
 
-        <button className="lg:hidden flex items-center justify-center" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+        <button className="lg:hidden flex items-center justify-center w-10 h-10 p-2" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
           <Menu className="h-5 w-5" style={{ color: "#f5f5f7" }} />
         </button>
       </div>

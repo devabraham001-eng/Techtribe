@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Inter, Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
@@ -92,6 +92,11 @@ const websiteJsonLd = {
     },
     "query-input": "required name=search_term_string",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

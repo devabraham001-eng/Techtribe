@@ -141,7 +141,7 @@ export function PostCard({
                 {post.excerpt && <p className="text-sm text-muted-foreground leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>}
                 <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-tertiary">
-                    <span className="inline-flex items-center gap-1.5"><Avatar className="h-5 w-5"><AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} /><AvatarFallback className="text-[9px]">{getInitials(post.author.name)}</AvatarFallback></Avatar>{post.author.name}</span>
+<span className="inline-flex items-center gap-1.5"><Avatar className="h-5 w-5 p-0.5"><AvatarImage src={post.author.avatarUrl || ""} alt={post.author.name} /><AvatarFallback className="text-[9px]">{getInitials(post.author.name)}</AvatarFallback></Avatar>{post.author.name}</span>
                     <span>·</span>
                     <div className="flex items-center gap-1"><Eye className="h-3 w-3" /><span>{post.viewCount}</span></div>
                     {showReadingTime && (<><span>·</span><div className="flex items-center gap-1"><Clock className="h-3 w-3" /><span>{post.readingTime} min</span></div></>)}

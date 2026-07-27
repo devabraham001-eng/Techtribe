@@ -63,13 +63,14 @@ const components: Partial<Components> = {
         }
         return (
           <div className="my-6">
-            <iframe
-              className="w-full rounded-lg border border-border"
-              height={embed.type === "codepen" ? 400 : 500}
-              src={embed.src}
-              allowFullScreen
-              title="Embedded media"
-            />
+            <div className="relative w-full" style={{ minHeight: "40vh" }}>
+              <iframe
+                className="w-full h-full rounded-lg border border-border absolute inset-0"
+                src={embed.src}
+                allowFullScreen
+                title="Embedded media"
+              />
+            </div>
           </div>
         );
       }

@@ -12,6 +12,8 @@ export default async function MainLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   let isAuthenticated = false;
   let isStaff = false;
+  let userName: string | undefined;
+  let userAvatarUrl: string | undefined;
   try {
     const supabase = await createServerSupabaseClient();
     const userResult = await supabase.auth.getUser();
@@ -20,10 +22,13 @@ export default async function MainLayout({
     if (user) {
       const authorResult = await supabase
         .from("authors")
-        .select("is_staff")
+        .select("is_staff, name, avatar_url")
         .eq("user_id", user.id)
         .single();
-      isStaff = (authorResult as { data: { is_staff: boolean } | null }).data?.is_staff ?? false;
+      const authorData = (authorResult as { data: { is_staff: boolean; name: string; avatar_url: string | null } | null }).data;
+      isStaff = authorData?.is_staff ?? false;
+      userName = authorData?.name ?? user.email ?? undefined;
+      userAvatarUrl = authorData?.avatar_url ?? undefined;
     }
   } catch {}
 
@@ -40,7 +45,7 @@ export default async function MainLayout({
             </PageTransition>
           </div>
         </main>
-        <MobileBottomNav isAuthenticated={true} isStaff={isStaff} />
+        <MobileBottomNav isAuthenticated={true} isStaff={isStaff} userName={userName} userAvatarUrl={userAvatarUrl} />
         <WriteModal />
       </WriteModalProvider>
     );

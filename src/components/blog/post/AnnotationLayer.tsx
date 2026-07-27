@@ -102,7 +102,7 @@ export function AnnotationLayer({ slug, contentRef }: AnnotationLayerProps) {
       {showPopup && selection && (
         <div
           ref={popupRef}
-          className="fixed z-50 w-80 rounded-xl border border-border bg-card shadow-xl p-4"
+          className="fixed z-50 w-80 max-w-[90vw] rounded-xl border border-border bg-card shadow-xl p-4"
           style={{ left: popupPos.x, top: Math.max(popupPos.y - 10, 10) }}
         >
           <div className="flex items-start justify-between mb-2">

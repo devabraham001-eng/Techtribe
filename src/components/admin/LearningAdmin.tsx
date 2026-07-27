@@ -285,7 +285,7 @@ export default function LearningAdmin() {
                     <button
                       type="button"
                       onClick={() => setEditing({ type: "track", id: track.id })}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
                       title="Edit track"
                     >
                       <Edit className="h-3.5 w-3.5" />
@@ -304,7 +304,7 @@ export default function LearningAdmin() {
                         });
                       }}
                       disabled={deletingId === track.id}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
                       title="Delete track"
                     >
                       {deletingId === track.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
@@ -313,7 +313,7 @@ export default function LearningAdmin() {
                 </div>
 
                 {expandedTracks.has(track.id) && (
-                  <div className="ml-6 space-y-1 border-l border-border pl-4">
+                  <div className="ml-3 space-y-1 border-l border-border pl-4">
                     <div className="flex items-center justify-between py-1">
                       <span className="text-xs text-muted-foreground font-medium">Modules</span>
                       <button
@@ -366,7 +366,7 @@ export default function LearningAdmin() {
                               type="button"
                               onClick={() => void moveItem("module", mod.id, "up")}
                               disabled={movingId === "reorder" || mod.sort_order === 0}
-                              className="inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30"
                               title="Move up"
                             >
                               <ChevronRight className="h-3 w-3 -rotate-90" />
@@ -375,7 +375,7 @@ export default function LearningAdmin() {
                               type="button"
                               onClick={() => void moveItem("module", mod.id, "down")}
                               disabled={movingId === "reorder" || mod.sort_order === track.modules.length - 1}
-                              className="inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30"
                               title="Move down"
                             >
                               <ChevronRight className="h-3 w-3 rotate-90" />
@@ -383,7 +383,7 @@ export default function LearningAdmin() {
                             <button
                               type="button"
                               onClick={() => setEditing({ type: "module", id: mod.id })}
-                              className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
                               title="Edit module"
                             >
                               <Edit className="h-3 w-3" />
@@ -402,7 +402,7 @@ export default function LearningAdmin() {
                                 });
                               }}
                               disabled={deletingId === mod.id}
-                              className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
                               title="Delete module"
                             >
                               {deletingId === mod.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
@@ -411,7 +411,7 @@ export default function LearningAdmin() {
                         </div>
 
                         {editing && editing.type === "module" && editing.id === mod.id && (
-                          <div className="ml-6 mt-1 mb-1">
+                          <div className="ml-3 mt-1 mb-1">
                             <ModuleForm
                               trackId={track.id}
                               initial={{ title: mod.title, description: mod.description ?? "" }}
@@ -426,7 +426,7 @@ export default function LearningAdmin() {
                         )}
 
                         {expandedModules.has(mod.id) && (
-                          <div className="ml-6 space-y-1">
+                          <div className="ml-3 space-y-1">
                             {editing && editing.type === "track" && editing.id === track.id && (
                               <div className="mb-2">
                                 <TrackForm
@@ -483,7 +483,7 @@ export default function LearningAdmin() {
                                       type="button"
                                       onClick={() => void moveItem("lesson", lesson.id, "up")}
                                       disabled={movingId === "reorder" || lesson.sort_order === 0}
-                                      className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30"
+                                      className="inline-flex h-7 w-7 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30"
                                       title="Move up"
                                     >
                                       <ChevronRight className="h-2.5 w-2.5 -rotate-90" />
@@ -492,7 +492,7 @@ export default function LearningAdmin() {
                                       type="button"
                                       onClick={() => void moveItem("lesson", lesson.id, "down")}
                                       disabled={movingId === "reorder" || lesson.sort_order === mod.lessons.length - 1}
-                                      className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30"
+                                      className="inline-flex h-7 w-7 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30"
                                       title="Move down"
                                     >
                                       <ChevronRight className="h-2.5 w-2.5 rotate-90" />
@@ -500,7 +500,7 @@ export default function LearningAdmin() {
                                     <button
                                       type="button"
                                       onClick={() => setEditing({ type: "lesson", id: lesson.id })}
-                                      className="inline-flex h-5 w-5 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
+                                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
                                       title="Edit lesson"
                                     >
                                       <Edit className="h-3 w-3" />
@@ -519,7 +519,7 @@ export default function LearningAdmin() {
                                         });
                                       }}
                                       disabled={deletingId === lesson.id}
-                                      className="inline-flex h-5 w-5 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
                                       title="Delete lesson"
                                     >
                                       {deletingId === lesson.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
@@ -528,7 +528,7 @@ export default function LearningAdmin() {
                                 </div>
 
                                 {editing && editing.type === "lesson" && editing.id === lesson.id && (
-                                  <div className="ml-6 mt-1 mb-1">
+                                  <div className="ml-3 mt-1 mb-1">
                                     <LessonForm
                                       moduleId={mod.id}
                                       initial={{ title: lesson.title, content: lesson.content ?? "", is_project: lesson.is_project, project_prompt: lesson.project_prompt ?? "" }}
@@ -543,7 +543,7 @@ export default function LearningAdmin() {
                                 )}
 
                                 {/* Challenges */}
-                                <div className="ml-6 mt-2">
+                                <div className="ml-3 mt-2">
                                   <button
                                     type="button"
                                     onClick={() => toggleChallenges(lesson.id)}
@@ -596,7 +596,7 @@ export default function LearningAdmin() {
                                                 }
                                               } catch {}
                                             }}
-                                            className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
+                                            className="inline-flex h-7 w-7 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted"
                                             title="Edit challenge"
                                           >
                                             <Edit className="h-3 w-3" />
@@ -608,7 +608,7 @@ export default function LearningAdmin() {
                                               await fetch(`/api/admin/learning/challenges/${ch.id}`, { method: "DELETE" });
                                               void loadChallenges(lesson.id);
                                             }}
-                                            className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                            className="inline-flex h-7 w-7 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                                             title="Delete challenge"
                                           >
                                             <Trash2 className="h-3 w-3" />
