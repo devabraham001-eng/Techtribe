@@ -52,6 +52,7 @@ export function AuthorDashboardClient({
   const [actionError, setActionError] = React.useState<string | null>(null);
   const [deleting, setDeleting] = React.useState<string | null>(null);
   const [postTypeFilter, setPostTypeFilter] = React.useState<"all" | "article" | "project">("all");
+  const [statusFilter, setStatusFilter] = React.useState<"all" | "draft" | "published">("all");
   const { openWriteModal } = useWriteModal();
 
   async function loadPosts() {
@@ -113,31 +114,10 @@ export function AuthorDashboardClient({
   const totalViews = published.reduce((sum, p) => sum + (p.view_count ?? 0), 0);
 
   const storyItems = [
-    {
-      label: "New",
-      value: "Article",
-      icon: Plus,
-      gradient: "from-primary to-primary-dark",
-      href: "/blog/write",
-    },
-    {
-      label: "Published",
-      value: String(published.length),
-      icon: Eye,
-      gradient: "from-green-500 to-emerald-600",
-    },
-    {
-      label: "Drafts",
-      value: String(drafts.length),
-      icon: FileText,
-      gradient: "from-yellow-500 to-amber-600",
-    },
-    {
-      label: "Views",
-      value: totalViews.toLocaleString(),
-      icon: BarChartIcon,
-      gradient: "from-primary/60 to-primary-dark",
-    },
+    { label: "New", value: "Article", icon: Plus, gradient: "from-primary to-primary-dark", href: "/blog/write", status: undefined },
+    { label: "Published", value: String(published.length), icon: Eye, gradient: "from-green-500 to-emerald-600", status: "published" as const },
+    { label: "Drafts", value: String(drafts.length), icon: FileText, gradient: "from-yellow-500 to-amber-600", status: "draft" as const },
+    { label: "Views", value: totalViews.toLocaleString(), icon: BarChartIcon, gradient: "from-primary/60 to-primary-dark", status: undefined },
   ];
 
   return (
@@ -174,6 +154,19 @@ export function AuthorDashboardClient({
                   type="button"
                   onClick={() => openWriteModal()}
                   className="hover:opacity-80 transition-opacity text-left"
+                >
+                  {content}
+                </button>
+              );
+            }
+            if (item.status) {
+              const isActiveStatus = statusFilter === item.status;
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => setStatusFilter(isActiveStatus ? "all" : item.status!)}
+                  className={`hover:opacity-80 transition-opacity text-left ${isActiveStatus ? "ring-2 ring-primary ring-offset-2 ring-offset-background rounded-2xl" : ""}`}
                 >
                   {content}
                 </button>
@@ -300,6 +293,7 @@ export function AuthorDashboardClient({
           <div className="space-y-3">
             {posts
               .filter((post) => postTypeFilter === "all" || post.post_type === postTypeFilter)
+              .filter((post) => statusFilter === "all" || post.status === statusFilter)
               .map((post) => {
                 const statusColor =
                   post.status === "published"

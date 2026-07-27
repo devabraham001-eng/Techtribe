@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname !== "/") return NextResponse.next();
+  const { pathname } = request.nextUrl;
 
   let supabaseResponse = NextResponse.next({ request });
   const supabase = createServerClient(
@@ -26,13 +26,27 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (user) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  // Redirect authenticated users from / to /dashboard
+  if (pathname === "/") {
+    if (user) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+    return supabaseResponse;
+  }
+
+  // Protect lesson detail and track detail pages (not the catalog itself)
+  const learnMatch = pathname.match(/^\/learn\/(.+)/);
+  if (learnMatch) {
+    if (!user) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
   return supabaseResponse;
 }
 
 export const config = {
-  matcher: ["/"],
+  matcher: ["/", "/learn/:path*"],
 };

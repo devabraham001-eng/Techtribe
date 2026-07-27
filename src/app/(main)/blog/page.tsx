@@ -2,10 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Search, Briefcase, Code2, GraduationCap, Server, Bot, Clock, RefreshCw } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { Search, Briefcase, Code2, GraduationCap, Server, Bot, RefreshCw } from "lucide-react";
 import { useLivePosts } from "@/hooks/useLivePosts";
-import type { Post } from "@/types/blog";
+import { PostGrid } from "@/components/blog/post/PostGrid";
 
 const categoryFilters = [
   { name: "All", slug: null, icon: null },
@@ -15,48 +14,6 @@ const categoryFilters = [
   { name: "AI & Tools", slug: "ai-tools", icon: Bot },
   { name: "Productivity", slug: "productivity", icon: GraduationCap },
 ];
-
-function BlogCard({ post }: { post: Post }) {
-  return (
-    <Link href={`/blog/${post.slug}`} className="group block">
-      <article className="bg-card border border-border rounded-xl p-4 sm:p-5 lg:p-6 hover:border-primary/20 hover:bg-card-hover transition-all duration-150 h-full flex flex-col min-w-0">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-3 text-xs">
-          {post.category && (
-            <span className="font-medium text-primary uppercase tracking-wider">{post.category.name}</span>
-          )}
-          <span style={{ color: "#636366" }}>&middot;</span>
-          <span style={{ color: "#98989d" }}>{formatDate(post.publishedAt || post.createdAt)}</span>
-        </div>
-        <h2 className="font-heading font-semibold text-base sm:text-lg leading-snug mb-2 group-hover:text-primary transition-colors break-words">
-          {post.title}
-        </h2>
-        {post.excerpt && (
-          <p className="text-sm leading-relaxed mb-3 line-clamp-2 flex-1" style={{ color: "#98989d" }}>
-            {post.excerpt}
-          </p>
-        )}
-        {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-3">
-            {post.tags.slice(0, 3).map((tag) => (
-              <span key={tag.id} className="px-2 py-0.5 rounded text-[10px] font-medium" style={{ background: "rgba(208,242,1,0.08)", color: "#98989d" }}>
-                #{tag.name}
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 pt-3 border-t border-border">
-          <div className="flex min-w-0 items-center gap-1.5 text-xs" style={{ color: "#636366" }}>
-            <Clock className="w-3 h-3 flex-shrink-0" />
-            <span>{post.readingTime} min read</span>
-          </div>
-          <span className="text-xs font-medium whitespace-nowrap" style={{ color: "#D0F201" }}>
-            Read article &rarr;
-          </span>
-        </div>
-      </article>
-    </Link>
-  );
-}
 
 export default function BlogPage() {
   const { posts, loading, error, refresh } = useLivePosts();
@@ -180,11 +137,7 @@ export default function BlogPage() {
           <p className="text-sm" style={{ color: "#98989d" }}>No articles found.</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:gap-5 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((post) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
-        </div>
+        <PostGrid posts={filtered} variant="vertical" columns={3} />
       )}
     </div>
   );

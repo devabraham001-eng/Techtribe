@@ -4,7 +4,7 @@ import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { Components } from "react-markdown";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlockEditor } from "./CodeBlockEditor";
 
 interface MdxRendererProps {
   content: string;
@@ -42,7 +42,7 @@ const components: Partial<Components> = {
         </code>
       );
     }
-    return <CodeBlock className={className}>{String(children)}</CodeBlock>;
+    return <CodeBlockEditor className={className}>{String(children)}</CodeBlockEditor>;
   },
 
   a({ href, children, ...props }) {

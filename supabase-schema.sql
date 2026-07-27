@@ -664,6 +664,43 @@ create index if not exists idx_lesson_challenges_lesson on lesson_challenges(les
 create index if not exists idx_user_challenge_submissions_user on user_challenge_submissions(user_id);
 create index if not exists idx_user_challenge_submissions_challenge on user_challenge_submissions(challenge_id);
 
+-- Auto-update lesson_count on learning_tracks
+create or replace function refresh_track_lesson_count()
+returns trigger as $$
+begin
+  update learning_tracks lt
+  set lesson_count = (
+    select count(*)::int
+    from track_modules tm
+    join lessons l on l.module_id = tm.id
+    where tm.track_id = lt.id
+  )
+  where lt.id = (
+    case
+      when TG_OP = 'DELETE' then
+        case when TG_TABLE_NAME = 'track_modules' then old.track_id
+             when TG_TABLE_NAME = 'lessons' then (select track_id from track_modules where id = old.module_id)
+        end
+      else
+        case when TG_TABLE_NAME = 'track_modules' then new.track_id
+             when TG_TABLE_NAME = 'lessons' then (select track_id from track_modules where id = new.module_id)
+        end
+    end
+  );
+  return null;
+end;
+$$ language plpgsql security definer set search_path = public;
+
+drop trigger if exists trg_refresh_lesson_count_modules on track_modules;
+create trigger trg_refresh_lesson_count_modules
+  after insert or update or delete on track_modules
+  for each row execute function refresh_track_lesson_count();
+
+drop trigger if exists trg_refresh_lesson_count_lessons on lessons;
+create trigger trg_refresh_lesson_count_lessons
+  after insert or update or delete on lessons
+  for each row execute function refresh_track_lesson_count();
+
 alter table lesson_challenges enable row level security;
 alter table user_challenge_submissions enable row level security;
 

@@ -56,7 +56,7 @@ export function LearnPageContent() {
   React.useEffect(() => {
     fetch("/api/learn/tracks")
       .then((res) => res.json())
-      .then((data: { id: string; title: string; description: string | null; slug: string; lesson_count: number }[]) => {
+      .then((data: { id: string; title: string; description: string | null; slug: string; lesson_count: number; module_count: number }[]) => {
         setTracks(
           data.map((t) => ({
             id: t.id,
@@ -64,6 +64,7 @@ export function LearnPageContent() {
             description: t.description ?? undefined,
             slug: t.slug,
             lessonCount: t.lesson_count,
+            moduleCount: t.module_count,
           }))
         );
       })
@@ -252,7 +253,7 @@ export function LearnPageContent() {
                     </div>
                     <div className="mt-auto flex items-center justify-between pt-6" style={{ borderTop: "1px solid #38383a" }}>
                       <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "#70757a" }}>
-                        {track.lessonCount} lesson{track.lessonCount !== 1 ? "s" : ""}
+                        {track.moduleCount} module{track.moduleCount !== 1 ? "s" : ""} · {track.lessonCount} lesson{track.lessonCount !== 1 ? "s" : ""}
                       </p>
                       <div className="flex items-center justify-center rounded-full p-2 transition-transform duration-200 group-hover:translate-x-1" style={{ background: "rgba(208, 242, 1, 0.1)" }}>
                         <ArrowRight className="h-5 w-5" style={{ color: "#D0F201" }} />
