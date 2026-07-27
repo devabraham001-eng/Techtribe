@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Calendar, Clock, Share2, Copy, Tag, Briefcase, Code, Users } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -135,11 +136,13 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
 
       <Reveal direction="up" duration={0.4} delay={0.3}>
       {post.coverImageUrl ? (
-        <div className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-card border border-border mb-8 sm:mb-10">
-          <img
+        <div className="relative w-full rounded-xl sm:rounded-2xl overflow-hidden bg-card border border-border mb-8 sm:mb-10" style={{ aspectRatio: "2 / 1" }}>
+          <Image
             src={post.coverImageUrl}
             alt={post.coverImageAlt || post.title}
-            className="w-full h-auto object-contain"
+            fill
+            className="object-contain"
+            priority
           />
         </div>
       ) : (

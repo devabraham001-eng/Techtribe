@@ -44,7 +44,6 @@ export function PostCard({
                   fill
                   sizes="80px"
                   className="object-cover"
-                  unoptimized
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">
@@ -72,12 +71,12 @@ export function PostCard({
         <article className="flex gap-4 p-4 bg-card border border-border rounded-xl hover:bg-card-hover transition-colors duration-150">
           <div className="relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-secondary">
             {post.coverImageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={post.coverImageUrl}
                 alt={post.coverImageAlt || post.title}
-                className="h-full w-full object-cover"
-                loading="lazy"
+                fill
+                sizes="80px"
+                className="object-cover"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
@@ -124,7 +123,6 @@ export function PostCard({
                     fill
                     sizes="(min-width: 768px) 50vw, 100vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                    unoptimized
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 via-secondary to-secondary">
@@ -161,11 +159,12 @@ export function PostCard({
           <div className="grid md:grid-cols-2 gap-0">
             <div className="relative aspect-[4/3] md:aspect-auto overflow-hidden bg-secondary">
               {post.coverImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={post.coverImageUrl}
                   alt={post.coverImageAlt || post.title}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 via-secondary to-secondary">
@@ -234,7 +233,6 @@ if (prefersReduced) {
                 fill
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                unoptimized
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 via-secondary to-secondary">
@@ -300,12 +298,12 @@ if (prefersReduced) {
       <article className={cn("bg-card border border-border rounded-xl hover:border-primary/20 hover:bg-card-hover transition-all duration-150 flex flex-col h-full", className)}>
         <div className="relative aspect-[16/9] overflow-hidden bg-secondary rounded-t-xl">
           {post.coverImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={post.coverImageUrl}
               alt={post.coverImageAlt || post.title}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-              loading="lazy"
+              fill
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+              className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 via-secondary to-secondary">
