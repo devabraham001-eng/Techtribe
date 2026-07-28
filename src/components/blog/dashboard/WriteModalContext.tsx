@@ -50,6 +50,17 @@ export function WriteModalProvider({ children }: { children: React.ReactNode }) 
 
 export function useWriteModal() {
   const context = React.useContext(WriteModalContext);
-  if (!context) throw new Error("useWriteModal must be used within WriteModalProvider");
+  if (!context) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("useWriteModal called outside WriteModalProvider — returning noop");
+    }
+    return {
+      open: false,
+      openWriteModal: () => {},
+      closeWriteModal: () => {},
+      editId: null,
+      setEditId: () => {},
+    };
+  }
   return context;
 }
