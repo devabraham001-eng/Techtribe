@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, Loader2, LogIn } from "lucide-react";
 
 interface LessonCompleteButtonProps {
@@ -53,7 +54,7 @@ export function LessonCompleteButton({ lessonId, isProject, trackSlug }: LessonC
   if (loading) {
     return (
       <div className="flex justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        <Skeleton className="h-10 w-40 rounded-lg" />
       </div>
     );
   }

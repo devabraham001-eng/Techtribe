@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Eye, ExternalLink, Globe, Monitor } from "lucide-react";
 
 interface Viewer {
@@ -92,8 +93,16 @@ export function RecentViewers({ authorId: _authorId }: RecentViewersProps) {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-8">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <div className="space-y-3 py-4 px-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <div className="flex-1 space-y-1.5">
+                <Skeleton className="h-3 w-32 rounded" />
+                <Skeleton className="h-2.5 w-20 rounded" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : viewers.length === 0 ? (
         <div className="px-4 py-6 text-center text-xs text-muted-foreground">

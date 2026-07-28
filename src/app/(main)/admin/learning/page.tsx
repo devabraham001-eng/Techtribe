@@ -4,9 +4,20 @@ import nextDynamic from "next/dynamic";
 import { ArrowLeft, Database as DatabaseIcon, ShieldAlert, BookOpen } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const LearningAdmin = nextDynamic(() => import("@/components/admin/LearningAdmin"), {
-  loading: () => <div className="flex items-center justify-center h-48"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>,
+  loading: () => (
+    <div className="p-6 space-y-4">
+      <Skeleton className="h-9 w-48 rounded-lg" />
+      <Skeleton className="h-9 w-32 rounded-lg" />
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-20 w-full rounded-xl" />
+        ))}
+      </div>
+    </div>
+  ),
 });
 
 export const dynamic = "force-dynamic";

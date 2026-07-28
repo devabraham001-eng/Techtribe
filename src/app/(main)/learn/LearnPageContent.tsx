@@ -3,7 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles, Wand2, BarChart3, GitBranch, Server, Zap, Shield, GraduationCap, ArrowRight, Award, BadgeCheck, ScrollText, Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Sparkles, Wand2, BarChart3, GitBranch, Server, Zap, Shield, GraduationCap, ArrowRight, Award, BadgeCheck, ScrollText } from "lucide-react";
 
 interface TrackItem {
   id: string;
@@ -74,8 +75,28 @@ export function LearnPageContent() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="min-h-screen bg-background pt-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex aspect-square w-full flex-col justify-between rounded-3xl border border-border p-6 animate-pulse" style={{ background: "#1c1c1e", borderColor: "#38383a" }}>
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-1.5">
+                    <Skeleton className="h-4 w-12 rounded" />
+                  </div>
+                  <div className="space-y-2">
+                    <Skeleton className="h-6 w-3/4 rounded" />
+                    <Skeleton className="h-4 w-1/2 rounded" />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between pt-6 border-t" style={{ borderColor: "#38383a" }}>
+                  <Skeleton className="h-3 w-28 rounded" />
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MdxRenderer } from "@/components/markdown/MdxRenderer";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Category, Tag } from "@/types/blog";
 
 const AUTOSAVE_KEY = "techtribe_editor_draft";
@@ -383,8 +384,14 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
   return (
     <div className="relative">
       {initialLoading && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 rounded-lg min-h-[300px]">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="absolute inset-0 z-10 bg-background/80 rounded-lg min-h-[300px] p-6 space-y-4">
+          <Skeleton className="h-8 w-48 rounded-lg" />
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-40 w-full rounded-lg" />
+          <div className="flex gap-3">
+            <Skeleton className="h-10 w-28 rounded-lg" />
+            <Skeleton className="h-10 w-28 rounded-lg" />
+          </div>
         </div>
       )}
       {restoreData && (

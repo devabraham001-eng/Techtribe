@@ -2,14 +2,21 @@
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { X, Loader2 } from "lucide-react";
+import { X } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useWriteModal } from "./WriteModalContext";
 import type { Category, Tag } from "@/types/blog";
 
 const PostEditor = dynamic(() => import("../editor/PostEditor").then((mod) => mod.PostEditor), {
   loading: () => (
-    <div className="flex items-center justify-center h-64">
-      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+    <div className="space-y-4 p-6">
+      <Skeleton className="h-8 w-48 rounded-lg" />
+      <Skeleton className="h-10 w-full rounded-lg" />
+      <Skeleton className="h-64 w-full rounded-lg" />
+      <div className="flex gap-3">
+        <Skeleton className="h-10 w-28 rounded-lg" />
+        <Skeleton className="h-10 w-28 rounded-lg" />
+      </div>
     </div>
   ),
 });
@@ -80,8 +87,11 @@ export function WriteModal() {
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-4 py-4 lg:px-6 lg:py-6">
           {loading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <div className="space-y-4 p-4">
+              <Skeleton className="h-5 w-32 rounded" />
+              <Skeleton className="h-10 w-full rounded-lg" />
+              <Skeleton className="h-10 w-full rounded-lg" />
+              <Skeleton className="h-24 w-full rounded-lg" />
             </div>
           ) : (
             <PostEditor

@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Edit, Trash2, Plus, Loader2, AlertCircle, Save, X, Eye } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Tab = "posts" | "categories" | "tags";
 type PostStatus = "draft" | "review" | "scheduled" | "published" | "archived";
@@ -286,8 +287,13 @@ export function AdminDashboardClient() {
       )}
 
       {loading && (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-9 flex-1 rounded-lg" />
+            ))}
+          </div>
+          <Skeleton className="h-64 w-full rounded-xl" />
         </div>
       )}
 

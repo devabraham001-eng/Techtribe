@@ -4,9 +4,24 @@ import nextDynamic from "next/dynamic";
 import { ArrowLeft, Database as DatabaseIcon } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const SettingsForm = nextDynamic(() => import("@/components/auth/SettingsForm").then((mod) => mod.SettingsForm), {
-  loading: () => <div className="flex items-center justify-center h-48"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>,
+  loading: () => (
+    <div className="space-y-6 p-6 max-w-2xl mx-auto">
+      <div className="flex items-center gap-4">
+        <Skeleton className="h-16 w-16 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+      </div>
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-24 w-full" />
+      <Skeleton className="h-10 w-32" />
+    </div>
+  ),
 });
 
 export const dynamic = "force-dynamic";

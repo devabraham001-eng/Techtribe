@@ -3,9 +3,28 @@ import nextDynamic from "next/dynamic";
 import { Database as DatabaseIcon } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const AuthorDashboardClient = nextDynamic(() => import("@/components/blog/dashboard/AuthorDashboardClient").then((mod) => mod.AuthorDashboardClient), {
-  loading: () => <div className="flex items-center justify-center h-48"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>,
+  loading: () => (
+    <div className="p-6 space-y-6 max-w-2xl mx-auto">
+      <div className="flex gap-3 overflow-x-auto pb-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-1.5 min-w-[72px]">
+            <Skeleton className="h-16 w-16 rounded-full" />
+            <Skeleton className="h-3 w-12" />
+            <Skeleton className="h-3 w-6" />
+          </div>
+        ))}
+      </div>
+      <Skeleton className="h-5 w-32" />
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-28 w-full rounded-xl" />
+        ))}
+      </div>
+    </div>
+  ),
 });
 
 export const dynamic = "force-dynamic";

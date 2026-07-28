@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { CodeEditor } from "@/components/ui/code-editor";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Play, RefreshCw, CheckCircle2, XCircle, Terminal, ChevronDown, ChevronUp } from "lucide-react";
 import type { LessonChallenge, TestResult, ChallengeSubmission } from "@/types/blog";
 
@@ -123,8 +124,14 @@ export function CodeChallenge({ lessonId }: CodeChallengeProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="space-y-4 p-6">
+        <div className="flex gap-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-8 w-24 rounded-lg" />
+          ))}
+        </div>
+        <Skeleton className="h-24 w-full rounded-lg" />
+        <Skeleton className="h-64 w-full rounded-lg" />
       </div>
     );
   }

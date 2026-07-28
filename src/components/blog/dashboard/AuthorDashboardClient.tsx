@@ -20,6 +20,7 @@ import { DashboardRightPanel } from "./DashboardRightPanel";
 import { RecentViewers } from "./RecentViewers";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/motion/Reveal";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useWriteModal } from "./WriteModalContext";
 
 interface PostSummary {
@@ -205,8 +206,10 @@ export function AuthorDashboardClient({
 
         {/* Loading state */}
         {loading && (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-28 w-full rounded-xl" />
+            ))}
           </div>
         )}
 
