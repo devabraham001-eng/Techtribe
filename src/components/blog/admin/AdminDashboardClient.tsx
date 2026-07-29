@@ -293,7 +293,27 @@ export function AdminDashboardClient() {
               <Skeleton key={i} className="h-9 flex-1 rounded-lg" />
             ))}
           </div>
-          <Skeleton className="h-64 w-full rounded-xl" />
+          <div className="rounded-xl border border-border">
+            <div className="border-b border-border p-4">
+              <div className="flex gap-4">
+                <Skeleton className="h-4 w-32 rounded" />
+                <Skeleton className="h-4 w-16 rounded hidden sm:block" />
+                <Skeleton className="h-4 w-12 rounded hidden md:block" />
+                <Skeleton className="h-4 w-24 rounded hidden md:block ml-auto" />
+              </div>
+            </div>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="border-b border-border last:border-0 p-4">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-4 w-48 rounded flex-1" />
+                  <Skeleton className="h-6 w-20 rounded hidden sm:block" />
+                  <Skeleton className="h-4 w-12 rounded hidden md:block" />
+                  <Skeleton className="h-4 w-24 rounded hidden md:block" />
+                  <Skeleton className="h-8 w-16 rounded ml-auto" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

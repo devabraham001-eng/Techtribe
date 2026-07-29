@@ -99,10 +99,37 @@ export default function AnalyticsClient() {
       <div className="p-6 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-xl" />
+            <div key={i} className="rounded-xl border border-border p-5 space-y-3">
+              <Skeleton className="h-3 w-20 rounded" />
+              <Skeleton className="h-8 w-24 rounded" />
+              <Skeleton className="h-2 w-full rounded" />
+            </div>
           ))}
         </div>
-        <Skeleton className="h-80 w-full rounded-xl" />
+        <div className="rounded-xl border border-border p-6 space-y-4">
+          <div className="flex gap-4">
+            <Skeleton className="h-3 w-16 rounded" />
+            <Skeleton className="h-3 w-16 rounded" />
+            <Skeleton className="h-3 w-16 rounded" />
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-end gap-2" style={{ height: 72 }}>
+              <Skeleton className="flex-1 rounded-t" style={{ height: "100%" }} />
+              <Skeleton className="flex-1 rounded-t" style={{ height: "65%" }} />
+              <Skeleton className="flex-1 rounded-t" style={{ height: "85%" }} />
+            </div>
+            <div className="flex items-end gap-2" style={{ height: 64 }}>
+              <Skeleton className="flex-1 rounded-t" style={{ height: "75%" }} />
+              <Skeleton className="flex-1 rounded-t" style={{ height: "90%" }} />
+              <Skeleton className="flex-1 rounded-t" style={{ height: "55%" }} />
+            </div>
+            <div className="flex items-end gap-2" style={{ height: 56 }}>
+              <Skeleton className="flex-1 rounded-t" style={{ height: "80%" }} />
+              <Skeleton className="flex-1 rounded-t" style={{ height: "60%" }} />
+              <Skeleton className="flex-1 rounded-t" style={{ height: "70%" }} />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

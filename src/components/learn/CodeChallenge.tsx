@@ -130,8 +130,30 @@ export function CodeChallenge({ lessonId }: CodeChallengeProps) {
             <Skeleton key={i} className="h-8 w-24 rounded-lg" />
           ))}
         </div>
-        <Skeleton className="h-24 w-full rounded-lg" />
-        <Skeleton className="h-64 w-full rounded-lg" />
+        <div className="rounded-lg border border-border p-4 space-y-3">
+          <Skeleton className="h-5 w-48 rounded" />
+          <Skeleton className="h-4 w-full rounded" />
+          <Skeleton className="h-4 w-3/4 rounded" />
+          <Skeleton className="h-4 w-1/2 rounded" />
+        </div>
+        <div className="rounded-lg border border-border overflow-hidden">
+          <div className="flex items-center justify-between bg-muted/30 px-4 py-2 border-b border-border">
+            <Skeleton className="h-3 w-16 rounded" />
+            <Skeleton className="h-3 w-12 rounded" />
+          </div>
+          <div className="p-4 space-y-2">
+            <Skeleton className="h-3 w-full rounded" style={{ width: "92%" }} />
+            <Skeleton className="h-3 w-full rounded" style={{ width: "75%" }} />
+            <Skeleton className="h-3 w-full rounded" style={{ width: "88%" }} />
+            <Skeleton className="h-3 w-full rounded" style={{ width: "60%" }} />
+            <Skeleton className="h-3 w-full rounded" style={{ width: "82%" }} />
+            <Skeleton className="h-3 w-full rounded" style={{ width: "70%" }} />
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <Skeleton className="h-10 w-24 rounded-lg" />
+          <Skeleton className="h-10 w-32 rounded-lg" />
+        </div>
       </div>
     );
   }

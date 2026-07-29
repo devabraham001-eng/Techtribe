@@ -208,7 +208,21 @@ export function AuthorDashboardClient({
         {loading && (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full rounded-xl" />
+              <div key={i} className="rounded-xl border border-border p-4 sm:p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Skeleton className="h-4 w-16 rounded" />
+                  <Skeleton className="h-3 w-20 rounded" />
+                </div>
+                <Skeleton className="h-5 w-3/4 rounded mb-3" />
+                <div className="flex items-center justify-between pt-3 border-t border-border">
+                  <Skeleton className="h-3 w-16 rounded" />
+                  <div className="flex gap-1">
+                    <Skeleton className="h-8 w-8 rounded-md" />
+                    <Skeleton className="h-8 w-8 rounded-md" />
+                    <Skeleton className="h-8 w-8 rounded-md" />
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}

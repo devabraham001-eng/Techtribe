@@ -88,10 +88,24 @@ export function WriteModal() {
         <div className="flex-1 overflow-y-auto px-4 py-4 lg:px-6 lg:py-6">
           {loading ? (
             <div className="space-y-4 p-4">
-              <Skeleton className="h-5 w-32 rounded" />
+              <div className="flex gap-2 border-b border-border pb-3">
+                <Skeleton className="h-8 w-20 rounded-lg" />
+                <Skeleton className="h-8 w-20 rounded-lg" />
+              </div>
+              <Skeleton className="h-5 w-16 rounded" />
               <Skeleton className="h-10 w-full rounded-lg" />
-              <Skeleton className="h-10 w-full rounded-lg" />
-              <Skeleton className="h-24 w-full rounded-lg" />
+              <Skeleton className="h-5 w-16 rounded" />
+              <div className="flex gap-2">
+                <Skeleton className="h-10 flex-1 rounded-lg" />
+                <Skeleton className="h-10 w-32 rounded-lg" />
+              </div>
+              <Skeleton className="h-5 w-20 rounded" />
+              <Skeleton className="h-40 w-full rounded-lg" />
+              <div className="flex gap-3 pt-4 border-t border-border">
+                <Skeleton className="h-10 w-28 rounded-lg" />
+                <Skeleton className="h-10 w-28 rounded-lg" />
+                <Skeleton className="h-10 w-32 rounded-lg ml-auto" />
+              </div>
             </div>
           ) : (
             <PostEditor

@@ -384,13 +384,24 @@ export function PostEditor({ categories, tags, canPublish, editId: providedEditI
   return (
     <div className="relative">
       {initialLoading && (
-        <div className="absolute inset-0 z-10 bg-background/80 rounded-lg min-h-[300px] p-6 space-y-4">
-          <Skeleton className="h-8 w-48 rounded-lg" />
+        <div className="absolute inset-0 z-10 bg-background/80 rounded-lg min-h-[400px] p-6 space-y-4">
+          <div className="flex gap-2 border-b border-border pb-3">
+            <Skeleton className="h-8 w-20 rounded-lg" />
+            <Skeleton className="h-8 w-20 rounded-lg" />
+          </div>
+          <Skeleton className="h-5 w-24 rounded" />
           <Skeleton className="h-10 w-full rounded-lg" />
-          <Skeleton className="h-40 w-full rounded-lg" />
-          <div className="flex gap-3">
+          <Skeleton className="h-5 w-24 rounded" />
+          <div className="flex gap-2">
+            <Skeleton className="h-10 flex-1 rounded-lg" />
+            <Skeleton className="h-10 w-32 rounded-lg" />
+          </div>
+          <Skeleton className="h-5 w-24 rounded" />
+          <Skeleton className="h-48 w-full rounded-lg" />
+          <div className="flex gap-3 pt-4 border-t border-border">
             <Skeleton className="h-10 w-28 rounded-lg" />
             <Skeleton className="h-10 w-28 rounded-lg" />
+            <Skeleton className="h-10 w-32 rounded-lg ml-auto" />
           </div>
         </div>
       )}
