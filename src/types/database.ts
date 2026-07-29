@@ -196,6 +196,7 @@ tags: {
           module_id: string;
           title: string;
           content: string | null;
+          video_url: string | null;
           is_project: boolean;
           project_prompt: string | null;
           sort_order: number;

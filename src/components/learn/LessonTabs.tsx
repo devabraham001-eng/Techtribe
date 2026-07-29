@@ -5,7 +5,8 @@ import Link from "next/link";
 import { MdxRenderer } from "@/components/markdown/MdxRenderer";
 import { LessonCompleteButton } from "@/components/learn/LessonCompleteButton";
 import { CodeChallenge } from "@/components/learn/CodeChallenge";
-import { ArrowLeft, BookOpen, Code2, Code, BookText } from "lucide-react";
+import { VideoEmbed } from "@/components/learn/VideoEmbed";
+import { ArrowLeft, BookOpen, Code2, Code, BookText, Video } from "lucide-react";
 import type { Lesson } from "@/types/blog";
 
 interface LessonTabsProps {
@@ -81,19 +82,43 @@ export function LessonTabs({ lesson, trackSlug, prevLesson, nextLesson }: Lesson
             </h1>
           </div>
 
-          {/* Lesson content */}
-          <div className="prose prose-sm dark:prose-invert max-w-none mb-12">
-            {lesson.content ? (
-              <MdxRenderer content={lesson.content} />
-            ) : lesson.isProject && lesson.projectPrompt ? (
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Project Brief</h2>
-                <p className="text-muted-foreground whitespace-pre-line">{lesson.projectPrompt}</p>
+          {/* Lesson content + Video */}
+          {lesson.videoUrl ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-12">
+              <div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                  <Video className="h-3.5 w-3.5" />
+                  Video Reference
+                </div>
+                <VideoEmbed url={lesson.videoUrl} />
               </div>
-            ) : (
-              <p className="text-muted-foreground">No content yet.</p>
-            )}
-          </div>
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                {lesson.content ? (
+                  <MdxRenderer content={lesson.content} />
+                ) : lesson.isProject && lesson.projectPrompt ? (
+                  <div className="rounded-xl border border-border bg-card p-6">
+                    <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Project Brief</h2>
+                    <p className="text-muted-foreground whitespace-pre-line">{lesson.projectPrompt}</p>
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">No content yet.</p>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="prose prose-sm dark:prose-invert max-w-none mb-12">
+              {lesson.content ? (
+                <MdxRenderer content={lesson.content} />
+              ) : lesson.isProject && lesson.projectPrompt ? (
+                <div className="rounded-xl border border-border bg-card p-6">
+                  <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Project Brief</h2>
+                  <p className="text-muted-foreground whitespace-pre-line">{lesson.projectPrompt}</p>
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No content yet.</p>
+              )}
+            </div>
+          )}
 
           {/* Actions */}
           <div className="border-t border-border pt-6">

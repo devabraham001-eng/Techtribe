@@ -39,6 +39,7 @@ function mapLesson(row: LessonRow): Lesson {
     moduleId: row.module_id,
     title: row.title,
     content: row.content ?? undefined,
+    videoUrl: row.video_url ?? undefined,
     isProject: row.is_project,
     projectPrompt: row.project_prompt ?? undefined,
     sortOrder: row.sort_order,

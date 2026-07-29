@@ -565,6 +565,7 @@ create table if not exists lessons (
   module_id uuid not null references track_modules(id) on delete cascade,
   title varchar(255) not null,
   content text,
+  video_url text,
   is_project boolean default false,
   project_prompt text,
   sort_order int not null,

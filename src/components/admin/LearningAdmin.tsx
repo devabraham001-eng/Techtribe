@@ -26,6 +26,7 @@ interface Lesson {
   module_id: string;
   title: string;
   content: string | null;
+  video_url: string | null;
   is_project: boolean;
   project_prompt: string | null;
   sort_order: number;
@@ -545,7 +546,7 @@ export default function LearningAdmin() {
                                   <div className="ml-3 mt-1 mb-1">
                                     <LessonForm
                                       moduleId={mod.id}
-                                      initial={{ title: lesson.title, content: lesson.content ?? "", is_project: lesson.is_project, project_prompt: lesson.project_prompt ?? "" }}
+                                      initial={{ title: lesson.title, content: lesson.content ?? "", video_url: lesson.video_url ?? "", is_project: lesson.is_project, project_prompt: lesson.project_prompt ?? "" }}
                                       onSave={async (vals) => {
                                         await saveItem(`/api/admin/learning/lessons/${lesson.id}`, vals);
                                         setEditing(null);
@@ -838,12 +839,13 @@ function LessonForm({
   onCancel,
 }: {
   moduleId: string;
-  initial?: { title: string; content: string; is_project: boolean; project_prompt: string };
+  initial?: { title: string; content: string; video_url: string; is_project: boolean; project_prompt: string };
   onSave: (vals: Record<string, unknown>) => Promise<void>;
   onCancel: () => void;
 }) {
   const [title, setTitle] = React.useState(initial?.title ?? "");
   const [content, setContent] = React.useState(initial?.content ?? "");
+  const [videoUrl, setVideoUrl] = React.useState(initial?.video_url ?? "");
   const [isProject, setIsProject] = React.useState(initial?.is_project ?? false);
   const [projectPrompt, setProjectPrompt] = React.useState(initial?.project_prompt ?? "");
   const [saving, setSaving] = React.useState(false);
@@ -858,6 +860,7 @@ function LessonForm({
       await onSave({
         title: title.trim(),
         content: content || null,
+        video_url: videoUrl.trim() || null,
         is_project: isProject,
         project_prompt: isProject ? (projectPrompt || null) : null,
       });
@@ -886,6 +889,19 @@ function LessonForm({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Write lesson content in MDX..."
+        />
+      </div>
+      <div>
+        <label className="block text-xs text-muted-foreground mb-0.5">
+          Video Reference URL
+          <span className="text-muted-foreground font-normal ml-1">(YouTube, Vimeo, Loom, or direct video link)</span>
+        </label>
+        <input
+          type="url"
+          className="h-7 w-full rounded-md border border-border bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          value={videoUrl}
+          onChange={(e) => setVideoUrl(e.target.value)}
+          placeholder="https://youtube.com/watch?v=..."
         />
       </div>
       <label className="flex items-center gap-2 text-sm">

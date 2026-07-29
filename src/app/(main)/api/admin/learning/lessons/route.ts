@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { module_id, title, content, is_project, project_prompt, sort_order } = body;
+  const { module_id, title, content, video_url, is_project, project_prompt, sort_order } = body;
 
   if (!module_id || !title) {
     return NextResponse.json({ error: "module_id and title are required" }, { status: 400 });
@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       module_id,
       title,
       content,
+      video_url: video_url ?? null,
       is_project: is_project ?? false,
       project_prompt: project_prompt ?? null,
       sort_order: sort_order ?? 0,

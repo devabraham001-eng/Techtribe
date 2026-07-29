@@ -157,6 +157,7 @@ export interface Lesson {
   moduleId: string;
   title: string;
   content?: string;
+  videoUrl?: string;
   isProject: boolean;
   projectPrompt?: string;
   sortOrder: number;
