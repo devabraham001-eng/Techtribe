@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import nextDynamic from "next/dynamic";
-import { ArrowLeft, Database as DatabaseIcon, ShieldAlert } from "lucide-react";
+import { Database as DatabaseIcon } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -48,22 +47,7 @@ export default async function AdminAnalyticsPage() {
   const author = authorData as { name: string; is_staff: boolean } | null;
 
   if (!author?.is_staff) {
-    return (
-      <div className="mx-auto max-w-2xl px-6 pb-20 pt-10">
-        <div className="rounded-lg border border-border bg-card p-8 text-center">
-          <ShieldAlert className="mx-auto h-10 w-10 text-muted-foreground" />
-          <h1 className="mt-4 font-heading text-2xl font-bold">Access denied</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Only staff authors can access analytics.</p>
-          <Link
-            href="/dashboard"
-            className="mt-4 inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Go to your dashboard
-          </Link>
-        </div>
-      </div>
-    );
+    redirect("/dashboard");
   }
 
   return (

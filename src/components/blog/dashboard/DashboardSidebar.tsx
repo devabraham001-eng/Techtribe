@@ -29,16 +29,12 @@ const STORAGE_KEY = "techtribe_sidebar_collapsed";
 export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarProps) {
   const pathname = usePathname();
   const { openWriteModal } = useWriteModal();
-  const [collapsed, setCollapsed] = React.useState(false);
-
-  React.useEffect(() => {
-    const restoreTimer = window.setTimeout(() => {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === "true") setCollapsed(true);
-    }, 0);
-
-    return () => window.clearTimeout(restoreTimer);
-  }, []);
+  const [collapsed, setCollapsed] = React.useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(STORAGE_KEY) === "true";
+    }
+    return false;
+  });
 
   function toggleCollapse() {
     setCollapsed((prev) => {

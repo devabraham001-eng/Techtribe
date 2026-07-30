@@ -20,9 +20,11 @@ import {
   BarChart3,
   Shield,
   User,
+  Loader2,
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useWriteModal } from "@/components/blog/dashboard/WriteModalContext";
+import { createClient } from "@/lib/supabase/client";
 
 interface MobileBottomNavProps {
   isAuthenticated: boolean;
@@ -36,13 +38,12 @@ export function MobileBottomNav({ isAuthenticated, isStaff, userName, userAvatar
   const router = useRouter();
   const { openWriteModal } = useWriteModal();
   const [moreOpen, setMoreOpen] = React.useState(false);
+  const [signingOut, setSigningOut] = React.useState(false);
 
   React.useEffect(() => {
-    const closeTimer = window.setTimeout(() => {
+    if (moreOpen) {
       setMoreOpen(false);
-    }, 0);
-
-    return () => window.clearTimeout(closeTimer);
+    }
   }, [pathname]);
 
   React.useEffect(() => {
@@ -209,14 +210,26 @@ export function MobileBottomNav({ isAuthenticated, isStaff, userName, userAvatar
                   {isAuthenticated && (
                     <>
                       <hr className="my-2 border-border" />
-                      <Link
-                        href="/auth/signout"
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-destructive/10 transition-colors text-sm font-medium text-destructive"
-                        onClick={() => setMoreOpen(false)}
+                      <button
+                        type="button"
+                        disabled={signingOut}
+                        onClick={async () => {
+                          setSigningOut(true);
+                          try {
+                            const supabase = createClient();
+                            await supabase.auth.signOut();
+                          } catch {}
+                          router.push("/blog");
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-3 rounded-lg hover:bg-destructive/10 transition-colors text-sm font-medium text-destructive disabled:opacity-50"
                       >
-                        <LogOut className="h-5 w-5" />
+                        {signingOut ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <LogOut className="h-5 w-5" />
+                        )}
                         Sign Out
-                      </Link>
+                      </button>
                     </>
                   )}
                 </div>

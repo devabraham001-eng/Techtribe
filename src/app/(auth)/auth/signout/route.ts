@@ -11,5 +11,4 @@ async function handleSignOut(request: Request) {
   return NextResponse.redirect(new URL("/blog", request.url), { status: 303 });
 }
 
-export const GET = handleSignOut;
 export const POST = handleSignOut;

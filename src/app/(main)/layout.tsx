@@ -1,7 +1,7 @@
 import { BlogHeader } from "@/components/blog/layout/BlogHeader";
 import { BlogFooter } from "@/components/blog/layout/BlogFooter";
 import { PageTransition } from "@/components/motion/PageTransition";
-import { DashboardSidebarWrapper } from "@/components/blog/dashboard/DashboardSidebarWrapper";
+import { DashboardSidebar } from "@/components/blog/dashboard/DashboardSidebar";
 import { WriteModalProvider } from "@/components/blog/dashboard/WriteModalContext";
 import { WriteModal } from "@/components/blog/dashboard/WriteModal";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
@@ -39,7 +39,11 @@ export default async function MainLayout({
       <WriteModalProvider>
         <main className="flex h-screen" role="main" id="main-content">
           <aside className="flex-shrink-0 hidden lg:block border-r border-border overflow-y-auto">
-            <DashboardSidebarWrapper />
+            <DashboardSidebar
+              authorName={userName ?? "User"}
+              authorAvatar={userAvatarUrl ?? null}
+              isStaff={isStaff}
+            />
           </aside>
           <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden pb-16 md:pb-0">
             <PageTransition>
