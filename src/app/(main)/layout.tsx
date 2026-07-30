@@ -7,6 +7,8 @@ import { WriteModal } from "@/components/blog/dashboard/WriteModal";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
