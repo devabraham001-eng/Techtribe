@@ -18,7 +18,7 @@ export async function generateMetadata({
   return {
     title: `${category.name} — TechTribe Blog`,
     description: category.description || `Browse articles in "${category.name}" on TechTribe.`,
-    alternates: { canonical: `https://techtribe.app/blog/category/${category.slug}` },
+    alternates: { canonical: `https://techtribe.online/blog/category/${category.slug}` },
   };
 }
 
@@ -42,8 +42,8 @@ export default async function CategoryPage({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Blog", item: "https://techtribe.app/blog" },
-      { "@type": "ListItem", position: 2, name: "Categories", item: "https://techtribe.app/blog/categories" },
+      { "@type": "ListItem", position: 1, name: "Blog", item: "https://techtribe.online/blog" },
+      { "@type": "ListItem", position: 2, name: "Categories", item: "https://techtribe.online/blog/categories" },
       { "@type": "ListItem", position: 3, name: category.name },
     ],
   };

@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { ArrowLeft, CheckCircle2, Circle, BookOpen, Code2, Terminal, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.online";
 
 export async function generateMetadata({
   params,

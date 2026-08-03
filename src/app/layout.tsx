@@ -31,7 +31,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "TechTribe Blog — Learn, Build, Get Hired",
   description: "Learn digital skills, find freelance work, share progress, and stay updated with tech news. TechTribe combines learning, freelancing, and social networking for developers.",
-  metadataBase: new URL("https://techtribe.app"),
+  metadataBase: new URL("https://techtribe.online"),
   icons: {
     icon: [
       { url: "/ttlg.png", type: "image/png" },
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
   },
 };
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.online";
 
 const organizationJsonLd = {
   "@context": "https://schema.org",

@@ -4,7 +4,7 @@ import { getLearningTrackBySlug, getTrackModulesWithLessons, getLessonById } fro
 import { LessonTabs } from "@/components/learn/LessonTabs";
 import type { Metadata } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.online";
 
 export async function generateMetadata({
   params,

@@ -10,7 +10,7 @@ import { getInitials } from "@/lib/utils";
 import { getBlogAuthors, getBlogPosts } from "@/lib/blog-data";
 import type { Metadata } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techtribe.online";
 
 export async function generateMetadata({
   params,

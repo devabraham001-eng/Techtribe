@@ -17,8 +17,8 @@ export async function GET() {
     .map((post) => `
     <item>
       <title>${escapeXml(post.title)}</title>
-      <link>https://techtribe.app/blog/${post.slug}</link>
-      <guid isPermaLink="true">https://techtribe.app/blog/${post.slug}</guid>
+      <link>https://techtribe.online/blog/${post.slug}</link>
+      <guid isPermaLink="true">https://techtribe.online/blog/${post.slug}</guid>
       <pubDate>${new Date(post.publishedAt!).toUTCString()}</pubDate>
       <dc:creator>${escapeXml(post.author.name)}</dc:creator>
       <description>${escapeXml(post.excerpt ?? "")}</description>
@@ -29,7 +29,7 @@ export async function GET() {
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>TechTribe Blog</title>
-    <link>https://techtribe.app</link>
+    <link>https://techtribe.online</link>
     <description>Learn digital skills, find freelance work, share progress, and stay updated with tech news.</description>
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}
