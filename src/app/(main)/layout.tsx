@@ -66,13 +66,12 @@ export default async function MainLayout({
         Skip to content
       </a>
       <BlogHeader />
-      <main id="main-content" className="flex-1 pt-28 md:pt-36 pb-16 lg:pb-0" role="main">
+      <main id="main-content" className="flex-1 pt-28 md:pt-36" role="main">
         <PageTransition>
           {children}
         </PageTransition>
       </main>
       <BlogFooter />
-      <MobileBottomNav isAuthenticated={false} isStaff={false} />
     </>
   );
 }

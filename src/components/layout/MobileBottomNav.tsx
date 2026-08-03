@@ -66,7 +66,7 @@ export function MobileBottomNav({ isAuthenticated, isStaff, userName, userAvatar
     : [
         { id: "home", label: "Home", icon: House, href: "/" },
         { id: "blog", label: "Blog", icon: Compass, href: "/blog" },
-        { id: "learn", label: "Learn", icon: BookOpen, href: "/learn" },
+        { id: "search", label: "Search", icon: Search, href: "/blog/search" },
         { id: "more", label: "More", icon: Ellipsis, href: "", action: "moreSheet" as const },
       ];
 
@@ -90,7 +90,6 @@ export function MobileBottomNav({ isAuthenticated, isStaff, userName, userAvatar
         { label: "Settings", icon: Settings, href: "/settings" },
       ]
     : [
-        { label: "Search", icon: Search, href: "/blog/search" },
         { label: "Categories", icon: Tags, href: "/blog/categories" },
         { label: "Authors", icon: Users, href: "/blog/authors" },
       ];
