@@ -1,4 +1,5 @@
 import { BlogHeader } from "@/components/blog/layout/BlogHeader";
+import { BlogFooter } from "@/components/blog/layout/BlogFooter";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { DashboardSidebar } from "@/components/blog/dashboard/DashboardSidebar";
 import { WriteModalProvider } from "@/components/blog/dashboard/WriteModalContext";
@@ -70,6 +71,7 @@ export default async function MainLayout({
           {children}
         </PageTransition>
       </main>
+      <BlogFooter />
       <MobileBottomNav isAuthenticated={false} isStaff={false} />
     </>
   );
