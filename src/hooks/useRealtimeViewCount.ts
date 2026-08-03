@@ -10,6 +10,10 @@ interface ViewCountState {
   lastUpdated: Date | null;
 }
 
+function todayStr(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
   const [state, setState] = useState<ViewCountState>({
     count: initialCount,
@@ -47,6 +51,11 @@ export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
           isLive: current.isLive,
           lastUpdated: new Date(),
         }));
+        try {
+          localStorage.setItem(`techtribe_viewed_${slug}`, todayStr());
+        } catch {
+          // Storage unavailable - count still registered server-side
+        }
       }
     } catch {
       // Silent fail
@@ -102,13 +111,13 @@ export function useRealtimeViewCount(slug: string, initialCount: number = 0) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const key = `techtribe_viewed_${slug}`;
-    const alreadyViewed = sessionStorage.getItem(key);
-    if (alreadyViewed) {
-      fetchLiveCount();
-      return;
+    let alreadyToday = false;
+    try {
+      alreadyToday = localStorage.getItem(key) === todayStr();
+    } catch {
+      // Storage unavailable - proceed with tracking
     }
-    sessionStorage.setItem(key, "1");
-    const timeout = setTimeout(incrementView, 0);
+    const timeout = setTimeout(alreadyToday ? fetchLiveCount : incrementView, 0);
     return () => clearTimeout(timeout);
   }, [incrementView, fetchLiveCount, slug]);
 

@@ -17,6 +17,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Globe,
 } from "lucide-react";
 interface SidebarProps {
   authorName: string;
@@ -85,6 +86,11 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
 
         {/* Nav items */}
         <div className="flex-1 space-y-1 px-2 py-4 overflow-y-auto">
+          <Link href="/" className={linkClass("/")} title="Home">
+            <Globe className={iconClass} />
+            {!collapsed && <span>Home</span>}
+          </Link>
+
           <Link href="/dashboard" className={linkClass("/dashboard")} title="Dashboard">
             <LayoutDashboard className={iconClass} />
             {!collapsed && <span>Dashboard</span>}
@@ -102,9 +108,9 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
             {!collapsed && <span>Write</span>}
           </button>
 
-          <Link href="/blog" className={linkClass("/blog")} title="Published">
+          <Link href="/blog" className={linkClass("/blog")} title="Blog">
             <CheckCircle className={iconClass} />
-            {!collapsed && <span>Published</span>}
+            {!collapsed && <span>Blog</span>}
           </Link>
 
           <Link href="/learn" className={linkClass("/learn")} title="Learn">

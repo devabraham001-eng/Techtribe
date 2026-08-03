@@ -73,9 +73,9 @@ export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
     <Card className="pt-0">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1">
-          <CardTitle>Page Views Over Time</CardTitle>
+          <CardTitle>Visitors Over Time</CardTitle>
           <CardDescription>
-            Showing daily page views split by authenticated vs anonymous visitors
+            Showing daily unique visitors split by authenticated vs anonymous
           </CardDescription>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>

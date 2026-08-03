@@ -35,6 +35,9 @@ export default function AnalyticsClient() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [pruning, setPruning] = React.useState(false);
+  const [clearing, setClearing] = React.useState(false);
+  const [clearCutoff, setClearCutoff] = React.useState("");
+  const [clearMessage, setClearMessage] = React.useState<string | null>(null);
 
   async function loadAnalytics() {
     setLoading(true);
@@ -91,6 +94,34 @@ export default function AnalyticsClient() {
       setError(err instanceof Error ? err.message : "Prune failed");
     } finally {
       setPruning(false);
+    }
+  }
+
+  async function handleClear() {
+    const label = clearCutoff
+      ? `Delete all site analytics created before ${clearCutoff}? This cannot be undone.`
+      : "Delete ALL site analytics data? This cannot be undone.";
+    if (!confirm(label)) return;
+    setClearing(true);
+    setError(null);
+    setClearMessage(null);
+    try {
+      const res = await fetch("/api/admin/analytics/clear", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(clearCutoff ? { before: clearCutoff } : {}),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Clear failed");
+      }
+      const data = await res.json();
+      setClearMessage(`Deleted ${(data.deletedCount ?? 0).toLocaleString()} records.`);
+      void loadAnalytics();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Clear failed");
+    } finally {
+      setClearing(false);
     }
   }
 
@@ -163,6 +194,45 @@ export default function AnalyticsClient() {
       </div>
       <div className="px-4 lg:px-6">
         <DataTable data={data.topPages} />
+      </div>
+      <div className="px-4 lg:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-4">
+          <div>
+            <p className="text-sm font-medium">Clear Analytics Data</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {clearCutoff
+                ? `Deletes site analytics created before ${clearCutoff}.`
+                : "Deletes all site analytics data. Optionally set a date to keep recent data."}
+            </p>
+            <label className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+              Delete data before
+              <input
+                type="date"
+                value={clearCutoff}
+                onChange={(e) => setClearCutoff(e.target.value)}
+                className="rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground"
+              />
+            </label>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <button
+              type="button"
+              onClick={() => void handleClear()}
+              disabled={clearing}
+              className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+            >
+              {clearing ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5" />
+              )}
+              Clear Data
+            </button>
+            {clearMessage && (
+              <span className="text-xs text-muted-foreground">{clearMessage}</span>
+            )}
+          </div>
+        </div>
       </div>
       <div className="px-4 lg:px-6">
         <div className="flex items-center justify-between rounded-xl border border-border bg-card p-4">

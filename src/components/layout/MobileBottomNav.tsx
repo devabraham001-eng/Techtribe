@@ -39,12 +39,12 @@ export function MobileBottomNav({ isAuthenticated, isStaff, userName, userAvatar
   const { openWriteModal } = useWriteModal();
   const [moreOpen, setMoreOpen] = React.useState(false);
   const [signingOut, setSigningOut] = React.useState(false);
+  const [prevPathname, setPrevPathname] = React.useState(pathname);
 
-  React.useEffect(() => {
-    if (moreOpen) {
-      setMoreOpen(false);
-    }
-  }, [pathname]);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    if (moreOpen) setMoreOpen(false);
+  }
 
   React.useEffect(() => {
     if (moreOpen) {
@@ -66,7 +66,7 @@ export function MobileBottomNav({ isAuthenticated, isStaff, userName, userAvatar
     : [
         { id: "home", label: "Home", icon: House, href: "/" },
         { id: "blog", label: "Blog", icon: Compass, href: "/blog" },
-        { id: "search", label: "Search", icon: Search, href: "/blog/search" },
+        { id: "learn", label: "Learn", icon: BookOpen, href: "/learn" },
         { id: "more", label: "More", icon: Ellipsis, href: "", action: "moreSheet" as const },
       ];
 
@@ -90,6 +90,7 @@ export function MobileBottomNav({ isAuthenticated, isStaff, userName, userAvatar
         { label: "Settings", icon: Settings, href: "/settings" },
       ]
     : [
+        { label: "Search", icon: Search, href: "/blog/search" },
         { label: "Categories", icon: Tags, href: "/blog/categories" },
         { label: "Authors", icon: Users, href: "/blog/authors" },
       ];
@@ -217,9 +218,11 @@ export function MobileBottomNav({ isAuthenticated, isStaff, userName, userAvatar
                           setSigningOut(true);
                           try {
                             const supabase = createClient();
-                            await supabase.auth.signOut();
+                            await supabase.auth.signOut({ scope: "local" });
                           } catch {}
+                          setMoreOpen(false);
                           router.push("/blog");
+                          router.refresh();
                         }}
                         className="flex w-full items-center gap-3 px-4 py-3 rounded-lg hover:bg-destructive/10 transition-colors text-sm font-medium text-destructive disabled:opacity-50"
                       >

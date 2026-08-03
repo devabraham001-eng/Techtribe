@@ -3,7 +3,7 @@ import { createServerSupabaseClient, createAdminSupabaseClient } from "@/lib/sup
 
 export const dynamic = "force-dynamic";
 
-export async function POST() {
+export async function POST(request: Request) {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -22,21 +22,31 @@ export async function POST() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const body = await request.json().catch(() => ({}));
+  const before = typeof body?.before === "string" && body.before ? body.before : null;
+
+  let cutoff: Date | null = null;
+  if (before) {
+    cutoff = new Date(before);
+    if (isNaN(cutoff.getTime())) {
+      return NextResponse.json({ error: "Invalid date" }, { status: 400 });
+    }
+  }
+
   const admin = createAdminSupabaseClient();
   if (!admin) {
     return NextResponse.json(
-      { error: "Pruning requires SUPABASE_SERVICE_ROLE_KEY to be configured" },
+      { error: "Analytics deletion requires SUPABASE_SERVICE_ROLE_KEY to be configured" },
       { status: 503 }
     );
   }
 
-  const sixMonthsAgo = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
+  let query = admin.from("page_views").delete({ count: "exact" });
+  if (cutoff) {
+    query = query.lt("created_at", cutoff.toISOString());
+  }
 
-  const { error, count } = await admin
-    .from("page_views")
-    .delete({ count: "exact" })
-    .lt("created_at", sixMonthsAgo);
-
+  const { error, count } = await query;
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

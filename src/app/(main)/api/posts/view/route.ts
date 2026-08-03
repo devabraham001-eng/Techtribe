@@ -39,7 +39,26 @@ export async function POST(request: Request) {
     isAuthor = !!authorData;
   }
 
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  let alreadyViewedToday = false;
   if (foundPost && !isAuthor) {
+    let query = supabase
+      .from("post_views")
+      .select("id", { count: "exact", head: true })
+      .eq("post_id", foundPost.id)
+      .gte("viewed_at", todayStart.toISOString());
+    if (ip) {
+      query = query.eq("viewer_ip", ip);
+    } else if (user?.id) {
+      query = query.eq("viewer_id", user.id);
+    }
+    const { count } = await query;
+    alreadyViewedToday = (count ?? 0) > 0;
+  }
+
+  if (foundPost && !isAuthor && !alreadyViewedToday) {
     try {
       await supabase.from("post_views").insert({
         post_id: foundPost.id,
@@ -52,9 +71,8 @@ export async function POST(request: Request) {
   }
 
   let viewCount: number | null;
-  if (isAuthor) {
-    const count = await getBlogViewCount(slug);
-    viewCount = count;
+  if (isAuthor || alreadyViewedToday) {
+    viewCount = await getBlogViewCount(slug);
   } else {
     viewCount = await incrementBlogViewCount(slug);
   }

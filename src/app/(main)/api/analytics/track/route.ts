@@ -4,10 +4,12 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const { path } = await request.json();
+  const body = await request.json().catch(() => ({}));
+  const { path, visitorId } = body as { path?: unknown; visitorId?: unknown };
   if (typeof path !== "string" || !path.trim()) {
     return NextResponse.json({ error: "Missing path" }, { status: 400 });
   }
+  const visitorIdStr = typeof visitorId === "string" && visitorId ? visitorId : null;
 
   try {
     const supabase = await createServerSupabaseClient();
@@ -29,14 +31,36 @@ export async function POST(request: Request) {
       hashedIp = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
     }
 
-    await supabase.from("page_views").insert({
-      path: path.trim(),
-      user_id: user?.id ?? null,
-      is_authenticated: !!user,
-      hashed_ip: hashedIp,
-      referrer,
-      user_agent: userAgent,
-    } as never);
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    let alreadyTrackedToday = false;
+    if (visitorIdStr || hashedIp) {
+      let query = supabase
+        .from("page_views")
+        .select("id", { count: "exact", head: true })
+        .eq("path", path.trim())
+        .gte("created_at", todayStart.toISOString());
+      if (visitorIdStr) {
+        query = query.eq("visitor_id", visitorIdStr);
+      } else if (hashedIp) {
+        query = query.eq("hashed_ip", hashedIp);
+      }
+      const { count } = await query;
+      alreadyTrackedToday = (count ?? 0) > 0;
+    }
+
+    if (!alreadyTrackedToday) {
+      await supabase.from("page_views").insert({
+        path: path.trim(),
+        user_id: user?.id ?? null,
+        is_authenticated: !!user,
+        hashed_ip: hashedIp,
+        visitor_id: visitorIdStr,
+        referrer,
+        user_agent: userAgent,
+      } as never);
+    }
 
     return NextResponse.json({ ok: true });
   } catch {

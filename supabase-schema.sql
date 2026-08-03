@@ -610,13 +610,18 @@ create table if not exists page_views (
   user_id uuid references auth.users(id) on delete set null,
   is_authenticated boolean not null default false,
   hashed_ip text,
+  visitor_id text,
   referrer text,
   user_agent text,
   created_at timestamptz not null default now()
 );
 
+-- For databases created before visitor_id existed
+alter table page_views add column if not exists visitor_id text;
+
 create index if not exists idx_page_views_created_at on page_views(created_at desc);
 create index if not exists idx_page_views_path on page_views(path);
+create index if not exists idx_page_views_visitor on page_views(visitor_id);
 
 
 alter table page_views enable row level security;

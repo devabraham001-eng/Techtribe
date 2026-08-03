@@ -254,6 +254,7 @@ tags: {
           user_id: string | null;
           is_authenticated: boolean;
           hashed_ip: string | null;
+          visitor_id: string | null;
           referrer: string | null;
           user_agent: string | null;
           created_at: string;

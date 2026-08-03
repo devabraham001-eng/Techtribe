@@ -450,7 +450,7 @@ export default function Home() {
                     ))}
                   </div>
                   <motion.div whileHover={{ x: 3 }} transition={{ duration: 0.2 }}>
-                    <Link href="/blog" className="inline-flex items-center gap-1 text-sm font-medium" style={{ color: "#D0F201" }}>
+                    <Link href="/learn" className="inline-flex items-center gap-1 text-sm font-medium" style={{ color: "#D0F201" }}>
                       View curriculum
                       <ChevronRight className="h-3.5 w-3.5" />
                     </Link>
