@@ -222,21 +222,21 @@ export function LearnDashboard({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/20 via-primary/10 to-background p-6 sm:p-8 border border-primary/20"
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/20 via-primary/10 to-background p-5 sm:p-8 border border-primary/20"
         >
           <div className="relative z-10 max-w-lg">
             <Badge className="mb-3 bg-primary/20 text-primary border-primary/30 text-[10px] uppercase tracking-wider">
               Online Course
             </Badge>
-            <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground leading-tight">
+            <h1 className="font-heading text-xl sm:text-3xl font-bold text-foreground leading-tight">
               Sharpen Your Skills with Professional Online Courses
             </h1>
-            <Button className="mt-4 gap-2" size="sm">
+            <Button className="mt-3 sm:mt-4 gap-2" size="sm">
               <Play className="h-4 w-4" />
               Join Now
             </Button>
           </div>
-          <div className="absolute right-0 top-0 h-full w-1/3 opacity-10 pointer-events-none">
+          <div className="absolute right-0 top-0 h-full w-1/3 opacity-10 pointer-events-none hidden sm:block">
             <svg viewBox="0 0 200 200" className="h-full w-full">
               <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary" />
               <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor" strokeWidth="1" className="text-primary" />
@@ -256,7 +256,7 @@ export function LearnDashboard({
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-40px" }}
-                className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+                className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3"
               >
                 {topTracks.map((track) => {
                   const pct = track.totalLessons > 0 ? Math.round((track.completedLessons / track.totalLessons) * 100) : 0;
@@ -315,7 +315,7 @@ export function LearnDashboard({
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, margin: "-40px" }}
-                  className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
                 >
                   {continueWatching.map((item) => (
                     <motion.div key={item.id} variants={scaleIn}>
@@ -397,8 +397,8 @@ export function LearnDashboard({
                     </div>
                   ) : (
                     <div className="divide-y divide-border">
-                      {/* Header */}
-                      <div className="grid grid-cols-[1fr_auto_1fr_auto] gap-4 px-6 py-2 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                      {/* Header - Desktop */}
+                      <div className="hidden sm:grid grid-cols-[1fr_auto_1fr_auto] gap-4 px-6 py-2 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
                         <span>Mentor</span>
                         <span>Type</span>
                         <span>Desc</span>
@@ -408,7 +408,7 @@ export function LearnDashboard({
                         <Link
                           key={row.id}
                           href={`/learn/${row.lesson.track.slug}/${row.lesson.id}`}
-                          className="grid grid-cols-[1fr_auto_1fr_auto] gap-4 items-center px-6 py-3 transition-colors hover:bg-card-hover"
+                          className="block sm:grid sm:grid-cols-[1fr_auto_1fr_auto] sm:gap-4 sm:items-center px-4 sm:px-6 py-3 transition-colors hover:bg-card-hover"
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-secondary">
@@ -426,22 +426,23 @@ export function LearnDashboard({
                                 </div>
                               )}
                             </div>
-                            <div className="min-w-0">
+                            <div className="min-w-0 flex-1">
                               <p className="text-sm font-medium text-foreground truncate">{row.lesson.track.title}</p>
+                              <p className="text-[10px] text-muted-foreground sm:hidden">{row.lesson.title}</p>
                               <p className="text-[10px] text-muted-foreground">
                                 {new Date(row.completedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                               </p>
                             </div>
                           </div>
-                          <div>
+                          <div className="hidden sm:block">
                             {row.lesson.track.category && (
                               <Badge variant="secondary" className="text-[9px] uppercase tracking-wider">
                                 {row.lesson.track.category}
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground truncate">{row.lesson.title}</p>
-                          <div className="flex items-center justify-center h-7 w-7 rounded-full border border-border">
+                          <p className="hidden sm:block text-sm text-muted-foreground truncate">{row.lesson.title}</p>
+                          <div className="hidden sm:flex items-center justify-center h-7 w-7 rounded-full border border-border">
                             <ArrowRight className="h-3 w-3 text-muted-foreground" />
                           </div>
                         </Link>
@@ -463,7 +464,7 @@ export function LearnDashboard({
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
               <Card className="bg-card border-border">
-                <CardContent className="flex flex-col items-center p-6 text-center">
+                <CardContent className="flex flex-col items-center p-4 sm:p-6 text-center">
                   <h3 className="text-sm font-semibold text-muted-foreground mb-4">Statistic</h3>
                   <div className="relative mb-4">
                     <ProgressRing percentage={completionPct} size={96} strokeWidth={7} />
@@ -513,7 +514,7 @@ export function LearnDashboard({
                         {mentors.slice(0, 3).map((mentor) => (
                           <div
                             key={mentor.id}
-                            className="flex items-center gap-3 px-6 py-3"
+                            className="flex items-center gap-3 px-4 sm:px-6 py-3"
                           >
                             <Avatar className="h-9 w-9">
                               <AvatarImage src={mentor.avatarUrl ?? ""} alt={mentor.name} />
@@ -547,7 +548,7 @@ export function LearnDashboard({
                         ))}
                       </div>
                       {mentors.length > 3 && (
-                        <div className="px-6 py-3 border-t border-border">
+                        <div className="px-4 sm:px-6 py-3 border-t border-border">
                           <Button variant="outline" size="sm" className="w-full text-xs">
                             See All
                           </Button>

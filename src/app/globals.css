@@ -93,7 +93,8 @@ body {
   line-height: 1.6;
   color: var(--fg);
   background: var(--bg);
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
 }
 
 * { border-color: var(--card-border); }
