@@ -37,7 +37,7 @@ export default async function MainLayout({
   if (isAuthenticated) {
     return (
       <WriteModalProvider>
-        <main className="flex h-screen" role="main" id="main-content">
+        <main className="flex h-full" role="main" id="main-content">
           <aside className="flex-shrink-0 hidden lg:block border-r border-border overflow-hidden">
             <DashboardSidebar
               authorName={userName ?? "User"}
@@ -66,7 +66,7 @@ export default async function MainLayout({
         Skip to content
       </a>
       <BlogHeader />
-      <main id="main-content" className="flex-1 pt-28 md:pt-36" role="main">
+      <main id="main-content" className="flex-1 overflow-y-auto pt-28 md:pt-36" role="main">
         <PageTransition>
           {children}
         </PageTransition>
