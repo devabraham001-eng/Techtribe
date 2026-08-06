@@ -109,7 +109,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${bricolageGrotesque.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="h-full overflow-hidden flex flex-col bg-background text-foreground font-sans">
+      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         <Suspense fallback={null}>
           <AnalyticsTracker />
         </Suspense>
