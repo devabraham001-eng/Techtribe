@@ -38,7 +38,7 @@ export default async function MainLayout({
     return (
       <WriteModalProvider>
         <main className="flex h-screen" role="main" id="main-content">
-          <aside className="flex-shrink-0 hidden lg:block border-r border-border overflow-y-auto">
+          <aside className="flex-shrink-0 hidden lg:block border-r border-border overflow-hidden">
             <DashboardSidebar
               authorName={userName ?? "User"}
               authorAvatar={userAvatarUrl ?? null}

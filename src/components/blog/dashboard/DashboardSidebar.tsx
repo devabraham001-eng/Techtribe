@@ -85,7 +85,7 @@ export function DashboardSidebar({ authorName, authorAvatar, isStaff }: SidebarP
         </div>
 
         {/* Nav items */}
-        <div className="flex-1 space-y-1 px-2 py-4 overflow-y-auto">
+        <div className="flex-1 min-h-0 space-y-1 px-2 py-4 overflow-y-auto">
           <Link href="/" className={linkClass("/")} title="Home">
             <Globe className={iconClass} />
             {!collapsed && <span>Home</span>}
