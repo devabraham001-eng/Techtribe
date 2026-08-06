@@ -9,7 +9,7 @@ export async function GET(
   const { slug } = await params;
 
   if (!isSupabaseConfigured()) {
-    return NextResponse.json({ likes: 0, userReaction: null });
+    return NextResponse.json({ likes: 0, commentCount: 0, shareCount: 0, userReaction: null });
   }
 
   const supabase = await createServerSupabaseClient();
@@ -33,6 +33,12 @@ export async function GET(
   const reactions = (rawReactions ?? []) as { reaction: string }[];
 
   const likes = reactions.filter((r) => r.reaction === "like").length;
+  const shareCount = reactions.filter((r) => r.reaction === "share").length;
+
+  const { count: commentCount } = await supabase
+    .from("post_comments")
+    .select("id", { count: "exact", head: true })
+    .eq("post_id", postId);
 
   const { data: { user } } = await supabase.auth.getUser();
   let userReaction: string | null = null;
@@ -46,7 +52,7 @@ export async function GET(
     userReaction = (myReaction as { reaction: string } | null)?.reaction ?? null;
   }
 
-  return NextResponse.json({ likes, userReaction });
+  return NextResponse.json({ likes, commentCount: commentCount ?? 0, shareCount, userReaction });
 }
 
 export async function POST(
@@ -79,7 +85,7 @@ export async function POST(
 
   const body = await request.json() as { reaction?: string };
   const reaction = body.reaction;
-  if (reaction !== "like") {
+  if (reaction !== "like" && reaction !== "share") {
     return NextResponse.json({ error: "Invalid reaction" }, { status: 400 });
   }
 
@@ -92,6 +98,9 @@ export async function POST(
     .maybeSingle();
 
   if (existing) {
+    if (reaction === "share") {
+      return NextResponse.json({ toggled: false, reaction });
+    }
     const existingId = (existing as { id: string }).id;
     await supabase
       .from("post_reactions")

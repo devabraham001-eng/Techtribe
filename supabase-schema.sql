@@ -395,12 +395,12 @@ alter table if exists posts add column if not exists post_type text not null def
 -- Phase 3: Social & Collaboration Tables
 -- =============================================
 
--- Post reactions (Ship It, Mind Blown, Learned Something)
+-- Post reactions (Ship It, Mind Blown, Learned Something, Like, Share)
 create table if not exists post_reactions (
   id uuid primary key default gen_random_uuid(),
   post_id uuid not null references posts(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
-  reaction text not null check (reaction in ('ship_it', 'mind_blown', 'learned_something', 'like')),
+  reaction text not null check (reaction in ('ship_it', 'mind_blown', 'learned_something', 'like', 'share')),
   created_at timestamptz default now(),
   unique(post_id, user_id, reaction)
 );
@@ -758,5 +758,12 @@ drop policy if exists "Users update own progress" on user_lesson_progress;
 create policy "Users update own progress" on user_lesson_progress
   for update using (user_id = auth.uid())
   with check (user_id = auth.uid());
+
+-- =============================================
+-- Phase 9: Share reactions
+-- Run in the Supabase SQL editor for existing databases:
+--   alter table post_reactions drop constraint if exists post_reactions_reaction_check;
+--   alter table post_reactions add constraint post_reactions_reaction_check check (reaction in ('ship_it', 'mind_blown', 'learned_something', 'like', 'share'));
+-- =============================================
 
 

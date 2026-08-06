@@ -1,6 +1,8 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import type { Post } from "@/types/blog";
+import type { Post, PostEngagementCounts } from "@/types/blog";
 import { PostCard } from "./PostCard";
 
 interface PostGridProps {
@@ -22,6 +24,28 @@ export function PostGrid({
   featuredIndex = 0,
   className,
 }: PostGridProps) {
+  const [countsByPost, setCountsByPost] = React.useState<Record<string, PostEngagementCounts>>({});
+
+  React.useEffect(() => {
+    if (posts.length === 0) return;
+    let cancelled = false;
+    const ids = posts.map((post) => post.id);
+    const timer = setTimeout(() => {
+      fetch(`/api/posts/reactions?ids=${ids.join(",")}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (!cancelled && data) {
+            setCountsByPost(data as Record<string, PostEngagementCounts>);
+          }
+        })
+        .catch(() => {});
+    }, 0);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [posts]);
+
   if (posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -43,6 +67,7 @@ export function PostGrid({
           variant="featured"
           showCategory={showCategory}
           showReadingTime={showReadingTime}
+          counts={countsByPost[featured.id]}
         />
         {rest.length > 0 && (
           <div className={cn(
@@ -56,6 +81,7 @@ export function PostGrid({
                 variant="vertical"
           showCategory={showCategory}
           showReadingTime={showReadingTime}
+                counts={countsByPost[post.id]}
               />
             ))}
           </div>
@@ -78,6 +104,7 @@ export function PostGrid({
           variant={variant}
           showCategory={showCategory}
           showReadingTime={showReadingTime}
+          counts={countsByPost[post.id]}
         />
       ))}
     </div>

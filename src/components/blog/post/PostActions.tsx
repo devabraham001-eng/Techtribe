@@ -63,6 +63,14 @@ export function PostActions({ slug }: PostActionsProps) {
     }, 400);
   }
 
+  function recordShare() {
+    fetch(`/api/posts/${slug}/reactions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reaction: "share" }),
+    }).catch(() => {});
+  }
+
   async function handleShare() {
     const url = typeof window !== "undefined" ? window.location.href : "";
     const title = typeof document !== "undefined" ? document.title : "";
@@ -70,6 +78,7 @@ export function PostActions({ slug }: PostActionsProps) {
     if (navigator.share) {
       try {
         await navigator.share({ title, url });
+        recordShare();
         return;
       } catch (err) {
         if ((err as Error).name === "AbortError") return;
@@ -78,6 +87,7 @@ export function PostActions({ slug }: PostActionsProps) {
 
     try {
       await navigator.clipboard.writeText(url);
+      recordShare();
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {

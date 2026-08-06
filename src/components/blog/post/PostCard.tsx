@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Clock, Eye, Briefcase, Code } from "lucide-react";
+import { Clock, Eye, ThumbsUp, MessageCircle, Share2, Briefcase, Code } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn, formatDate, getInitials } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -15,14 +15,18 @@ const cardVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
+const EMPTY_COUNTS = { likes: 0, commentCount: 0, shareCount: 0 };
+
 export function PostCard({
   post,
   variant = "vertical",
   showCategory = true,
   showReadingTime = true,
+  counts,
   className,
 }: PostCardProps) {
   const prefersReduced = useReducedMotion();
+  const { likes, commentCount, shareCount } = counts ?? EMPTY_COUNTS;
   const motionProps = {
     variants: cardVariants,
     initial: "hidden" as const,
@@ -143,6 +147,9 @@ export function PostCard({
                     <span>·</span>
                     <div className="flex items-center gap-1"><Eye className="h-3 w-3" /><span>{post.viewCount}</span></div>
                     {showReadingTime && (<><span>·</span><div className="flex items-center gap-1"><Clock className="h-3 w-3" /><span>{post.readingTime} min</span></div></>)}
+                    <span>·</span><div className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" /><span className="tabular-nums">{likes}</span></div>
+                    <span>·</span><div className="flex items-center gap-1"><MessageCircle className="h-3 w-3" /><span className="tabular-nums">{commentCount}</span></div>
+                    <span>·</span><div className="flex items-center gap-1"><Share2 className="h-3 w-3" /><span className="tabular-nums">{shareCount}</span></div>
                   </div>
                   <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">Read more →</span>
                 </div>
@@ -208,6 +215,21 @@ export function PostCard({
                       </div>
                     </>
                   )}
+                  <span>·</span>
+                  <div className="flex items-center gap-1">
+                    <ThumbsUp className="h-3 w-3" />
+                    <span className="tabular-nums">{likes}</span>
+                  </div>
+                  <span>·</span>
+                  <div className="flex items-center gap-1">
+                    <MessageCircle className="h-3 w-3" />
+                    <span className="tabular-nums">{commentCount}</span>
+                  </div>
+                  <span>·</span>
+                  <div className="flex items-center gap-1">
+                    <Share2 className="h-3 w-3" />
+                    <span className="tabular-nums">{shareCount}</span>
+                  </div>
                 </div>
                 <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">
                   Read more →
@@ -283,7 +305,12 @@ if (prefersReduced) {
               </div>
             )}
             <div className="flex items-center justify-between mt-auto pt-3 border-t border-border">
-              <div className="flex items-center gap-1.5 text-[11px] text-fg-tertiary"><Eye className="h-3 w-3" /><span>{post.viewCount} views</span></div>
+              <div className="flex items-center gap-2.5 text-[11px] text-fg-tertiary">
+                <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /><span className="tabular-nums">{post.viewCount}</span></span>
+                <span className="inline-flex items-center gap-1"><ThumbsUp className="h-3 w-3" /><span className="tabular-nums">{likes}</span></span>
+                <span className="inline-flex items-center gap-1"><MessageCircle className="h-3 w-3" /><span className="tabular-nums">{commentCount}</span></span>
+                <span className="inline-flex items-center gap-1"><Share2 className="h-3 w-3" /><span className="tabular-nums">{shareCount}</span></span>
+              </div>
               <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">Read →</span>
             </div>
           </div>
@@ -362,9 +389,11 @@ if (prefersReduced) {
             </div>
           )}
           <div className="flex items-center justify-between mt-auto pt-3 border-t border-border">
-            <div className="flex items-center gap-1.5 text-[11px] text-fg-tertiary">
-              <Eye className="h-3 w-3" />
-              <span>{post.viewCount} views</span>
+            <div className="flex items-center gap-2.5 text-[11px] text-fg-tertiary">
+              <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /><span className="tabular-nums">{post.viewCount}</span></span>
+              <span className="inline-flex items-center gap-1"><ThumbsUp className="h-3 w-3" /><span className="tabular-nums">{likes}</span></span>
+              <span className="inline-flex items-center gap-1"><MessageCircle className="h-3 w-3" /><span className="tabular-nums">{commentCount}</span></span>
+              <span className="inline-flex items-center gap-1"><Share2 className="h-3 w-3" /><span className="tabular-nums">{shareCount}</span></span>
             </div>
             <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
               Read →

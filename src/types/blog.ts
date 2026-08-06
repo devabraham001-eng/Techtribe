@@ -114,12 +114,19 @@ export interface AdSlot {
   isActive: boolean;
 }
 
+export interface PostEngagementCounts {
+  likes: number;
+  commentCount: number;
+  shareCount: number;
+}
+
 export interface PostCardProps {
   post: Post;
   variant?: "horizontal" | "vertical" | "featured";
   showCategory?: boolean;
   showAuthor?: boolean;
   showReadingTime?: boolean;
+  counts?: PostEngagementCounts;
   className?: string;
 }
 
