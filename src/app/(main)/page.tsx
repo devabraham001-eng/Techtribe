@@ -147,7 +147,7 @@ export default function Home() {
                   color: "#f5f5f7",
                 }}
               >
-                Learn web development for free with your tribe.
+                The Social Platform to Learn, Build, and Collaborate in Tech.
               </motion.h1>
 
               <motion.p
@@ -161,8 +161,7 @@ export default function Home() {
                   fontWeight: 400,
                 }}
               >
-                No paywalls. No corporate jargon. Just real projects, real feedback, and a community of
-                developers building in public. Zero to hired — completely free.
+                TechTribe is the social platform for tech talent. Master any skill, publish technical articles, build real projects, and collaborate with a thriving community.
               </motion.p>
 
               <motion.div
