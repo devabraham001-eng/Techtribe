@@ -12,6 +12,7 @@ const navLinks = [
   { name: "Learn", href: "/learn" },
   { name: "Categories", href: "/blog/categories" },
   { name: "Authors", href: "/blog/authors" },
+  { name: "About", href: "/about" },
 ];
 
 export function BlogHeader() {
@@ -44,6 +45,7 @@ export function BlogHeader() {
           <Link href="/learn" className="hover:opacity-70">Learn</Link>
           <Link href="/blog/categories" className="hover:opacity-70">Categories</Link>
           <Link href="/blog/authors" className="hover:opacity-70">Authors</Link>
+          <Link href="/about" className="hover:opacity-70">About</Link>
           {authed && (
             <Link href="/blog/write" className="hover:opacity-70 flex items-center gap-1">
               <PenLine className="h-3.5 w-3.5" />
