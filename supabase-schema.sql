@@ -400,7 +400,7 @@ create table if not exists post_reactions (
   id uuid primary key default gen_random_uuid(),
   post_id uuid not null references posts(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
-  reaction text not null check (reaction in ('ship_it', 'mind_blown', 'learned_something')),
+  reaction text not null check (reaction in ('ship_it', 'mind_blown', 'learned_something', 'like')),
   created_at timestamptz default now(),
   unique(post_id, user_id, reaction)
 );

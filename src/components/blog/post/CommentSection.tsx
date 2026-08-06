@@ -131,7 +131,7 @@ export function CommentSection({ slug }: CommentSectionProps) {
   }
 
   return (
-    <div className="mt-8 pt-6 border-t border-border">
+    <div id="comments" className="mt-8 pt-6 border-t border-border scroll-mt-24">
       <h3 className="text-sm font-medium text-foreground mb-4 flex items-center gap-1.5">
         <MessageCircle className="h-4 w-4" />
         Comments ({comments.length})
@@ -139,6 +139,7 @@ export function CommentSection({ slug }: CommentSectionProps) {
 
       <div className="flex gap-2 mb-6">
         <input
+          id="comment-input"
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Write a comment..."

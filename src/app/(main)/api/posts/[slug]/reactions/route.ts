@@ -9,7 +9,7 @@ export async function GET(
   const { slug } = await params;
 
   if (!isSupabaseConfigured()) {
-    return NextResponse.json({ ship_it: 0, mind_blown: 0, learned_something: 0 });
+    return NextResponse.json({ likes: 0, userReaction: null });
   }
 
   const supabase = await createServerSupabaseClient();
@@ -32,12 +32,7 @@ export async function GET(
 
   const reactions = (rawReactions ?? []) as { reaction: string }[];
 
-  const counts = { ship_it: 0, mind_blown: 0, learned_something: 0 };
-  if (reactions) {
-    for (const r of reactions) {
-      if (r.reaction in counts) counts[r.reaction as keyof typeof counts]++;
-    }
-  }
+  const likes = reactions.filter((r) => r.reaction === "like").length;
 
   const { data: { user } } = await supabase.auth.getUser();
   let userReaction: string | null = null;
@@ -51,7 +46,7 @@ export async function GET(
     userReaction = (myReaction as { reaction: string } | null)?.reaction ?? null;
   }
 
-  return NextResponse.json({ ...counts, userReaction });
+  return NextResponse.json({ likes, userReaction });
 }
 
 export async function POST(
@@ -84,7 +79,7 @@ export async function POST(
 
   const body = await request.json() as { reaction?: string };
   const reaction = body.reaction;
-  if (!reaction || !["ship_it", "mind_blown", "learned_something"].includes(reaction)) {
+  if (reaction !== "like") {
     return NextResponse.json({ error: "Invalid reaction" }, { status: 400 });
   }
 

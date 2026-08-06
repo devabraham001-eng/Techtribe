@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LiveIndicator, LiveViewCount } from "@/components/blog/live/LiveIndicator";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { MdxRenderer } from "@/components/markdown/MdxRenderer";
-import { ReactionBar } from "@/components/blog/post/ReactionBar";
+import { PostActions } from "@/components/blog/post/PostActions";
 import { AnnotationLayer } from "@/components/blog/post/AnnotationLayer";
 import { CommentSection } from "@/components/blog/post/CommentSection";
 import { Reveal } from "@/components/motion/Reveal";
@@ -220,7 +220,7 @@ export function ArticleView({ post, relatedPosts, prevPost, nextPost }: ArticleV
       </Reveal>
 
       <Reveal direction="up" duration={0.4} delay={0.48}>
-      <ReactionBar slug={post.slug} />
+      <PostActions slug={post.slug} />
       <AnnotationLayer slug={post.slug} contentRef={contentRef} />
       </Reveal>
 
