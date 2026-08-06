@@ -12,12 +12,12 @@ function getGradient(status: Author["status"]): string {
   switch (status) {
     case "open_to_work":
     case "hiring":
-      return "bg-gradient-to-br from-amber-400 via-orange-400 to-rose-400";
+      return "bg-gradient-to-br from-lime-400 via-emerald-400 to-amber-400";
     case "mentoring":
     case "open_for_mentorship":
-      return "bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-400";
+      return "bg-gradient-to-br from-lime-400 via-teal-400 to-cyan-400";
     default:
-      return "bg-gradient-to-br from-rose-300 via-amber-200 to-sky-300";
+      return "bg-gradient-to-br from-lime-300 via-emerald-300 to-teal-300";
   }
 }
 
