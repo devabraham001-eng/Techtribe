@@ -4,8 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Menu, PenLine } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { ArrowRight, Menu } from "lucide-react";
 
 const navLinks = [
   { name: "Blog", href: "/blog" },
@@ -15,22 +14,8 @@ const navLinks = [
   { name: "About", href: "/about" },
 ];
 
-export function BlogHeader() {
+export function BlogHeader({ isAuthenticated = false }: { isAuthenticated?: boolean }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const [authed, setAuthed] = React.useState(false);
-  const [isStaff, setIsStaff] = React.useState(false);
-
-  React.useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        setAuthed(true);
-        supabase.from("authors").select("is_staff").eq("user_id", data.session.user.id).single().then(({ data: author }) => {
-          if (author) setIsStaff((author as { is_staff: boolean }).is_staff);
-        });
-      }
-    });
-  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 pt-4 pb-4" style={{ background: "#0a0a0a" }}>
@@ -46,19 +31,10 @@ export function BlogHeader() {
           <Link href="/blog/categories" className="hover:opacity-70">Categories</Link>
           <Link href="/blog/authors" className="hover:opacity-70">Authors</Link>
           <Link href="/about" className="hover:opacity-70">About</Link>
-          {authed && (
-            <Link href="/blog/write" className="hover:opacity-70 flex items-center gap-1">
-              <PenLine className="h-3.5 w-3.5" />
-              Write
-            </Link>
-          )}
-          {authed && <Link href="/dashboard" className="hover:opacity-70">Dashboard</Link>}
-          {isStaff && <Link href="/admin" className="hover:opacity-70">Admin</Link>}
-          {authed && <Link href="/settings" className="hover:opacity-70">Settings</Link>}
         </nav>
 
         <div className="hidden lg:flex items-center gap-4">
-          {authed ? (
+          {isAuthenticated ? (
             <Link
               href="/learn"
               className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all"
@@ -106,54 +82,13 @@ export function BlogHeader() {
                 {link.name}
               </Link>
             ))}
-            {authed && (
-              <Link
-                href="/blog/write"
-                className="block py-2 text-sm font-medium flex items-center gap-2"
-                style={{ color: "#f5f5f7" }}
-                onClick={() => setMenuOpen(false)}
-              >
-                <PenLine className="h-3.5 w-3.5" />
-                Write
-              </Link>
-            )}
-            {authed && (
-              <Link
-                href="/dashboard"
-                className="block py-2 text-sm font-medium"
-                style={{ color: "#f5f5f7" }}
-                onClick={() => setMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-            )}
-            {isStaff && (
-              <Link
-                href="/admin"
-                className="block py-2 text-sm font-medium"
-                style={{ color: "#f5f5f7" }}
-                onClick={() => setMenuOpen(false)}
-              >
-                Admin
-              </Link>
-            )}
-            {authed && (
-              <Link
-                href="/settings"
-                className="block py-2 text-sm font-medium"
-                style={{ color: "#f5f5f7" }}
-                onClick={() => setMenuOpen(false)}
-              >
-                Settings
-              </Link>
-            )}
             <Link
-              href={authed ? "/learn" : "/login"}
+              href={isAuthenticated ? "/learn" : "/login"}
               className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all mt-3"
               style={{ background: "#D0F201", color: "#10180B", padding: "10px 20px", fontSize: 14 }}
               onClick={() => setMenuOpen(false)}
             >
-              {authed ? "Continue Learning" : "Join"}
+              {isAuthenticated ? "Continue Learning" : "Join"}
               <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Link>
           </div>

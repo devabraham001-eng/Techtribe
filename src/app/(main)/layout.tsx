@@ -65,7 +65,7 @@ export default async function MainLayout({
       >
         Skip to content
       </a>
-      <BlogHeader />
+      <BlogHeader isAuthenticated={isAuthenticated} />
       <main id="main-content" className="flex-1 pt-28 md:pt-36" role="main">
         <PageTransition>
           {children}
