@@ -16,6 +16,7 @@ export default async function MainLayout({
   let isStaff = false;
   let userName: string | undefined;
   let userAvatarUrl: string | undefined;
+
   try {
     const supabase = await createServerSupabaseClient();
     const userResult = await supabase.auth.getUser();
@@ -26,7 +27,7 @@ export default async function MainLayout({
         .from("authors")
         .select("is_staff, name, avatar_url")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
       const authorData = (authorResult as { data: { is_staff: boolean; name: string; avatar_url: string | null } | null }).data;
       isStaff = authorData?.is_staff ?? false;
       userName = authorData?.name ?? user.email ?? undefined;
@@ -65,7 +66,7 @@ export default async function MainLayout({
       >
         Skip to content
       </a>
-      <BlogHeader isAuthenticated={isAuthenticated} />
+      <BlogHeader isAuthenticated={false} />
       <main id="main-content" className="flex-1 pt-28 md:pt-36" role="main">
         <PageTransition>
           {children}
