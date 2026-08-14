@@ -1,7 +1,17 @@
+import type { Metadata } from "next";
 import * as React from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getBlogPosts, getBlogTags } from "@/lib/blog-data";
+
+export const metadata: Metadata = {
+  title: "Tags",
+  description: "Browse TechTribe articles by topic. Find tutorials, guides, and insights on web development, career, AI, and more.",
+  openGraph: {
+    title: "Tags — TechTribe Blog",
+    description: "Browse TechTribe articles by topic.",
+  },
+};
 
 export default async function TagsPage() {
   const [tags, posts] = await Promise.all([

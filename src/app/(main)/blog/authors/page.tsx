@@ -1,6 +1,16 @@
+import type { Metadata } from "next";
 import * as React from "react";
 import { AuthorCard } from "@/components/blog/authors/AuthorCard";
 import { getBlogAuthors, getBlogPosts } from "@/lib/blog-data";
+
+export const metadata: Metadata = {
+  title: "Authors",
+  description: "Meet the writers and contributors behind TechTribe's tutorials, career guides, and tech insights.",
+  openGraph: {
+    title: "Authors — TechTribe Blog",
+    description: "Meet the writers and contributors behind TechTribe's tutorials, career guides, and tech insights.",
+  },
+};
 
 export default async function AuthorsPage() {
   const [authors, posts] = await Promise.all([

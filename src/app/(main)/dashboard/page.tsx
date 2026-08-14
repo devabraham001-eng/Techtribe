@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import nextDynamic from "next/dynamic";
 import { Database as DatabaseIcon } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { Skeleton } from "@/components/ui/skeleton";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Manage your TechTribe profile, articles, and learning progress.",
+};
 
 const AuthorDashboardClient = nextDynamic(() => import("@/components/blog/dashboard/AuthorDashboardClient").then((mod) => mod.AuthorDashboardClient), {
   loading: () => (
@@ -88,16 +94,6 @@ export default async function DashboardPage() {
       />
     );
   } catch {
-    return (
-      <div className="mx-auto max-w-2xl px-6 pb-20 pt-10">
-        <div className="rounded-lg border border-border bg-card p-8 text-center">
-          <DatabaseIcon className="mx-auto h-10 w-10 text-muted-foreground" />
-          <h1 className="mt-4 font-heading text-2xl font-bold">Connection error</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Could not connect to the database. Please try again later.
-          </p>
-        </div>
-      </div>
-    );
+    redirect("/login?next=/dashboard");
   }
 }

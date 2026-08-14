@@ -1,8 +1,18 @@
+import type { Metadata } from "next";
 import * as React from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getBlogCategories, getBlogPosts } from "@/lib/blog-data";
+
+export const metadata: Metadata = {
+  title: "Categories",
+  description: "Explore TechTribe articles organized by category — web development, career, DevOps, AI, and productivity.",
+  openGraph: {
+    title: "Categories — TechTribe Blog",
+    description: "Explore TechTribe articles organized by category.",
+  },
+};
 
 export default async function CategoriesPage() {
   const [categories, posts] = await Promise.all([

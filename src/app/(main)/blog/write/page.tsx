@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft, Database as DatabaseIcon } from "lucide-react";
@@ -7,6 +8,11 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Write Article",
+  description: "Create and publish a new article on TechTribe.",
+};
 
 export default async function WritePage({
   searchParams,

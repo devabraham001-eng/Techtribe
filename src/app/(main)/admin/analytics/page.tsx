@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import nextDynamic from "next/dynamic";
 import { Database as DatabaseIcon } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { Skeleton } from "@/components/ui/skeleton";
+
+export const metadata: Metadata = {
+  title: "Analytics",
+  description: "View TechTribe platform analytics and insights.",
+};
 
 const AnalyticsClient = nextDynamic(() => import("@/components/analytics-client"), {
   loading: () => (

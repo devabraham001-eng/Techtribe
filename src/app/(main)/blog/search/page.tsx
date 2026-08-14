@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import * as React from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { PostGrid } from "@/components/blog/post/PostGrid";
 import { searchBlogPosts } from "@/lib/blog-data";
+
+export const metadata: Metadata = {
+  title: "Search",
+  description: "Search TechTribe articles, tutorials, and guides.",
+};
 
 export default async function SearchPage({
   searchParams,

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import nextDynamic from "next/dynamic";
@@ -5,6 +6,11 @@ import { ArrowLeft, Database as DatabaseIcon } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { Skeleton } from "@/components/ui/skeleton";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  description: "Manage TechTribe content, authors, and platform settings.",
+};
 
 const AdminDashboardClient = nextDynamic(() => import("@/components/blog/admin/AdminDashboardClient").then((mod) => mod.AdminDashboardClient), {
   loading: () => (

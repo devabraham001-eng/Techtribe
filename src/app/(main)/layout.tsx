@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BlogHeader } from "@/components/blog/layout/BlogHeader";
 import { BlogFooter } from "@/components/blog/layout/BlogFooter";
 import { PageTransition } from "@/components/motion/PageTransition";
@@ -8,6 +9,23 @@ import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: {
+    default: "TechTribe — Learn, Build, and Collaborate in Tech",
+    template: "%s | TechTribe",
+  },
+  description: "The social platform for tech talent. Master skills, publish articles, build real projects, and collaborate with a thriving community.",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "TechTribe",
+    images: [{ url: "/ttlg.png", width: 512, height: 512 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+};
 
 export default async function MainLayout({
   children,
@@ -33,7 +51,9 @@ export default async function MainLayout({
       userName = authorData?.name ?? user.email ?? undefined;
       userAvatarUrl = authorData?.avatar_url ?? undefined;
     }
-  } catch {}
+  } catch {
+    isAuthenticated = false;
+  }
 
   if (isAuthenticated) {
     return (

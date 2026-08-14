@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import nextDynamic from "next/dynamic";
@@ -5,6 +6,11 @@ import { ArrowLeft, Database as DatabaseIcon, BookOpen } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { Skeleton } from "@/components/ui/skeleton";
+
+export const metadata: Metadata = {
+  title: "Learning Management",
+  description: "Manage learning tracks, modules, and lessons on TechTribe.",
+};
 
 const LearningAdmin = nextDynamic(() => import("@/components/admin/LearningAdmin"), {
   loading: () => (
