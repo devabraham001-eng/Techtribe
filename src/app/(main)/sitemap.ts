@@ -15,11 +15,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: "https://techtribe.online", changeFrequency: "weekly", priority: 1 },
     { url: "https://techtribe.online/blog", changeFrequency: "daily", priority: 0.9 },
     { url: "https://techtribe.online/learn", changeFrequency: "daily", priority: 0.9 },
+    { url: "https://techtribe.online/about", changeFrequency: "monthly", priority: 0.7 },
     { url: "https://techtribe.online/blog/authors", changeFrequency: "weekly", priority: 0.5 },
     { url: "https://techtribe.online/blog/categories", changeFrequency: "weekly", priority: 0.5 },
     { url: "https://techtribe.online/blog/tags", changeFrequency: "weekly", priority: 0.5 },
-    { url: "https://techtribe.online/blog/search", changeFrequency: "weekly", priority: 0.3 },
-    { url: "https://techtribe.online/login", changeFrequency: "yearly", priority: 0.1 },
   ];
 
   const postRoutes: MetadataRoute.Sitemap = (posts as { slug: string; updatedAt: string }[])
