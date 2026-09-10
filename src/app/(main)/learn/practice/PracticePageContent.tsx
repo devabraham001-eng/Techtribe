@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Settings } from "lucide-react";
 import { PracticeBoard } from "@/components/practice/PracticeBoard";
 import { XPWidget } from "@/components/practice/XPWidget";
 import { Leaderboard } from "@/components/practice/Leaderboard";
@@ -12,6 +12,7 @@ export function PracticePageContent() {
   const [workloads, setWorkloads] = React.useState<Workload[]>([]);
   const [passedIds, setPassedIds] = React.useState<Set<string>>(new Set());
   const [xp, setXp] = React.useState<{ total_xp: number; level: number; streak_days: number } | null>(null);
+  const [isStaff, setIsStaff] = React.useState(false);
   const [leaders, setLeaders] = React.useState<{ userId: string; totalXp: number; level: number; streakDays: number; authorName?: string }[]>([]);
   const [loading, setLoading] = React.useState(true);
 
@@ -21,11 +22,13 @@ export function PracticePageContent() {
       fetch("/api/practice/progress").then((r) => r.json()).catch(() => ({ passedIds: [] })),
       fetch("/api/practice/xp").then((r) => (r.ok ? r.json() : null)).catch(() => null),
       fetch("/api/practice/leaderboard").then((r) => r.json()).catch(() => []),
+      fetch("/api/author/profile").then((r) => (r.ok ? r.json() : null)).catch(() => null),
     ])
-      .then(([workloadsData, progressData, xpData, leaderboardData]) => {
+      .then(([workloadsData, progressData, xpData, leaderboardData, profileData]) => {
         setWorkloads(Array.isArray(workloadsData) ? workloadsData : []);
         setPassedIds(new Set(progressData?.passedIds ?? []));
         if (xpData && typeof xpData.total_xp === "number") setXp(xpData);
+        if (profileData?.is_staff) setIsStaff(true);
         if (Array.isArray(leaderboardData)) {
           setLeaders(
             leaderboardData.map((e: { userId?: string; user_id?: string; totalXp?: number; total_xp?: number; level: number; streakDays?: number; streak_days?: number; authorName?: string }) => ({
@@ -74,16 +77,28 @@ export function PracticePageContent() {
         Back to Learn
       </Link>
 
-      <header className="mb-8">
-        <h1
-          className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-2"
-          style={{ color: "#f5f5f7" }}
-        >
-          Practice
-        </h1>
-        <p className="text-sm sm:text-base max-w-lg" style={{ color: "#98989d" }}>
-          Real-world workloads. Solve them in-browser. Earn XP and build your proof of work.
-        </p>
+      <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1
+            className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-2"
+            style={{ color: "#f5f5f7" }}
+          >
+            Practice
+          </h1>
+          <p className="text-sm sm:text-base max-w-lg" style={{ color: "#98989d" }}>
+            Real-world workloads. Solve them in-browser. Earn XP and build your proof of work.
+          </p>
+        </div>
+        {isStaff && (
+          <Link
+            href="/admin/practice"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all hover:opacity-90"
+            style={{ background: "#1c1c1e", color: "#D0F201", border: "1px solid #38383a" }}
+          >
+            <Settings className="h-3.5 w-3.5" />
+            Manage workloads
+          </Link>
+        )}
       </header>
 
       <PracticeBoard workloads={workloads} passedIds={passedIds} />
