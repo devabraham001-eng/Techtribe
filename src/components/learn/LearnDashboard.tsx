@@ -18,6 +18,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Play,
+  Terminal,
 } from "lucide-react";
 
 const fadeUp = {
@@ -250,6 +251,38 @@ export function LearnDashboard({
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
           {/* — LEFT COLUMN — */}
           <div className="space-y-6">
+            {/* — Practice Workloads banner — */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-40px" }}
+            >
+              <Link href="/learn/practice" className="group block">
+                <Card className="bg-card border-primary/30 hover:border-primary/60 transition-colors overflow-hidden">
+                  <CardContent className="flex items-center gap-4 p-4 sm:p-5">
+                    <div
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                      style={{ background: "rgba(208,242,1,0.12)" }}
+                    >
+                      <Terminal className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-foreground">
+                        Practice real workloads
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        Solve JS, Python, Linux & SQL tasks in-browser and earn XP
+                      </p>
+                    </div>
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
+                      <ArrowRight className="h-4 w-4 text-primary-foreground transition-transform group-hover:translate-x-0.5" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </motion.div>
+
             {/* — Micro Progress Trackers — */}
             {topTracks.length > 0 && (
               <motion.div

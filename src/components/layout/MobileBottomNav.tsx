@@ -85,6 +85,7 @@ export function MobileBottomNav({ isAuthenticated, isStaff, userName, userAvatar
               { label: "Admin", icon: Shield, href: "/admin" },
               { label: "  Analytics", icon: BarChart3, href: "/admin/analytics" },
               { label: "  Learning", icon: BookOpen, href: "/admin/learning" },
+              { label: "  Practice", icon: BookOpen, href: "/admin/practice" },
             ]
           : []),
         { label: "Settings", icon: Settings, href: "/settings" },
