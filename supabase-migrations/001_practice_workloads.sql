@@ -152,7 +152,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Write a function `fizzBuzz(n)` that returns an array from 1 to n. For multiples of 3 use "Fizz", multiples of 5 use "Buzz", multiples of both use "FizzBuzz", otherwise the number.',
   'javascript', 'beginner', 150,
   '[{"name":"main.js","content":"function fizzBuzz(n) {\n  // Your code here\n}\n\nconsole.log(fizzBuzz(5)) // [1,2,\"Fizz\",4,\"Buzz\"]\n"}]'::jsonb,
-  '[{"name":"fizzBuzz(3) has Fizz at index 2","passed":false,"output":""},{"name":"fizzBuzz(5) has FizzBuzz at index 14","passed":false,"output":""}]'::jsonb,
+  '[{"name":"fizzBuzz(3) === [1, 2, \"Fizz\"]","passed":false,"output":""},{"name":"fizzBuzz(5) === [1, 2, \"Fizz\", 4, \"Buzz\"]","passed":false,"output":""}]'::jsonb,
   3
 );
 
@@ -179,7 +179,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Write a function `parse_csv(text)` that takes CSV text (comma-separated) and returns a list of dictionaries with headers as keys.',
   'python', 'intermediate', 200,
   '[{"name":"main.py","content":"def parse_csv(text):\n    # Your code here\n    pass\n\ncsv = \"name,age\\nAlice,30\\nBob,25\"\nprint(parse_csv(csv))\n# [{\"name\":\"Alice\",\"age\":\"30\"},{\"name\":\"Bob\",\"age\":\"25\"}]\n"}]'::jsonb,
-  '[{"name":"parse_csv returns list of dicts","passed":false,"output":""},{"name":"handles empty input","passed":false,"output":""}]'::jsonb,
+  '[{"name":"parse_csv(\"name,age\\nAlice,30\") == [{\"name\": \"Alice\", \"age\": \"30\"}]","passed":false,"output":""},{"name":"parse_csv(\"\") == []","passed":false,"output":""}]'::jsonb,
   3
 );
 
@@ -198,7 +198,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Given `access.log`, write a bash command to extract all unique IP addresses, one per line, sorted.',
   'linux', 'beginner', 100,
   '[{"name":"access.log","content":"192.168.1.1 - GET /home\n10.0.0.2 - GET /api\n192.168.1.1 - GET /about\n10.0.0.3 - POST /api\n10.0.0.2 - GET /home\n"}]'::jsonb,
-  '[{"name":"finds 3 unique IPs","passed":false,"output":""}]'::jsonb,
+  '[{"name":"finds 192.168.1.1","passed":false,"output":"192.168.1.1"},{"name":"finds 10.0.0.2","passed":false,"output":"10.0.0.2"},{"name":"finds 10.0.0.3","passed":false,"output":"10.0.0.3"}]'::jsonb,
   2
 ),
 (
@@ -206,7 +206,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Given `words.txt` (one word per line), write a command to count occurrences of each word and sort by frequency descending.',
   'linux', 'intermediate', 200,
   '[{"name":"words.txt","content":"apple\nbanana\napple\ncherry\nbanana\napple\n"}]'::jsonb,
-  '[{"name":"apple appears 3 times","passed":false,"output":""},{"name":"banana appears 2 times","passed":false,"output":""}]'::jsonb,
+  '[{"name":"apple appears 3 times","passed":false,"output":"3 apple"},{"name":"banana appears 2 times","passed":false,"output":"2 banana"},{"name":"cherry appears once","passed":false,"output":"1 cherry"}]'::jsonb,
   3
 );
 
@@ -217,7 +217,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Write a SQL query to select all columns from the `users` table.',
   'sql', 'beginner', 100,
   '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT)\nINSERT INTO users VALUES (1, \"Alice\", \"alice@test.com\", 30)\nINSERT INTO users VALUES (2, \"Bob\", \"bob@test.com\", 25)\nINSERT INTO users VALUES (3, \"Charlie\", \"charlie@test.com\", 35)\n"},{"name":"query.sql","content":"-- Write your query here\nSELECT * FROM users\n"}]'::jsonb,
-  '[{"name":"returns all 3 rows","passed":false,"output":""},{"name":"includes all columns","passed":false,"output":""}]'::jsonb,
+  '[{"name":"returns Alice","passed":false,"output":"Alice"},{"name":"returns Bob","passed":false,"output":"Bob"},{"name":"returns Charlie","passed":false,"output":"Charlie"}]'::jsonb,
   1
 ),
 (
@@ -225,7 +225,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Write a SQL query to select name and email of users older than 28, ordered by age descending.',
   'sql', 'beginner', 150,
   '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT)\nINSERT INTO users VALUES (1, \"Alice\", \"alice@test.com\", 30)\nINSERT INTO users VALUES (2, \"Bob\", \"bob@test.com\", 25)\nINSERT INTO users VALUES (3, \"Charlie\", \"charlie@test.com\", 35)\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
-  '[{"name":"returns Alice and Charlie","passed":false,"output":""},{"name":"ordered by age desc","passed":false,"output":""}]'::jsonb,
+  '[{"name":"returns Alice","passed":false,"output":"Alice"},{"name":"returns Charlie","passed":false,"output":"Charlie"}]'::jsonb,
   2
 ),
 (
@@ -233,6 +233,6 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Given a `products` table (id, name, category, price), write a query to count products per category, showing category and count, ordered by count descending.',
   'sql', 'intermediate', 200,
   '[{"name":"schema.sql","content":"CREATE TABLE products (id INT PRIMARY KEY, name VARCHAR(100), category VARCHAR(50), price DECIMAL(10,2))\nINSERT INTO products VALUES (1, \"Laptop\", \"electronics\", 999.99)\nINSERT INTO products VALUES (2, \"Mouse\", \"electronics\", 29.99)\nINSERT INTO products VALUES (3, \"Desk\", \"furniture\", 199.99)\nINSERT INTO products VALUES (4, \"Chair\", \"furniture\", 149.99)\nINSERT INTO products VALUES (5, \"Keyboard\", \"electronics\", 79.99)\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
-  '[{"name":"electronics has 3 products","passed":false,"output":""},{"name":"furniture has 2 products","passed":false,"output":""},{"name":"ordered by count desc","passed":false,"output":""}]'::jsonb,
+  '[{"name":"electronics count is 3","passed":false,"output":"electronics"},{"name":"furniture count is 2","passed":false,"output":"furniture"}]'::jsonb,
   3
 );

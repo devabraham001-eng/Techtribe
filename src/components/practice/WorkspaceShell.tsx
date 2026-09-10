@@ -4,6 +4,22 @@ import * as React from "react";
 import { Play, Loader2, CheckCircle2, XCircle, ChevronDown, ChevronRight } from "lucide-react";
 import type { Workload, WorkloadFile, TestResult } from "@/types/blog";
 
+// Solution filename per category — must match the API's SOLUTION_FILE map
+const SOLUTION_FILE: Record<string, { name: string; starter: string }> = {
+  javascript: { name: "main.js", starter: "// Your code here\n" },
+  web: { name: "main.js", starter: "// Your code here\n" },
+  python: { name: "main.py", starter: "# Your code here\n" },
+  linux: { name: "solution.sh", starter: "# Write your bash command here\n# Data files are in the same directory\n" },
+  sql: { name: "query.sql", starter: "-- Write your query here\n" },
+};
+
+function ensureSolutionFile(category: string, starter: WorkloadFile[]): WorkloadFile[] {
+  const solution = SOLUTION_FILE[category];
+  if (!solution) return starter;
+  if (starter.some((f) => f.name === solution.name)) return starter;
+  return [...starter, { name: solution.name, content: solution.starter }];
+}
+
 export function WorkspaceShell({
   workload,
   onComplete,
@@ -11,8 +27,15 @@ export function WorkspaceShell({
   workload: Workload;
   onComplete: () => void;
 }) {
-  const [files, setFiles] = React.useState<WorkloadFile[]>(workload.starterFiles);
-  const [activeFile, setActiveFile] = React.useState(0);
+  const [files, setFiles] = React.useState<WorkloadFile[]>(() => {
+    const withSolution = ensureSolutionFile(workload.category, workload.starterFiles);
+    return withSolution;
+  });
+  const [activeFile, setActiveFile] = React.useState(() => {
+    const withSolution = ensureSolutionFile(workload.category, workload.starterFiles);
+    const idx = withSolution.findIndex((f) => f.name === SOLUTION_FILE[workload.category]?.name);
+    return idx >= 0 ? idx : 0;
+  });
   const [running, setRunning] = React.useState(false);
   const [results, setResults] = React.useState<TestResult[] | null>(null);
   const [output, setOutput] = React.useState("");
@@ -35,7 +58,7 @@ export function WorkspaceShell({
 
       if (!res.ok) {
         const err = await res.json();
-        setOutput(err.error || "Execution failed");
+        setOutput(err.detail ? `${err.error || "Execution failed"} (${err.detail})` : err.error || "Execution failed");
         return;
       }
 
