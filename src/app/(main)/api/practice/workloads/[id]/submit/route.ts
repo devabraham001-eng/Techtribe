@@ -4,13 +4,13 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getWorkloadById } from "@/lib/practice-data";
 
-const GLOT_API = "https://run.glot.io/languages";
+const JDOODLE_API = "https://api.jdoodle.com/v1/execute";
 
-// Workload category -> Glot language (must match Glot's language names exactly)
+// Workload category -> JDoodle language (must match JDoodle's identifiers exactly)
 const CATEGORY_LANGUAGE: Record<string, string> = {
-  javascript: "javascript",
-  web: "javascript",
-  python: "python",
+  javascript: "nodejs",
+  web: "nodejs",
+  python: "python3",
   linux: "bash",
   sql: "sqlite",
 };
@@ -132,20 +132,21 @@ export async function POST(
   const solutionFile = files.find((f) => f.name === solutionName) ?? files[files.length - 1];
   const attachments = files.filter((f) => f !== solutionFile);
 
-  let glotFiles: { name: string; content: string }[];
+  let scriptFiles: { name: string; content: string }[];
   let results: { name: string; passed: boolean; output?: string }[] = [];
   let stdout = "";
   let stderr = "";
   let exitCode = 1;
 
   if (language === "bash") {
-    // Run the learner's command with data files alongside it
-    glotFiles = [
-      { name: "main.sh", content: solutionFile.content },
-      ...attachments.map((f) => ({ name: f.name, content: f.content })),
-    ];
-    const run = await executeOnGlot(language, glotFiles);
-    if (!run.ok) return NextResponse.json({ error: "Code execution failed", detail: run.detail }, { status: 502 });
+    // JDoodle accepts a single script: embed data files via heredocs, then the learner's command
+    const heredocs = attachments
+      .map((f) => `cat > ${f.name} << 'TEchTRIBE_EOF'\n${f.content}TEchTRIBE_EOF`)
+      .join("\n");
+    const script = heredocs ? `${heredocs}\n${solutionFile.content}` : solutionFile.content;
+    scriptFiles = [{ name: "main.sh", content: script }];
+    const run = await executeOnJDoodle(language, script);
+    if (!run.ok) return NextResponse.json({ error: run.error, detail: run.detail }, { status: run.status });
     stdout = run.stdout; stderr = run.stderr; exitCode = run.exitCode;
     results = gradeOutputTests(stdout, workload.hiddenTests, exitCode);
   } else if (language === "sqlite") {
@@ -158,11 +159,11 @@ export async function POST(
     // javascript / python: single file (solution first) + assertion harness
     const ordered = [solutionFile, ...attachments];
     const userCode = ordered.map((f) => f.content).join("\n\n");
-    const harness = language === "python" ? pyHarness(workload.hiddenTests) : jsHarness(workload.hiddenTests);
-    const ext = language === "python" ? "py" : "js";
-    glotFiles = [{ name: `main.${ext}`, content: harness ? `${userCode}\n\n${harness}` : userCode }];
-    const run = await executeOnGlot(language, glotFiles);
-    if (!run.ok) return NextResponse.json({ error: "Code execution failed", detail: run.detail }, { status: 502 });
+    const harness = language === "python3" ? pyHarness(workload.hiddenTests) : jsHarness(workload.hiddenTests);
+    const script = harness ? `${userCode}\n\n${harness}` : userCode;
+    scriptFiles = [{ name: language === "python3" ? "main.py" : "main.js", content: script }];
+    const run = await executeOnJDoodle(language, script);
+    if (!run.ok) return NextResponse.json({ error: run.error, detail: run.detail }, { status: run.status });
     stdout = run.stdout; stderr = run.stderr; exitCode = run.exitCode;
     results = parseTestResults(stdout).results;
   }
@@ -211,40 +212,57 @@ export async function POST(
   });
 }
 
-// Glot (run.glot.io) is free with no API key. Response: { stdout, stderr, error }.
-async function executeOnGlot(
+// JDoodle (api.jdoodle.com) — free tier, key-based, reliable.
+// Needs JDOODLE_CLIENT_ID + JDOODLE_CLIENT_SECRET env vars.
+// Response: { output, statusCode, memory, cpuTime }.
+async function executeOnJDoodle(
   language: string,
-  files: { name: string; content: string }[]
-): Promise<{ ok: true; stdout: string; stderr: string; exitCode: number } | { ok: false; detail: string }> {
+  script: string
+): Promise<
+  | { ok: true; stdout: string; stderr: string; exitCode: number }
+  | { ok: false; error: string; detail: string; status: number }
+> {
+  const clientId = process.env.JDOODLE_CLIENT_ID;
+  const clientSecret = process.env.JDOODLE_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    console.error("JDoodle credentials missing: set JDOODLE_CLIENT_ID and JDOODLE_CLIENT_SECRET");
+    return {
+      ok: false,
+      error: "Code runner not configured",
+      detail: "Missing JDoodle API credentials on the server",
+      status: 503,
+    };
+  }
+
   try {
-    const glotRes = await fetch(`${GLOT_API}/${language}/latest`, {
+    const res = await fetch(JDOODLE_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ stdin: "", files }),
+      body: JSON.stringify({ clientId, clientSecret, script, language, versionIndex: "0" }),
       signal: AbortSignal.timeout(25000),
     });
 
-    if (!glotRes.ok) {
+    if (!res.ok) {
       let detail = "";
       try {
-        detail = (await glotRes.text()).slice(0, 300);
+        detail = (await res.text()).slice(0, 300);
       } catch {}
-      console.error(`Glot error ${glotRes.status} for ${language}: ${detail}`);
-      return { ok: false, detail: detail || `HTTP ${glotRes.status}` };
+      console.error(`JDoodle error ${res.status} for ${language}: ${detail}`);
+      return { ok: false, error: "Code execution failed", detail: detail || `HTTP ${res.status}`, status: 502 };
     }
 
-    const response = (await glotRes.json()) as { stdout?: string; stderr?: string; error?: string };
-    const err = response.error || "";
-    return {
-      ok: true,
-      stdout: response.stdout || "",
-      stderr: err || response.stderr || "",
-      exitCode: err ? 1 : 0,
-    };
+    const response = (await res.json()) as { output?: string; statusCode?: number };
+    const output = response.output || "";
+    // JDoodle exposes no process exit code: detect hard crashes from output markers.
+    // (Test harnesses report per-test pass/fail themselves; this only catches crashes.)
+    const crashed =
+      /(\bcommand not found\b|syntax error|Traceback \(most recent call last\)|ReferenceError|TypeError: |Error: Cannot find module)/i.test(output) &&
+      !output.includes('"passed":true');
+    return { ok: true, stdout: output, stderr: "", exitCode: crashed ? 1 : 0 };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "unknown";
-    console.error(`Glot request failed for ${language}: ${msg}`);
-    return { ok: false, detail: msg };
+    console.error(`JDoodle request failed for ${language}: ${msg}`);
+    return { ok: false, error: "Code execution failed", detail: msg, status: 502 };
   }
 }
 
