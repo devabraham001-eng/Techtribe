@@ -15,6 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: "https://techtribe.online", changeFrequency: "weekly", priority: 1 },
     { url: "https://techtribe.online/blog", changeFrequency: "daily", priority: 0.9 },
     { url: "https://techtribe.online/learn", changeFrequency: "daily", priority: 0.9 },
+    { url: "https://techtribe.online/learn/practice", changeFrequency: "weekly", priority: 0.8 },
     { url: "https://techtribe.online/about", changeFrequency: "monthly", priority: 0.7 },
     { url: "https://techtribe.online/blog/authors", changeFrequency: "weekly", priority: 0.5 },
     { url: "https://techtribe.online/blog/categories", changeFrequency: "weekly", priority: 0.5 },

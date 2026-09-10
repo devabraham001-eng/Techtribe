@@ -116,10 +116,28 @@ export function LearnPageContent() {
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                 </li>
                 <li className="breadcrumb-item" tabIndex={0} style={{ color: "#98989d" }}>
-                  Paths
+                  Learn
                 </li>
               </ol>
             </nav>
+
+            {/* Tab bar: Paths + Practice */}
+            <div className="flex items-center gap-1 mt-4 sm:mt-6">
+              <Link
+                href="/learn"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all"
+                style={{ background: "#D0F201", color: "#10180B" }}
+              >
+                Paths
+              </Link>
+              <Link
+                href="/learn/practice"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium transition-all"
+                style={{ background: "#1c1c1e", color: "#98989d", border: "1px solid #38383a" }}
+              >
+                Practice
+              </Link>
+            </div>
 
             <aside aria-label="Free trial" className="console-free-trial mt-4 sm:mt-5">
               <div className="flex flex-wrap items-center gap-3 rounded-xl border p-4 sm:p-5" style={{ borderColor: "#D0F201", background: "rgba(208, 242, 1, 0.04)" }}>

@@ -18,6 +18,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Globe,
+  Terminal,
 } from "lucide-react";
 interface SidebarProps {
   authorName?: string;
@@ -154,6 +155,10 @@ export function DashboardSidebar({
               <Link href="/admin/learning" className={linkClass("/admin/learning")} title="Learning">
                 <BookOpen className={iconClass} />
                 {!collapsed && <span>Learning</span>}
+              </Link>
+              <Link href="/admin/practice" className={linkClass("/admin/practice")} title="Practice">
+                <Terminal className={iconClass} />
+                {!collapsed && <span>Practice</span>}
               </Link>
             </>
           )}

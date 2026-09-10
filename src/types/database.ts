@@ -262,6 +262,50 @@ tags: {
         Insert: Omit<Database["public"]["Tables"]["page_views"]["Row"], "id" | "created_at">;
         Update: never;
       };
+      workloads: {
+        Row: {
+          id: string;
+          title: string;
+          brief: string;
+          category: string;
+          difficulty: string;
+          xp_reward: number;
+          starter_files: Json;
+          hidden_tests: Json;
+          sort_order: number;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["workloads"]["Row"], "id" | "created_at">;
+        Update: Partial<Pick<Database["public"]["Tables"]["workloads"]["Row"], "title" | "brief" | "category" | "difficulty" | "xp_reward" | "starter_files" | "hidden_tests" | "sort_order" | "is_active">>;
+      };
+      user_workload_submissions: {
+        Row: {
+          id: string;
+          user_id: string;
+          workload_id: string;
+          files: Json;
+          passed: boolean;
+          test_results: Json | null;
+          output: string | null;
+          submitted_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["user_workload_submissions"]["Row"], "id" | "submitted_at">;
+        Update: never;
+      };
+      user_xp: {
+        Row: {
+          user_id: string;
+          total_xp: number;
+          level: number;
+          streak_days: number;
+          last_active_date: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["user_xp"]["Row"], "created_at" | "updated_at">;
+        Update: Partial<Pick<Database["public"]["Tables"]["user_xp"]["Row"], "total_xp" | "level" | "streak_days" | "last_active_date">>;
+      };
     };
     Functions: {
       increment_post_views: {

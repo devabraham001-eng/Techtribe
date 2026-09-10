@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn, getInitials } from "@/lib/utils";
+import { PracticeRankCard } from "@/components/practice/PracticeRankCard";
 import {
   GraduationCap,
   ArrowRight,
@@ -486,6 +487,9 @@ export function LearnDashboard({
                 </CardContent>
               </Card>
             </motion.div>
+
+            {/* — Practice Rank — */}
+            <PracticeRankCard />
 
             {/* — Your Mentor — */}
             <motion.div

@@ -209,3 +209,44 @@ export interface UserLessonProgress {
   completedAt: string;
   submittedProjectArticleId?: string | null;
 }
+
+// Practice Workload Types
+export interface WorkloadFile {
+  name: string;
+  content: string;
+}
+
+export interface Workload {
+  id: string;
+  title: string;
+  brief: string;
+  category: 'javascript' | 'python' | 'linux' | 'sql' | 'web';
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  xpReward: number;
+  starterFiles: WorkloadFile[];
+  hiddenTests: { name: string; passed: boolean; output?: string }[];
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface WorkloadSubmission {
+  id: string;
+  userId: string;
+  workloadId: string;
+  files: WorkloadFile[];
+  passed: boolean;
+  testResults?: TestResult[];
+  output?: string;
+  submittedAt: string;
+}
+
+export interface UserXP {
+  userId: string;
+  totalXp: number;
+  level: number;
+  streakDays: number;
+  lastActiveDate: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
