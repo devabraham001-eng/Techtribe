@@ -135,7 +135,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Count Vowels',
   'Write a function `countVowels(str)` that returns the number of vowels (a, e, i, o, u) in the given string. Ignore case.',
   'javascript', 'beginner', 100,
-  '[{"name":"main.js","content":"function countVowels(str) {\n  // Your code here\n}\n\nconsole.log(countVowels(\"hello world\")); // 3\n"}]'::jsonb,
+  '[{"name":"main.js","content":"function countVowels(str) {\n  // Your code here\n}\n\nconsole.log(countVowels(\"hello world\")) // 3\n"}]'::jsonb,
   '[{"name":"countVowels(\"hello\") === 2","passed":false,"output":""},{"name":"countVowels(\"AEIOU\") === 5","passed":false,"output":""},{"name":"countVowels(\"\") === 0","passed":false,"output":""}]'::jsonb,
   1
 ),
@@ -143,7 +143,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Reverse String',
   'Write a function `reverseStr(str)` that returns the string reversed.',
   'javascript', 'beginner', 100,
-  '[{"name":"main.js","content":"function reverseStr(str) {\n  // Your code here\n}\n\nconsole.log(reverseStr(\"abc\")); // \"cba\"\n"}]'::jsonb,
+  '[{"name":"main.js","content":"function reverseStr(str) {\n  // Your code here\n}\n\nconsole.log(reverseStr(\"abc\")) // \"cba\"\n"}]'::jsonb,
   '[{"name":"reverseStr(\"abc\") === \"cba\"","passed":false,"output":""},{"name":"reverseStr(\"hello\") === \"olleh\"","passed":false,"output":""}]'::jsonb,
   2
 ),
@@ -151,7 +151,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'FizzBuzz',
   'Write a function `fizzBuzz(n)` that returns an array from 1 to n. For multiples of 3 use "Fizz", multiples of 5 use "Buzz", multiples of both use "FizzBuzz", otherwise the number.',
   'javascript', 'beginner', 150,
-  '[{"name":"main.js","content":"function fizzBuzz(n) {\n  // Your code here\n}\n\nconsole.log(fizzBuzz(5)); // [1,2,\"Fizz\",\"Buzz\",5]\n"}]'::jsonb,
+  '[{"name":"main.js","content":"function fizzBuzz(n) {\n  // Your code here\n}\n\nconsole.log(fizzBuzz(5)) // [1,2,\"Fizz\",4,\"Buzz\"]\n"}]'::jsonb,
   '[{"name":"fizzBuzz(3) has Fizz at index 2","passed":false,"output":""},{"name":"fizzBuzz(5) has FizzBuzz at index 14","passed":false,"output":""}]'::jsonb,
   3
 );
@@ -216,7 +216,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Select All Users',
   'Write a SQL query to select all columns from the `users` table.',
   'sql', 'beginner', 100,
-  '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT);\nINSERT INTO users VALUES (1, \"Alice\", \"alice@test.com\", 30);\nINSERT INTO users VALUES (2, \"Bob\", \"bob@test.com\", 25);\nINSERT INTO users VALUES (3, \"Charlie\", \"charlie@test.com\", 35);\n"},{"name":"query.sql","content":"-- Write your query here\nSELECT * FROM users;\n"}]'::jsonb,
+  '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT)\nINSERT INTO users VALUES (1, \"Alice\", \"alice@test.com\", 30)\nINSERT INTO users VALUES (2, \"Bob\", \"bob@test.com\", 25)\nINSERT INTO users VALUES (3, \"Charlie\", \"charlie@test.com\", 35)\n"},{"name":"query.sql","content":"-- Write your query here\nSELECT * FROM users\n"}]'::jsonb,
   '[{"name":"returns all 3 rows","passed":false,"output":""},{"name":"includes all columns","passed":false,"output":""}]'::jsonb,
   1
 ),
@@ -224,7 +224,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Filter by Age',
   'Write a SQL query to select name and email of users older than 28, ordered by age descending.',
   'sql', 'beginner', 150,
-  '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT);\nINSERT INTO users VALUES (1, \"Alice\", \"alice@test.com\", 30);\nINSERT INTO users VALUES (2, \"Bob\", \"bob@test.com\", 25);\nINSERT INTO users VALUES (3, \"Charlie\", \"charlie@test.com\", 35);\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
+  '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT)\nINSERT INTO users VALUES (1, \"Alice\", \"alice@test.com\", 30)\nINSERT INTO users VALUES (2, \"Bob\", \"bob@test.com\", 25)\nINSERT INTO users VALUES (3, \"Charlie\", \"charlie@test.com\", 35)\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
   '[{"name":"returns Alice and Charlie","passed":false,"output":""},{"name":"ordered by age desc","passed":false,"output":""}]'::jsonb,
   2
 ),
@@ -232,7 +232,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Count by Category',
   'Given a `products` table (id, name, category, price), write a query to count products per category, showing category and count, ordered by count descending.',
   'sql', 'intermediate', 200,
-  '[{"name":"schema.sql","content":"CREATE TABLE products (id INT PRIMARY KEY, name VARCHAR(100), category VARCHAR(50), price DECIMAL(10,2));\nINSERT INTO products VALUES (1, \"Laptop\", \"electronics\", 999.99);\nINSERT INTO products VALUES (2, \"Mouse\", \"electronics\", 29.99);\nINSERT INTO products VALUES (3, \"Desk\", \"furniture\", 199.99);\nINSERT INTO products VALUES (4, \"Chair\", \"furniture\", 149.99);\nINSERT INTO products VALUES (5, \"Keyboard\", \"electronics\", 79.99);\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
+  '[{"name":"schema.sql","content":"CREATE TABLE products (id INT PRIMARY KEY, name VARCHAR(100), category VARCHAR(50), price DECIMAL(10,2))\nINSERT INTO products VALUES (1, \"Laptop\", \"electronics\", 999.99)\nINSERT INTO products VALUES (2, \"Mouse\", \"electronics\", 29.99)\nINSERT INTO products VALUES (3, \"Desk\", \"furniture\", 199.99)\nINSERT INTO products VALUES (4, \"Chair\", \"furniture\", 149.99)\nINSERT INTO products VALUES (5, \"Keyboard\", \"electronics\", 79.99)\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
   '[{"name":"electronics has 3 products","passed":false,"output":""},{"name":"furniture has 2 products","passed":false,"output":""},{"name":"ordered by count desc","passed":false,"output":""}]'::jsonb,
   3
 );
