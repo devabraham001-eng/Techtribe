@@ -216,7 +216,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Select All Users',
   'Write a SQL query to select all columns from the `users` table.',
   'sql', 'beginner', 100,
-  '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT)\nINSERT INTO users VALUES (1, \"Alice\", \"alice@test.com\", 30)\nINSERT INTO users VALUES (2, \"Bob\", \"bob@test.com\", 25)\nINSERT INTO users VALUES (3, \"Charlie\", \"charlie@test.com\", 35)\n"},{"name":"query.sql","content":"-- Write your query here\nSELECT * FROM users\n"}]'::jsonb,
+  '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT)\nINSERT INTO users VALUES (1, ''Alice'', ''alice@test.com'', 30)\nINSERT INTO users VALUES (2, ''Bob'', ''bob@test.com'', 25)\nINSERT INTO users VALUES (3, ''Charlie'', ''charlie@test.com'', 35)\n"},{"name":"query.sql","content":"-- Write your query here\nSELECT * FROM users\n"}]'::jsonb,
   '[{"name":"returns Alice","passed":false,"output":"Alice"},{"name":"returns Bob","passed":false,"output":"Bob"},{"name":"returns Charlie","passed":false,"output":"Charlie"}]'::jsonb,
   1
 ),
@@ -224,7 +224,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Filter by Age',
   'Write a SQL query to select name and email of users older than 28, ordered by age descending.',
   'sql', 'beginner', 150,
-  '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT)\nINSERT INTO users VALUES (1, \"Alice\", \"alice@test.com\", 30)\nINSERT INTO users VALUES (2, \"Bob\", \"bob@test.com\", 25)\nINSERT INTO users VALUES (3, \"Charlie\", \"charlie@test.com\", 35)\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
+  '[{"name":"schema.sql","content":"CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), age INT)\nINSERT INTO users VALUES (1, ''Alice'', ''alice@test.com'', 30)\nINSERT INTO users VALUES (2, ''Bob'', ''bob@test.com'', 25)\nINSERT INTO users VALUES (3, ''Charlie'', ''charlie@test.com'', 35)\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
   '[{"name":"returns Alice","passed":false,"output":"Alice"},{"name":"returns Charlie","passed":false,"output":"Charlie"}]'::jsonb,
   2
 ),
@@ -232,7 +232,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Count by Category',
   'Given a `products` table (id, name, category, price), write a query to count products per category, showing category and count, ordered by count descending.',
   'sql', 'intermediate', 200,
-  '[{"name":"schema.sql","content":"CREATE TABLE products (id INT PRIMARY KEY, name VARCHAR(100), category VARCHAR(50), price DECIMAL(10,2))\nINSERT INTO products VALUES (1, \"Laptop\", \"electronics\", 999.99)\nINSERT INTO products VALUES (2, \"Mouse\", \"electronics\", 29.99)\nINSERT INTO products VALUES (3, \"Desk\", \"furniture\", 199.99)\nINSERT INTO products VALUES (4, \"Chair\", \"furniture\", 149.99)\nINSERT INTO products VALUES (5, \"Keyboard\", \"electronics\", 79.99)\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
+  '[{"name":"schema.sql","content":"CREATE TABLE products (id INT PRIMARY KEY, name VARCHAR(100), category VARCHAR(50), price DECIMAL(10,2))\nINSERT INTO products VALUES (1, ''Laptop'', ''electronics'', 999.99)\nINSERT INTO products VALUES (2, ''Mouse'', ''electronics'', 29.99)\nINSERT INTO products VALUES (3, ''Desk'', ''furniture'', 199.99)\nINSERT INTO products VALUES (4, ''Chair'', ''furniture'', 149.99)\nINSERT INTO products VALUES (5, ''Keyboard'', ''electronics'', 79.99)\n"},{"name":"query.sql","content":"-- Write your query here\n"}]'::jsonb,
   '[{"name":"electronics count is 3","passed":false,"output":"electronics"},{"name":"furniture count is 2","passed":false,"output":"furniture"}]'::jsonb,
   3
 );

@@ -1,26 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import Database from "better-sqlite3";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getWorkloadById } from "@/lib/practice-data";
 
-const PISTON_API = "https://emkc.org/api/v2/piston/execute";
-const PISTON_RUNTIMES = "https://emkc.org/api/v2/piston/runtimes";
+const GLOT_API = "https://run.glot.io/languages";
 
-// Workload category -> Piston language (must match Piston's language names exactly)
+// Workload category -> Glot language (must match Glot's language names exactly)
 const CATEGORY_LANGUAGE: Record<string, string> = {
   javascript: "javascript",
   web: "javascript",
   python: "python",
   linux: "bash",
-  sql: "sqlite3",
-};
-
-// Exact fallback versions (from Piston /runtimes)
-const FALLBACK_VERSIONS: Record<string, string> = {
-  javascript: "18.15.0",
-  python: "3.10.0",
-  bash: "5.2.0",
-  sqlite3: "3.36.0",
+  sql: "sqlite",
 };
 
 // File holding the learner's solution per category
@@ -32,54 +24,10 @@ const SOLUTION_FILE: Record<string, string> = {
   sql: "query.sql",
 };
 
-interface PistonResponse {
-  run: {
-    stdout: string;
-    stderr: string;
-    output: string;
-    code: number;
-    signal: string | null;
-  };
-  language: string;
-  version: string;
-}
-
-interface PistonRuntime {
-  language: string;
-  version: string;
-  aliases: string[];
-  runtime?: string;
-}
-
-// Cache resolved runtime versions for 1h to avoid a lookup per submission
-let runtimeCache: { at: number; versions: Record<string, string> } | null = null;
-
-async function resolveVersion(language: string): Promise<string> {
-  const now = Date.now();
-  if (runtimeCache && now - runtimeCache.at < 3600_000 && runtimeCache.versions[language]) {
-    return runtimeCache.versions[language];
-  }
-  try {
-    const res = await fetch(PISTON_RUNTIMES, { signal: AbortSignal.timeout(8000) });
-    if (res.ok) {
-      const runtimes = (await res.json()) as PistonRuntime[];
-      const versions: Record<string, string> = {};
-      for (const r of runtimes) {
-        // Prefer the node runtime for javascript (deno entry comes first otherwise)
-        if (r.language === "javascript" && r.runtime !== "node") continue;
-        if (!versions[r.language]) versions[r.language] = r.version;
-        for (const a of r.aliases ?? []) {
-          if (r.language === "javascript" && r.runtime !== "node") continue;
-          if (!versions[a]) versions[a] = r.version;
-        }
-      }
-      runtimeCache = { at: now, versions };
-      if (versions[language]) return versions[language];
-    }
-  } catch {
-    // fall through to hardcoded versions
-  }
-  return FALLBACK_VERSIONS[language] ?? "18.15.0";
+interface ExecResult {
+  stdout: string;
+  stderr: string;
+  exitCode: number;
 }
 
 // Extract per-line JSON test results (ignores demo console.log/print noise)
@@ -178,14 +126,13 @@ export async function POST(
   }
 
   const language = CATEGORY_LANGUAGE[workload.category] ?? "javascript";
-  const version = await resolveVersion(language);
   const solutionName = SOLUTION_FILE[workload.category] ?? files[0].name;
 
   // Split learner solution from data/attachment files
   const solutionFile = files.find((f) => f.name === solutionName) ?? files[files.length - 1];
   const attachments = files.filter((f) => f !== solutionFile);
 
-  let pistonFiles: { name: string; content: string }[];
+  let glotFiles: { name: string; content: string }[];
   let results: { name: string; passed: boolean; output?: string }[] = [];
   let stdout = "";
   let stderr = "";
@@ -193,20 +140,18 @@ export async function POST(
 
   if (language === "bash") {
     // Run the learner's command with data files alongside it
-    pistonFiles = [
+    glotFiles = [
       { name: "main.sh", content: solutionFile.content },
       ...attachments.map((f) => ({ name: f.name, content: f.content })),
     ];
-    const run = await executeOnPiston(language, version, pistonFiles);
+    const run = await executeOnGlot(language, glotFiles);
     if (!run.ok) return NextResponse.json({ error: "Code execution failed", detail: run.detail }, { status: 502 });
     stdout = run.stdout; stderr = run.stderr; exitCode = run.exitCode;
     results = gradeOutputTests(stdout, workload.hiddenTests, exitCode);
-  } else if (language === "sqlite3") {
-    // Schema first, learner query last, single script
+  } else if (language === "sqlite") {
+    // Run schema + learner query in a local in-memory SQLite database
     const combined = [...attachments.map((f) => f.content), solutionFile.content].join("\n");
-    pistonFiles = [{ name: "main.sql", content: combined }];
-    const run = await executeOnPiston(language, version, pistonFiles);
-    if (!run.ok) return NextResponse.json({ error: "Code execution failed", detail: run.detail }, { status: 502 });
+    const run = runSqlite(combined);
     stdout = run.stdout; stderr = run.stderr; exitCode = run.exitCode;
     results = gradeOutputTests(stdout, workload.hiddenTests, exitCode);
   } else {
@@ -215,8 +160,8 @@ export async function POST(
     const userCode = ordered.map((f) => f.content).join("\n\n");
     const harness = language === "python" ? pyHarness(workload.hiddenTests) : jsHarness(workload.hiddenTests);
     const ext = language === "python" ? "py" : "js";
-    pistonFiles = [{ name: `main.${ext}`, content: harness ? `${userCode}\n\n${harness}` : userCode }];
-    const run = await executeOnPiston(language, version, pistonFiles);
+    glotFiles = [{ name: `main.${ext}`, content: harness ? `${userCode}\n\n${harness}` : userCode }];
+    const run = await executeOnGlot(language, glotFiles);
     if (!run.ok) return NextResponse.json({ error: "Code execution failed", detail: run.detail }, { status: 502 });
     stdout = run.stdout; stderr = run.stderr; exitCode = run.exitCode;
     results = parseTestResults(stdout).results;
@@ -266,38 +211,88 @@ export async function POST(
   });
 }
 
-async function executeOnPiston(
+// Glot (run.glot.io) is free with no API key. Response: { stdout, stderr, error }.
+async function executeOnGlot(
   language: string,
-  version: string,
   files: { name: string; content: string }[]
 ): Promise<{ ok: true; stdout: string; stderr: string; exitCode: number } | { ok: false; detail: string }> {
   try {
-    const pistonRes = await fetch(PISTON_API, {
+    const glotRes = await fetch(`${GLOT_API}/${language}/latest`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ language, version, files }),
-      signal: AbortSignal.timeout(20000),
+      body: JSON.stringify({ stdin: "", files }),
+      signal: AbortSignal.timeout(25000),
     });
 
-    if (!pistonRes.ok) {
+    if (!glotRes.ok) {
       let detail = "";
       try {
-        detail = (await pistonRes.text()).slice(0, 300);
+        detail = (await glotRes.text()).slice(0, 300);
       } catch {}
-      console.error(`Piston error ${pistonRes.status} for ${language}@${version}: ${detail}`);
-      return { ok: false, detail: detail || `HTTP ${pistonRes.status}` };
+      console.error(`Glot error ${glotRes.status} for ${language}: ${detail}`);
+      return { ok: false, detail: detail || `HTTP ${glotRes.status}` };
     }
 
-    const response = (await pistonRes.json()) as PistonResponse;
+    const response = (await glotRes.json()) as { stdout?: string; stderr?: string; error?: string };
+    const err = response.error || "";
     return {
       ok: true,
-      stdout: response.run.stdout || "",
-      stderr: response.run.stderr || "",
-      exitCode: response.run.code,
+      stdout: response.stdout || "",
+      stderr: err || response.stderr || "",
+      exitCode: err ? 1 : 0,
     };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "unknown";
-    console.error(`Piston request failed for ${language}: ${msg}`);
+    console.error(`Glot request failed for ${language}: ${msg}`);
     return { ok: false, detail: msg };
+  }
+}
+
+// Local in-memory SQLite for SQL workloads — no network needed.
+// Groups lines into statements by leading keyword (seeds carry no semicolons),
+// runs setup statements, and captures SELECT rows as stdout.
+function runSqlite(script: string): { stdout: string; stderr: string; exitCode: number } {
+  let db: InstanceType<typeof Database> | null = null;
+  try {
+    db = new Database(":memory:");
+    const lines = script
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0 && !l.startsWith("--"));
+
+    const KEYWORDS = /^(CREATE|INSERT|SELECT|WITH|VALUES|UPDATE|DELETE|DROP|ALTER|PRAGMA|EXPLAIN|REPLACE)\b/i;
+    const statements: string[] = [];
+    let current = "";
+    for (const line of lines) {
+      if (KEYWORDS.test(line) && current.trim()) {
+        statements.push(current);
+        current = line;
+      } else {
+        current += (current ? "\n" : "") + line;
+      }
+    }
+    if (current.trim()) statements.push(current);
+
+    const outRows: string[] = [];
+    for (const stmt of statements) {
+      const text = stmt.trim().replace(/;$/, "");
+      if (!text) continue;
+      if (/^(select|with|values|pragma|explain)\b/i.test(text)) {
+        const rows = db.prepare(text).all() as Record<string, unknown>[];
+        for (const row of rows) {
+          outRows.push(Object.values(row).join(" | "));
+        }
+      } else {
+        db.exec(text);
+      }
+    }
+    return { stdout: outRows.join("\n"), stderr: "", exitCode: 0 };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "unknown";
+    return { stdout: "", stderr: msg, exitCode: 1 };
+  } finally {
+    try {
+      db?.close();
+    } catch {}
   }
 }
