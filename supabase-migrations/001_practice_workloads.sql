@@ -144,7 +144,7 @@ insert into workloads (title, brief, category, difficulty, xp_reward, starter_fi
   'Write a function `reverseStr(str)` that returns the string reversed.',
   'javascript', 'beginner', 100,
   '[{"name":"main.js","content":"function reverseStr(str) {\n  // Your code here\n}\n\nconsole.log(reverseStr(\"abc\")); // \"cba\"\n"}]'::jsonb,
-  '[{"name":"reverseStr(\"abc\") === \"cba\"","passed":false,"output":""},{"name\":\"reverseStr(\"hello\") === \"olleh\"","passed":false,"output":""}]'::jsonb,
+  '[{"name":"reverseStr(\"abc\") === \"cba\"","passed":false,"output":""},{"name":"reverseStr(\"hello\") === \"olleh\"","passed":false,"output":""}]'::jsonb,
   2
 ),
 (
