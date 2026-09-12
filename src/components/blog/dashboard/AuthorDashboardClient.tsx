@@ -414,7 +414,7 @@ function RecentArticleCards({
                   <p className="mb-2 text-[10px] font-medium text-muted-foreground">
                     {(post.viewCount ?? 0).toLocaleString()} views
                   </p>
-                  <div className="flex items-center gap-2 border-t border-border pt-2">
+                  <div className="flex items-center gap-2 pt-1">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-secondary text-[10px] font-bold text-muted-foreground">
                       {post.author?.avatarUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
