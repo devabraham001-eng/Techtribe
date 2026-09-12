@@ -48,6 +48,19 @@ interface DashboardProps {
   isStaff: boolean;
 }
 
+interface CommunityPost {
+  id: string;
+  slug: string;
+  title: string;
+  coverImageUrl?: string;
+  postType?: string;
+  viewCount: number;
+  publishedAt?: string;
+  createdAt: string;
+  category?: { name: string };
+  author: { id: string; name: string; avatarUrl?: string };
+}
+
 function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return "Good Morning";
@@ -289,16 +302,12 @@ function StatPills({
 
 function RecentArticleCards({
   posts,
+  loading,
   maxViews,
-  authorName,
-  authorAvatar,
-  onEdit,
 }: {
-  posts: PostSummary[];
+  posts: CommunityPost[];
+  loading: boolean;
   maxViews: number;
-  authorName: string;
-  authorAvatar: string | null;
-  onEdit: (id: string) => void;
 }) {
   const trackRef = React.useRef<HTMLDivElement>(null);
 
@@ -306,13 +315,13 @@ function RecentArticleCards({
     trackRef.current?.scrollBy({ left: direction * 320, behavior: "smooth" });
   }
 
-  if (posts.length === 0) return null;
+  if (!loading && posts.length === 0) return null;
 
   return (
-    <section aria-labelledby="recent-articles-heading">
+    <section aria-labelledby="discover-heading">
       <div className="mb-4 flex items-center justify-between">
-        <h2 id="recent-articles-heading" className="font-heading text-base font-bold text-foreground">
-          Recent Articles
+        <h2 id="discover-heading" className="font-heading text-base font-bold text-foreground">
+          Discover
         </h2>
         <div className="flex items-center gap-2">
           <button
@@ -333,84 +342,102 @@ function RecentArticleCards({
           </button>
         </div>
       </div>
-      <div ref={trackRef} className="flex snap-x gap-4 overflow-x-auto pb-1">
-        {posts.slice(0, 6).map((post) => {
-          const isProject = post.post_type === "project";
-          const viewsPct = maxViews > 0 ? Math.max(Math.round(((post.view_count ?? 0) / maxViews) * 100), post.view_count > 0 ? 4 : 0) : 0;
-          return (
-            <article
-              key={post.id}
-              className="flex w-[270px] shrink-0 snap-start flex-col justify-between rounded-2xl border border-border bg-card p-3 shadow-sm sm:w-[300px]"
-            >
-              <div>
-                <button
-                  type="button"
-                  onClick={() => onEdit(post.id)}
-                  aria-label={`Edit ${post.title}`}
-                  className="group relative mb-3 block aspect-[16/10] w-full overflow-hidden rounded-xl bg-gradient-to-br from-primary/25 via-secondary to-card"
-                >
-                  <span className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-                    {isProject ? (
-                      <Briefcase className="h-12 w-12 text-primary/30" strokeWidth={1.5} />
-                    ) : (
-                      <FileText className="h-12 w-12 text-primary/30" strokeWidth={1.5} />
-                    )}
-                  </span>
-                  <span className="absolute inset-0 flex items-center justify-center bg-black/20 transition group-hover:bg-black/30">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm">
-                      <Play className="ml-0.5 h-3.5 w-3.5" fill="currentColor" aria-hidden="true" />
-                    </span>
-                  </span>
-                </button>
-                <span
-                  className={cn(
-                    "mb-2 inline-block rounded-full px-2 py-0.5 text-[9px] font-bold tracking-wider",
-                    post.status === "published"
-                      ? "bg-primary/10 text-primary"
-                      : "bg-amber-500/10 text-amber-500"
-                  )}
-                >
-                  {post.status.toUpperCase()}
-                </span>
-                <h3 className="mb-3 line-clamp-2 text-xs font-bold leading-relaxed text-foreground">
-                  <button type="button" onClick={() => onEdit(post.id)} className="text-left hover:text-primary">
-                    {post.title}
-                  </button>
-                </h3>
-              </div>
-              <div>
-                <div
-                  className="mb-1 h-1.5 w-full overflow-hidden rounded-full bg-secondary"
-                  role="progressbar"
-                  aria-valuenow={viewsPct}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label={`${post.view_count ?? 0} views on ${post.title}`}
-                >
-                  <div className="h-1.5 rounded-full bg-primary" style={{ width: `${viewsPct}%` }} />
-                </div>
-                <p className="mb-2 text-[10px] font-medium text-muted-foreground">
-                  {(post.view_count ?? 0).toLocaleString()} views
-                </p>
-                <div className="flex items-center gap-2 border-t border-border pt-2">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-secondary text-[10px] font-bold text-muted-foreground">
-                    {authorAvatar ? (
+      {loading ? (
+        <div className="flex snap-x gap-4 overflow-x-auto pb-1">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="w-[270px] shrink-0 snap-start rounded-2xl border border-border bg-card p-3 sm:w-[300px]">
+              <Skeleton className="mb-3 aspect-[16/10] w-full rounded-xl" />
+              <Skeleton className="mb-2 h-4 w-16 rounded-full" />
+              <Skeleton className="mb-3 h-4 w-full rounded" />
+              <Skeleton className="h-1.5 w-full rounded-full" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div ref={trackRef} className="flex snap-x gap-4 overflow-x-auto pb-1">
+          {posts.map((post) => {
+            const viewsPct = maxViews > 0 ? Math.max(Math.round(((post.viewCount ?? 0) / maxViews) * 100), post.viewCount > 0 ? 4 : 0) : 0;
+            return (
+              <article
+                key={post.id}
+                className="flex w-[270px] shrink-0 snap-start flex-col justify-between rounded-2xl border border-border bg-card p-3 shadow-sm sm:w-[300px]"
+              >
+                <div>
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    aria-label={`Read ${post.title}`}
+                    className="group relative mb-3 block aspect-[16/10] w-full overflow-hidden rounded-xl bg-gradient-to-br from-primary/25 via-secondary to-card"
+                  >
+                    {post.coverImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={authorAvatar} alt="" className="h-full w-full object-cover" />
+                      <img
+                        src={post.coverImageUrl}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                        loading="lazy"
+                      />
                     ) : (
-                      authorName.charAt(0).toUpperCase()
+                      <span className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                        {post.postType === "project" ? (
+                          <Briefcase className="h-12 w-12 text-primary/30" strokeWidth={1.5} />
+                        ) : (
+                          <FileText className="h-12 w-12 text-primary/30" strokeWidth={1.5} />
+                        )}
+                      </span>
                     )}
+                    <span className="absolute inset-0 flex items-center justify-center bg-black/20 transition group-hover:bg-black/30">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm">
+                        <Play className="ml-0.5 h-3.5 w-3.5" fill="currentColor" aria-hidden="true" />
+                      </span>
+                    </span>
+                  </Link>
+                  <span className="mb-2 inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold tracking-wider text-primary">
+                    {(post.category?.name ?? post.postType ?? "ARTICLE").toUpperCase()}
                   </span>
-                  <span className="leading-none">
-                    <span className="block truncate text-[11px] font-semibold text-foreground">{authorName}</span>
-                    <span className="mt-0.5 block text-[9px] text-muted-foreground">{formatDate(post.created_at)}</span>
-                  </span>
+                  <h3 className="mb-3 line-clamp-2 text-xs font-bold leading-relaxed text-foreground">
+                    <Link href={`/blog/${post.slug}`} className="hover:text-primary">
+                      {post.title}
+                    </Link>
+                  </h3>
                 </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+                <div>
+                  <div
+                    className="mb-1 h-1.5 w-full overflow-hidden rounded-full bg-secondary"
+                    role="progressbar"
+                    aria-valuenow={viewsPct}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`${post.viewCount ?? 0} views on ${post.title}`}
+                  >
+                    <div className="h-1.5 rounded-full bg-primary" style={{ width: `${viewsPct}%` }} />
+                  </div>
+                  <p className="mb-2 text-[10px] font-medium text-muted-foreground">
+                    {(post.viewCount ?? 0).toLocaleString()} views
+                  </p>
+                  <div className="flex items-center gap-2 border-t border-border pt-2">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-secondary text-[10px] font-bold text-muted-foreground">
+                      {post.author?.avatarUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={post.author.avatarUrl} alt="" className="h-full w-full object-cover" />
+                      ) : (
+                        (post.author?.name ?? "?").charAt(0).toUpperCase()
+                      )}
+                    </span>
+                    <span className="leading-none">
+                      <span className="block max-w-[150px] truncate text-[11px] font-semibold text-foreground">
+                        {post.author?.name ?? "TechTribe Author"}
+                      </span>
+                      <span className="mt-0.5 block text-[9px] text-muted-foreground">
+                        {formatDate(post.publishedAt ?? post.createdAt)}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
@@ -736,6 +763,7 @@ function DashboardRail({
 /* ------------------------------------------------------------------ */
 
 export function AuthorDashboardClient({
+  authorId,
   authorName,
   authorBio,
   authorAvatar,
@@ -745,6 +773,8 @@ export function AuthorDashboardClient({
   const [error, setError] = React.useState<string | null>(null);
   const [actionError, setActionError] = React.useState<string | null>(null);
   const [deleting, setDeleting] = React.useState<string | null>(null);
+  const [communityPosts, setCommunityPosts] = React.useState<CommunityPost[]>([]);
+  const [communityLoading, setCommunityLoading] = React.useState(true);
   const [postTypeFilter, setPostTypeFilter] = React.useState<"all" | "article" | "project">("all");
   const [statusFilter, setStatusFilter] = React.useState<"all" | "draft" | "published">("all");
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -778,6 +808,24 @@ export function AuthorDashboardClient({
   }, []);
 
   React.useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/posts?limit=12`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { posts?: CommunityPost[] } | null) => {
+        if (cancelled) return;
+        const others = (data?.posts ?? []).filter((post) => post.author?.id !== authorId);
+        setCommunityPosts(others.slice(0, 8));
+        setCommunityLoading(false);
+      })
+      .catch(() => {
+        if (!cancelled) setCommunityLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [authorId]);
+
+  React.useEffect(() => {
     const handlePostsChanged = () => {
       void loadPosts();
     };
@@ -807,7 +855,7 @@ export function AuthorDashboardClient({
   const published = posts.filter((p) => p.status === "published");
   const drafts = posts.filter((p) => p.status === "draft");
   const totalViews = published.reduce((sum, p) => sum + (p.view_count ?? 0), 0);
-  const maxViews = published.reduce((max, p) => Math.max(max, p.view_count ?? 0), 0);
+  const communityMaxViews = communityPosts.reduce((max, p) => Math.max(max, p.viewCount ?? 0), 0);
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const filteredPosts = posts
@@ -857,18 +905,15 @@ export function AuthorDashboardClient({
           </div>
         )}
 
-        {loading ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="rounded-2xl border border-border bg-card p-3">
-                <Skeleton className="mb-3 aspect-[16/10] w-full rounded-xl" />
-                <Skeleton className="mb-2 h-4 w-16 rounded-full" />
-                <Skeleton className="mb-3 h-4 w-full rounded" />
-                <Skeleton className="h-1.5 w-full rounded-full" />
-              </div>
-            ))}
-          </div>
-        ) : posts.length === 0 ? (
+        <Reveal direction="up" duration={0.4} delay={0.1}>
+          <RecentArticleCards
+            posts={communityPosts}
+            loading={communityLoading}
+            maxViews={communityMaxViews}
+          />
+        </Reveal>
+
+        {!loading && !error && posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card py-20 text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-border bg-secondary">
               <FileText className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
@@ -887,30 +932,20 @@ export function AuthorDashboardClient({
             </button>
           </div>
         ) : (
-          <Reveal direction="up" duration={0.4} delay={0.1}>
-            <RecentArticleCards
-              posts={posts}
-              maxViews={maxViews}
-              authorName={authorName}
-              authorAvatar={authorAvatar}
-              onEdit={editPost}
-            />
-          </Reveal>
-        )}
-
-        {!loading && !error && posts.length > 0 && (
-          <Reveal direction="up" duration={0.4} delay={0.15}>
-            <ArticlesTable
-              posts={filteredPosts}
-              loading={false}
-              postTypeFilter={postTypeFilter}
-              onPostTypeFilterChange={setPostTypeFilter}
-              onWrite={writeNow}
-              onEdit={editPost}
-              onDelete={(id) => void handleDelete(id)}
-              deletingId={deleting}
-            />
-          </Reveal>
+          !error && (
+            <Reveal direction="up" duration={0.4} delay={0.15}>
+              <ArticlesTable
+                posts={filteredPosts}
+                loading={loading}
+                postTypeFilter={postTypeFilter}
+                onPostTypeFilterChange={setPostTypeFilter}
+                onWrite={writeNow}
+                onEdit={editPost}
+                onDelete={(id) => void handleDelete(id)}
+                deletingId={deleting}
+              />
+            </Reveal>
+          )
         )}
 
         {/* Right rail content stacked below center on smaller screens */}
