@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn, getInitials } from "@/lib/utils";
@@ -290,21 +291,15 @@ function LearnSidebar() {
       )}
     >
       <div className="space-y-8">
-        <div className={cn("flex items-center gap-2", collapsed && "md:justify-center")}>
-          <Link
-            href="/dashboard"
-            title="TechTribe"
-            aria-label="TechTribe home"
-            className="font-heading text-2xl font-bold lowercase tracking-tight text-primary"
-          >
-            <span aria-hidden="true" className={cn(collapsed && "md:hidden")}>
-              techtribe
+        <div className={cn("flex items-center", collapsed && "md:justify-center")}>
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" />
+            <span
+              className={cn("font-heading text-lg font-bold", collapsed && "md:hidden")}
+              style={{ letterSpacing: "-0.02em", color: "#f5f5f7" }}
+            >
+              TechTribe
             </span>
-            {collapsed && (
-              <span aria-hidden="true" className="hidden md:inline">
-                t
-              </span>
-            )}
           </Link>
         </div>
         <nav aria-label="Main Navigation" className="space-y-1.5">
