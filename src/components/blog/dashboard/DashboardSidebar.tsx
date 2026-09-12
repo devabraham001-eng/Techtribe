@@ -5,21 +5,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useWriteModal } from "./WriteModalContext";
+import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
-  PenLine,
-  CheckCircle,
-  BookOpen,
-  FileEdit,
-  Settings,
-  Shield,
+  ArrowUp,
+  ArrowUpRight,
   BarChart3,
-  LogOut,
+  BookOpen,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Globe,
+  FileEdit,
+  GraduationCap,
+  LayoutGrid,
+  LogOut,
+  MessageSquare,
+  Newspaper,
+  PenLine,
+  Play,
+  Settings,
+  Shield,
   Terminal,
+  Trophy,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
 interface SidebarProps {
   authorName?: string;
   authorAvatar?: string | null;
@@ -28,6 +37,91 @@ interface SidebarProps {
 }
 
 const STORAGE_KEY = "techtribe_sidebar_collapsed";
+
+type WriteAction = "write" | "drafts";
+
+interface SubMenuItem {
+  id: string;
+  label: string;
+  href?: string;
+  action?: WriteAction;
+  icon: LucideIcon;
+}
+
+interface MenuItem {
+  id: string;
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  staffOnly?: boolean;
+  children?: SubMenuItem[];
+}
+
+const MENU_ITEMS: MenuItem[] = [
+  { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: LayoutGrid },
+  {
+    id: "learn",
+    label: "Learn",
+    href: "/learn",
+    icon: GraduationCap,
+    children: [
+      { id: "practice", label: "Practice", href: "/learn/practice", icon: MessageSquare },
+      { id: "videos", label: "Video guides", href: "/learn/video-guides", icon: Play },
+      { id: "achievements", label: "Achievements", href: "/dashboard", icon: Trophy },
+    ],
+  },
+  {
+    id: "blog",
+    label: "Blog",
+    href: "/blog",
+    icon: Newspaper,
+    children: [
+      { id: "write", label: "Write", action: "write", icon: PenLine },
+      { id: "drafts", label: "Drafts", action: "drafts", icon: FileEdit },
+    ],
+  },
+  {
+    id: "admin",
+    label: "Admin",
+    href: "/admin",
+    icon: Shield,
+    staffOnly: true,
+    children: [
+      { id: "analytics", label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+      { id: "learning", label: "Learning", href: "/admin/learning", icon: BookOpen },
+      { id: "practice-admin", label: "Practice", href: "/admin/practice", icon: Terminal },
+    ],
+  },
+  { id: "settings", label: "Settings", href: "/settings", icon: Settings },
+];
+
+function PromoAvatar() {
+  // Decorative character illustration (no icon equivalent).
+  return (
+    <svg className="mt-2 h-14 w-14" fill="none" viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M20 70C20 53.4315 33.4315 40 50 40C66.5685 40 80 53.4315 80 70V100H20V70Z" fill="#F4D3BD" />
+      <path
+        d="M22 36C22 36 34 22 55 24C68 25 76 34 76 34L86 38L64 45L40 44L22 36Z"
+        fill="#D0F201"
+        stroke="#10180B"
+        strokeWidth="3"
+      />
+      <circle cx="43" cy="56" fill="#10180B" r="3" />
+      <circle cx="63" cy="56" fill="#10180B" r="3" />
+      <path d="M50 63C53 67 59 67 62 63" stroke="#10180B" strokeLinecap="round" strokeWidth="2.5" />
+      <path
+        d="M20 40C20 40 32 30 52 32C66 33.5 73 42 73 42"
+        stroke="#10180B"
+        strokeLinecap="round"
+        strokeWidth="3"
+      />
+    </svg>
+  );
+}
+
+function isPathActive(pathname: string, href: string): boolean {
+  return pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
+}
 
 export function DashboardSidebar({
   authorName = "User",
@@ -43,199 +137,251 @@ export function DashboardSidebar({
     }
     return false;
   });
+  // Manual expand/collapse overrides. A section with no manual override
+  // auto-expands when the current route lives inside it.
+  const [manualOpen, setManualOpen] = React.useState<Record<string, boolean>>({});
 
-  function toggleCollapse() {
-    setCollapsed((prev) => {
+  function toggleCollapse() {    setCollapsed((prev) => {
       const next = !prev;
-      localStorage.setItem(STORAGE_KEY, String(next));
+      try {
+        localStorage.setItem(STORAGE_KEY, String(next));
+      } catch {
+        /* storage unavailable */
+      }
       return next;
     });
   }
 
-  const linkClass = (href: string) =>
-    `flex items-center gap-3 rounded-lg transition-colors ${
-      collapsed ? "px-2 py-2.5 justify-center" : "px-3 py-2.5"
-    } ${
-      pathname === href
-        ? "bg-card font-semibold text-foreground"
-        : "text-muted-foreground hover:bg-card hover:text-foreground"
-    }`;
+  function toggleMenu(id: string) {
+    setManualOpen((prev) => {
+      const menu = visibleMenus.find((m) => m.id === id);
+      const currentlyOpen = prev[id] ?? (menu ? menuMatches(menu) : false);
+      return { ...prev, [id]: !currentlyOpen };
+    });
+  }
 
-  const iconClass = "h-5 w-5 flex-shrink-0";
+  const visibleMenus = MENU_ITEMS.filter((menu) => !menu.staffOnly || isStaff);
+
+  function menuMatches(menu: MenuItem): boolean {
+    if (isPathActive(pathname, menu.href)) return true;
+    return (menu.children ?? []).some((child) => child.href && isPathActive(pathname, child.href));
+  }
+
+  function isMenuOpen(menu: MenuItem): boolean {
+    return manualOpen[menu.id] ?? menuMatches(menu);
+  }
+
+  const rowClass = (active: boolean) =>
+    cn(
+      "flex items-center gap-3.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors",
+      collapsed && "mx-auto h-10 w-10 justify-center gap-0 px-0",
+      active
+        ? "bg-card text-foreground"
+        : "text-muted-foreground hover:bg-card/60 hover:text-foreground"
+    );
 
   return (
     <div
-      className={`flex flex-col h-full transition-all duration-200 ease-in-out ${
-        collapsed ? "w-[72px]" : "w-[245px]"
-      }`}
+      className={cn(
+        "flex h-full flex-col justify-between bg-secondary p-6 transition-all duration-200",
+        collapsed ? "w-[76px] px-3" : "w-[245px]"
+      )}
     >
-      <nav className="flex flex-col h-full" aria-label="Dashboard navigation">
-        {/* Logo */}
-        <div className="border-b border-border flex-shrink-0">
-          <Link
-            href="/dashboard"
-            className={`flex items-center h-14 ${
-              collapsed ? "justify-center px-0" : "gap-2.5 px-3"
-            }`}
-          >
-            {collapsed ? (
-              <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" />
-            ) : (
-              <>
-                <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" />
-                <span className="font-heading font-bold text-lg" style={{ letterSpacing: "-0.02em", color: "#f5f5f7" }}>
-                  TechTribe
-                </span>
-              </>
-            )}
+      <div className="min-h-0 flex-1 space-y-8 overflow-y-auto">
+        <div className={cn("flex items-center", collapsed && "justify-center")}>
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" />
+            <span
+              className={cn("font-heading text-lg font-bold", collapsed && "hidden")}
+              style={{ letterSpacing: "-0.02em", color: "#f5f5f7" }}
+            >
+              TechTribe
+            </span>
           </Link>
         </div>
-
-        {/* Nav items */}
-        <div className="flex-1 min-h-0 space-y-1 px-2 py-4 overflow-y-auto">
-          <Link href="/" className={linkClass("/")} title="Home">
-            <Globe className={iconClass} />
-            {!collapsed && <span>Home</span>}
-          </Link>
-
-          <Link href="/dashboard" className={linkClass("/dashboard")} title="Dashboard">
-            <LayoutDashboard className={iconClass} />
-            {!collapsed && <span>Dashboard</span>}
-          </Link>
-
-          <button
-            type="button"
-            onClick={() => openWriteModal()}
-            className={`flex w-full items-center gap-3 rounded-lg transition-colors text-left ${
-              collapsed ? "px-2 py-2.5 justify-center" : "px-3 py-2.5"
-            } text-muted-foreground hover:bg-card hover:text-foreground`}
-            title="Write"
-          >
-            <PenLine className={iconClass} />
-            {!collapsed && <span>Write</span>}
-          </button>
-
-          <Link href="/blog" className={linkClass("/blog")} title="Blog">
-            <CheckCircle className={iconClass} />
-            {!collapsed && <span>Blog</span>}
-          </Link>
-
-          <Link href="/learn" className={linkClass("/learn")} title="Learn">
-            <BookOpen className={iconClass} />
-            {!collapsed && <span>Learn</span>}
-          </Link>
-
-          <button
-            type="button"
-            onClick={() => openWriteModal()}
-            className={`flex w-full items-center gap-3 rounded-lg transition-colors text-left ${
-              collapsed ? "px-2 py-2.5 justify-center" : "px-3 py-2.5"
-            } text-muted-foreground hover:bg-card hover:text-foreground`}
-            title="Drafts"
-          >
-            <FileEdit className={iconClass} />
-            {!collapsed && <span>Drafts</span>}
-          </button>
-
-          <Link href="/settings" className={linkClass("/settings")} title="Settings">
-            <Settings className={iconClass} />
-            {!collapsed && <span>Settings</span>}
-          </Link>
-
-          {isStaff && (
-            <>
-              <Link href="/admin" className={linkClass("/admin")} title="Admin">
-                <Shield className={iconClass} />
-                {!collapsed && <span>Admin</span>}
-              </Link>
-              <Link href="/admin/analytics" className={linkClass("/admin/analytics")} title="Analytics">
-                <BarChart3 className={iconClass} />
-                {!collapsed && <span>Analytics</span>}
-              </Link>
-              <Link href="/admin/learning" className={linkClass("/admin/learning")} title="Learning">
-                <BookOpen className={iconClass} />
-                {!collapsed && <span>Learning</span>}
-              </Link>
-              <Link href="/admin/practice" className={linkClass("/admin/practice")} title="Practice">
-                <Terminal className={iconClass} />
-                {!collapsed && <span>Practice</span>}
-              </Link>
-            </>
-          )}
-        </div>
-
-        {/* User & sign out / sign in */}
-        <div className="border-t border-border flex-shrink-0">
-          {isAuthenticated ? (
-            <>
-              <div className={`flex items-center ${collapsed ? "justify-center py-3" : "gap-3 px-3 py-3"}`}>
-                <div className="h-8 w-8 flex-shrink-0 rounded-full bg-card border border-border flex items-center justify-center overflow-hidden" title={authorName}>
-                  {authorAvatar ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={authorAvatar} alt={authorName} className="h-full w-full object-cover" />
-                  ) : (
-                    <span className="text-xs font-bold text-fg-tertiary">
-                      {authorName.charAt(0).toUpperCase()}
-                    </span>
+        <nav aria-label="Dashboard navigation" className="space-y-1.5">
+          {visibleMenus.map((menu) => {
+            const Icon = menu.icon;
+            const active = menuMatches(menu);
+            const expanded = isMenuOpen(menu) && !collapsed;
+            return (
+              <div key={menu.id}>
+                <div className={rowClass(active)}>
+                  <Link
+                    href={menu.href}
+                    aria-current={active && !menu.children ? "page" : undefined}
+                    title={collapsed ? menu.label : undefined}
+                    aria-label={collapsed ? menu.label : undefined}
+                    className="flex min-w-0 flex-1 items-center gap-3.5"
+                  >
+                    <Icon
+                      className={cn("h-4 w-4 shrink-0", active && "text-foreground")}
+                      strokeWidth={active ? 2.2 : 2}
+                      aria-hidden="true"
+                    />
+                    <span className={cn("truncate", collapsed && "hidden")}>{menu.label}</span>
+                  </Link>
+                  {menu.children && !collapsed && (
+                    <button
+                      type="button"
+                      onClick={() => toggleMenu(menu.id)}
+                      title={expanded ? `Collapse ${menu.label}` : `Expand ${menu.label}`}
+                      aria-label={expanded ? `Collapse ${menu.label}` : `Expand ${menu.label}`}
+                      aria-expanded={expanded}
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-muted-foreground transition hover:bg-card-hover hover:text-foreground"
+                    >
+                      <ChevronDown
+                        className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")}
+                        aria-hidden="true"
+                      />
+                    </button>
                   )}
                 </div>
-                {!collapsed && (
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate text-foreground">{authorName}</p>
+                {menu.children && expanded && (
+                  <div className="ml-5 mt-1 space-y-1 border-l border-border pl-3">
+                    {menu.children.map((child) => {
+                      const ChildIcon = child.icon;
+                      const childActive = child.href ? isPathActive(pathname, child.href) : false;
+                      const childRow = cn(
+                        "flex w-full items-center gap-3 rounded-full px-3 py-2 text-left text-[13px] font-medium transition-colors",
+                        childActive
+                          ? "bg-card text-foreground"
+                          : "text-muted-foreground hover:bg-card/60 hover:text-foreground"
+                      );
+                      return child.href ? (
+                        <Link
+                          key={child.id}
+                          href={child.href}
+                          aria-current={childActive ? "page" : undefined}
+                          className={childRow}
+                        >
+                          <ChildIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+                          <span className="truncate">{child.label}</span>
+                        </Link>
+                      ) : (
+                        <button
+                          key={child.id}
+                          type="button"
+                          onClick={() => openWriteModal()}
+                          className={childRow}
+                        >
+                          <ChildIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+                          <span className="truncate">{child.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
+            );
+          })}
+        </nav>
+      </div>
 
-              <form action="/auth/signout" method="post" className={collapsed ? "px-2 pb-3" : "px-3 pb-3"}>
-                <button
-                  type="submit"
-                  className={`flex w-full items-center gap-3 rounded-lg transition-colors ${
-                    collapsed ? "justify-center px-2 py-2" : "px-3 py-2"
-                  } text-muted-foreground hover:bg-card hover:text-foreground`}
-                  title="Sign out"
-                >
-                  <LogOut className={iconClass} />
-                  {!collapsed && <span>Sign out</span>}
-                </button>
-              </form>
-            </>
-          ) : (
-            <div className={collapsed ? "px-2 py-3" : "px-3 py-3"}>
+      <div className="mt-6 shrink-0">
+        {collapsed ? (
+          <div className="flex justify-center">
+            <Link
+              href="/settings"
+              title="Upgrade to Plus"
+              aria-label="Upgrade to Plus"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow transition hover:bg-primary-dark"
+            >
+              <ArrowUp className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
+            </Link>
+          </div>
+        ) : (
+          <div className="relative mt-8 pt-8">
+            <div className="relative flex flex-col items-center overflow-hidden rounded-2xl bg-primary p-4 text-center">
+              <div className="absolute -top-7 left-1/2 flex h-16 w-16 -translate-x-1/2 items-center justify-center overflow-hidden rounded-full border-4 border-secondary bg-white shadow-lg">
+                <PromoAvatar />
+              </div>
+              <div className="mb-3 mt-6">
+                <h3 className="flex items-center justify-center gap-1.5 text-base font-extrabold leading-tight tracking-tight text-primary-foreground">
+                  Level
+                  <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-foreground text-[10px] font-black text-primary">
+                    <ArrowUp className="h-2.5 w-2.5" strokeWidth={3} aria-hidden="true" />
+                  </span>
+                  Up
+                </h3>
+                <p className="text-base font-extrabold leading-tight text-primary-foreground">with Plus</p>
+              </div>
               <Link
-                href="/login"
-                className={`flex w-full items-center gap-3 rounded-lg transition-colors ${
-                  collapsed ? "justify-center px-2 py-2" : "px-3 py-2"
-                } bg-primary text-primary-foreground font-semibold hover:opacity-90`}
-                title="Sign in"
+                href="/settings"
+                className="flex w-full items-center justify-center gap-1.5 rounded-full bg-primary-foreground px-3 py-2 text-xs font-semibold text-primary shadow transition hover:opacity-90"
               >
-                <LogOut className={`${iconClass} rotate-180`} />
-                {!collapsed && <span>Sign in</span>}
+                <span>Upgrade Now</span>
+                <ArrowUpRight className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
               </Link>
             </div>
-          )}
-
-          {/* Collapse toggle */}
-          <div className={collapsed ? "px-2 pb-3" : "px-3 pb-3"}>
-            <button
-              type="button"
-              onClick={toggleCollapse}
-              className={`flex w-full items-center gap-3 rounded-lg transition-colors ${
-                collapsed ? "justify-center px-2 py-2" : "px-3 py-2"
-              } text-muted-foreground hover:bg-card hover:text-foreground`}
-              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              {collapsed ? (
-                <ChevronRight className={iconClass} />
-              ) : (
-                <>
-                  <ChevronLeft className={iconClass} />
-                  <span>Collapse</span>
-                </>
-              )}
-            </button>
           </div>
+        )}
+
+        {isAuthenticated ? (
+          <div className="mt-4 space-y-1.5 border-t border-border pt-4">
+            <div className={cn("flex items-center gap-3 px-4 py-1", collapsed && "justify-center px-0")}>
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-card"
+                title={authorName}
+              >
+                {authorAvatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={authorAvatar} alt={authorName} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="text-xs font-bold text-muted-foreground">
+                    {authorName.charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <p className={cn("min-w-0 flex-1 truncate text-sm font-medium text-foreground", collapsed && "hidden")}>
+                {authorName}
+              </p>
+            </div>
+            <form action="/auth/signout" method="post">
+              <button
+                type="submit"
+                title="Sign out"
+                aria-label="Sign out"
+                className={cn(rowClass(false), "w-full")}
+              >
+                <LogOut className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden="true" />
+                <span className={cn(collapsed && "hidden")}>Sign out</span>
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div className="mt-4 border-t border-border pt-4">
+            <Link
+              href="/login"
+              title="Sign in"
+              className="flex w-full items-center gap-3.5 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90"
+            >
+              <LogOut className="h-4 w-4 shrink-0 rotate-180" aria-hidden="true" />
+              <span>Sign in</span>
+            </Link>
+          </div>
+        )}
+
+        <div className="mt-1.5">
+          <button
+            type="button"
+            onClick={toggleCollapse}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-expanded={!collapsed}
+            className={cn(rowClass(false), "w-full")}
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+            ) : (
+              <>
+                <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>Collapse</span>
+              </>
+            )}
+          </button>
         </div>
-      </nav>
+      </div>
     </div>
   );
 }

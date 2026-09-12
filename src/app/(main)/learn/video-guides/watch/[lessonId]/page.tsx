@@ -5,7 +5,6 @@ import { ArrowLeft, ArrowRight, ChevronLeft, ExternalLink } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getVideoWatchData } from "@/lib/learning-data";
-import { LearnShell } from "@/components/learn/LearnSidebar";
 import { VideoPlayer } from "@/components/learn/VideoGuidesDashboard";
 
 export const dynamic = "force-dynamic";
@@ -43,8 +42,7 @@ export default async function VideoWatchPage({ params }: WatchParams) {
   const { current, prev, next } = data;
 
   return (
-    <LearnShell activeId="videos">
-      <div className="space-y-6 overflow-y-auto p-4 sm:p-6 lg:p-8">
+    <div className="space-y-6 overflow-y-auto p-4 sm:p-6 lg:p-8">
         <Link
           href="/learn/video-guides"
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition hover:text-foreground"
@@ -108,6 +106,5 @@ export default async function VideoWatchPage({ params }: WatchParams) {
           )}
         </div>
       </div>
-    </LearnShell>
   );
 }

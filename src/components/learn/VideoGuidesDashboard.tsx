@@ -8,7 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials, slugify } from "@/lib/utils";
 import { resolveVideoEmbed } from "@/lib/video-embed";
 import type { CategoryVideoGroup } from "@/lib/learning-data";
-import { LearnShell } from "./LearnSidebar";
 import {
   Bell,
   Check,
@@ -606,7 +605,7 @@ export function VideoGuidesDashboard({
   const [activeVideo, setActiveVideo] = React.useState<WatchTarget | null>(null);
 
   return (
-    <LearnShell activeId="videos">
+    <>
       <VideoHeader user={user} query={query} onQueryChange={setQuery} />
       <div className="space-y-6 overflow-y-auto p-5 md:p-6">
         <CategoryShortcuts groups={groups} />
@@ -618,6 +617,6 @@ export function VideoGuidesDashboard({
         target={activeVideo}
         onClose={() => setActiveVideo(null)}
       />
-    </LearnShell>
+    </>
   );
 }

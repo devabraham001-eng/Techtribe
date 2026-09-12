@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn, getInitials } from "@/lib/utils";
-import { LearnShell } from "./LearnSidebar";
 import {
   ArrowUpRight,
   Book,
@@ -608,7 +607,7 @@ export function LearnDashboard({
   const heroNoun = heroNumber === 1 ? "lesson" : "lessons";
 
   return (
-    <LearnShell activeId="dashboard">
+    <>
       <LearnHeader user={user} streak={stats.streak} query={query} onQueryChange={setQuery} />
       <div className="space-y-6 overflow-y-auto p-4 sm:space-y-8 sm:p-6 lg:p-8">
         <HeroBanner
@@ -630,6 +629,6 @@ export function LearnDashboard({
           </div>
         </section>
       </div>
-    </LearnShell>
+    </>
   );
 }
