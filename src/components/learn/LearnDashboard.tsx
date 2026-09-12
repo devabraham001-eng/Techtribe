@@ -6,35 +6,31 @@ import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn, getInitials } from "@/lib/utils";
 import {
-  ArrowRight,
+  ArrowUp,
   ArrowUpRight,
-  BookOpen,
+  Bell,
+  Book,
   Briefcase,
-  Cloud,
-  Code2,
-  Database,
+  Calendar,
   FileText,
   Flame,
   Globe,
+  Landmark,
+  LayoutGrid,
+  MessageSquare,
+  Mic,
   Play,
   Search,
-  Server,
-  ShieldCheck,
-  Smartphone,
-  Sparkles,
-  Terminal,
-  Zap,
+  Settings,
+  ShoppingBag,
+  Trophy,
+  Video,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
-};
-
-const stagger = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
 };
 
 interface Mentor {
@@ -106,41 +102,223 @@ interface LearnDashboardProps {
   mentors: Mentor[];
 }
 
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
+/* ------------------------------------------------------------------ */
+/* Static replica content (mirrors CODE.txt 1:1)                       */
+/* ------------------------------------------------------------------ */
+
+interface NavItem {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  active: boolean;
 }
 
-function trackIconFor(track: TrackProgress, index: number): LucideIcon {
-  const haystack = `${track.title} ${track.category ?? ""}`.toLowerCase();
-  if (/(ai|machine learning|\bml\b|agent|llm)/.test(haystack)) return Sparkles;
-  if (/(data|sql|database|postgres)/.test(haystack)) return Database;
-  if (/(web|frontend|react|next|css|javascript|typescript)/.test(haystack)) return Globe;
-  if (/(mobile|flutter|android|ios|native)/.test(haystack)) return Smartphone;
-  if (/(devops|docker|infra|linux|server|backend|deploy)/.test(haystack)) return Server;
-  if (/(secur|cyber)/.test(haystack)) return ShieldCheck;
-  if (/(cloud|aws|azure|gcp)/.test(haystack)) return Cloud;
-  if (/(code|python|programming|git)/.test(haystack)) return Code2;
-  const fallbacks: LucideIcon[] = [Code2, Terminal, BookOpen];
-  return fallbacks[index % fallbacks.length];
+const NAV_ITEMS: NavItem[] = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutGrid, active: true },
+  { label: "Practice", href: "/learn/practice", icon: MessageSquare, active: false },
+  { label: "Schedule", href: "#scheduled", icon: Calendar, active: false },
+  { label: "Video guides", href: "#module", icon: Play, active: false },
+  { label: "Notifications", href: "/dashboard", icon: Bell, active: false },
+  { label: "Achievements", href: "/dashboard", icon: Trophy, active: false },
+  { label: "Settings", href: "/settings", icon: Settings, active: false },
+];
+
+interface ReplicaLesson {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  highlighted: boolean;
 }
 
-const LESSON_ICON_FALLBACKS: LucideIcon[] = [BookOpen, FileText, Play, Code2, Terminal];
+const REPLICA_LESSONS: ReplicaLesson[] = [
+  {
+    title: "Office vocabulary",
+    description: "Talk about daily tasks, meetings, and coworkers.",
+    icon: Book,
+    highlighted: true,
+  },
+  {
+    title: "What is your job?",
+    description: "Learn names of common professions and roles.",
+    icon: Briefcase,
+    highlighted: true,
+  },
+  {
+    title: "Job Interviews",
+    description: "Talk about daily tasks, meetings, and coworkers.",
+    icon: Mic,
+    highlighted: true,
+  },
+  {
+    title: "Work Meetings",
+    description: "Use phrases to contribute, agree, or ask questions.",
+    icon: Video,
+    highlighted: false,
+  },
+  {
+    title: "CV Basics",
+    description: "Use phrases to contribute, agree, or ask questions.",
+    icon: FileText,
+    highlighted: false,
+  },
+];
 
-function lessonIconFor(lesson: RecentLesson["lesson"], index: number): LucideIcon {
-  if (lesson.isProject) return Briefcase;
-  return LESSON_ICON_FALLBACKS[index % LESSON_ICON_FALLBACKS.length];
+type TopicVariant = "light" | "primary" | "dark";
+
+interface ReplicaTopic {
+  number: string;
+  title: React.ReactNode;
+  icon: LucideIcon;
+  variant: TopicVariant;
+  artClassName: string;
+  iconClassName: string;
 }
 
-function formatShortDate(value: string): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+const REPLICA_TOPICS: ReplicaTopic[] = [
+  {
+    number: "01",
+    title: (
+      <>
+        Going
+        <br />
+        shopping
+      </>
+    ),
+    icon: ShoppingBag,
+    variant: "light",
+    artClassName: "flex w-full items-end justify-end pb-1 pr-1",
+    iconClassName: "h-24 w-24",
+  },
+  {
+    number: "02",
+    title: (
+      <>
+        Around the
+        <br />
+        world
+      </>
+    ),
+    icon: Globe,
+    variant: "primary",
+    artClassName: "flex w-full items-end justify-center -mb-5",
+    iconClassName: "h-28 w-28",
+  },
+  {
+    number: "03",
+    title: (
+      <>
+        Paris
+        <br />
+        en ville
+      </>
+    ),
+    icon: Landmark,
+    variant: "dark",
+    artClassName: "flex w-full items-end justify-center -mb-1",
+    iconClassName: "h-24 w-24",
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/* Sidebar                                                             */
+/* ------------------------------------------------------------------ */
+
+function PromoAvatar() {
+  // Decorative character illustration from the reference (no icon equivalent).
+  return (
+    <svg className="mt-2 h-14 w-14" fill="none" viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M20 70C20 53.4315 33.4315 40 50 40C66.5685 40 80 53.4315 80 70V100H20V70Z" fill="#F4D3BD" />
+      <path
+        d="M22 36C22 36 34 22 55 24C68 25 76 34 76 34L86 38L64 45L40 44L22 36Z"
+        fill="#D0F201"
+        stroke="#10180B"
+        strokeWidth="3"
+      />
+      <circle cx="43" cy="56" fill="#10180B" r="3" />
+      <circle cx="63" cy="56" fill="#10180B" r="3" />
+      <path d="M50 63C53 67 59 67 62 63" stroke="#10180B" strokeLinecap="round" strokeWidth="2.5" />
+      <path
+        d="M20 40C20 40 32 30 52 32C66 33.5 73 42 73 42"
+        stroke="#10180B"
+        strokeLinecap="round"
+        strokeWidth="3"
+      />
+    </svg>
+  );
 }
 
-/* ---------------- Header: search + XP/streak + avatar ---------------- */
+function LearnSidebar() {
+  return (
+    <aside
+      aria-label="Learn navigation"
+      className="flex w-full shrink-0 flex-col justify-between border-b border-border bg-secondary p-6 md:min-h-screen md:w-64 md:border-b-0 md:border-r"
+    >
+      <div className="space-y-8">
+        <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard"
+            className="font-heading text-2xl font-bold lowercase tracking-tight text-primary"
+          >
+            techtribe
+          </Link>
+        </div>
+        <nav aria-label="Main Navigation" className="space-y-1.5">
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                aria-current={item.active ? "page" : undefined}
+                className={cn(
+                  "flex items-center gap-3.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors",
+                  item.active
+                    ? "bg-card text-foreground"
+                    : "text-muted-foreground hover:bg-card/60 hover:text-foreground"
+                )}
+              >
+                <Icon
+                  className={cn("h-4 w-4 shrink-0", item.active && "text-foreground")}
+                  strokeWidth={item.active ? 2.2 : 2}
+                  aria-hidden="true"
+                />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+      <div className="relative mt-8 pt-8">
+        <div className="relative flex flex-col items-center overflow-hidden rounded-2xl bg-primary p-4 text-center">
+          <div className="absolute -top-7 left-1/2 flex h-16 w-16 -translate-x-1/2 items-center justify-center overflow-hidden rounded-full border-4 border-secondary bg-white shadow-lg">
+            <PromoAvatar />
+          </div>
+          <div className="mb-3 mt-6">
+            <h3 className="flex items-center justify-center gap-1.5 text-base font-extrabold leading-tight tracking-tight text-primary-foreground">
+              Level
+              <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-foreground text-[10px] font-black text-primary">
+                <ArrowUp className="h-2.5 w-2.5" strokeWidth={3} aria-hidden="true" />
+              </span>
+              Up
+            </h3>
+            <p className="text-base font-extrabold leading-tight text-primary-foreground">with Plus</p>
+          </div>
+          <Link
+            href="/settings"
+            className="flex w-full items-center justify-center gap-1.5 rounded-full bg-primary-foreground px-3 py-2 text-xs font-semibold text-primary shadow transition hover:opacity-90"
+          >
+            <span>Upgrade Now</span>
+            <ArrowUpRight className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Header                                                              */
+/* ------------------------------------------------------------------ */
 
 function XpStreakPill({ streak }: { streak: number }) {
   const [xp, setXp] = React.useState<number | null>(null);
@@ -162,7 +340,7 @@ function XpStreakPill({ streak }: { streak: number }) {
 
   return (
     <div
-      className="flex items-center gap-2.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs sm:gap-3 sm:px-3.5"
+      className="flex items-center gap-3 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs"
       aria-label={`Practice XP and ${streak}-day streak`}
     >
       <span className="flex items-center gap-1.5 font-medium">
@@ -173,7 +351,7 @@ function XpStreakPill({ streak }: { streak: number }) {
         <span className="font-semibold text-foreground">{xp === null ? "···" : xp.toLocaleString("en-US")}</span>
         <span className="text-[11px] text-muted-foreground">XP</span>
       </span>
-      <span className="h-3 w-px bg-border" aria-hidden="true" />
+      <div className="h-3 w-[1px] bg-border" aria-hidden="true" />
       <span className="flex items-center gap-1.5 font-medium">
         <Flame className="h-3.5 w-3.5 text-primary" fill="currentColor" aria-hidden="true" />
         <span className="font-semibold text-foreground">{streak}</span>
@@ -195,30 +373,29 @@ function LearnHeader({
   onQueryChange: (value: string) => void;
 }) {
   return (
-    <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:h-20 sm:px-6">
-        <form role="search" className="relative w-40 sm:w-72 lg:w-96" onSubmit={(e) => e.preventDefault()}>
-          <label htmlFor="learn-search" className="sr-only">
-            Search for a course, lesson, etc.
-          </label>
-          <Search
-            className="pointer-events-none absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground sm:left-3.5"
-            aria-hidden="true"
-          />
-          <input
-            id="learn-search"
-            type="search"
-            value={query}
-            onChange={(e) => onQueryChange(e.target.value)}
-            placeholder="Search for a course, lesson, etc."
-            aria-controls="learn-lesson-list"
-            className="w-full bg-transparent py-2 pl-7 pr-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none sm:pl-10 sm:pr-4"
-          />
-        </form>
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <XpStreakPill streak={streak} />
-          <Avatar className="ml-1 h-8 w-8 border border-border">
-            <AvatarImage src={user.avatarUrl ?? ""} alt={user.name} />
+    <header className="flex h-16 items-center justify-between border-b border-border px-4 sm:h-20 sm:px-8">
+      <div className="relative w-40 sm:w-72 lg:w-96">
+        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-0 sm:pl-3.5">
+          <Search className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+        </span>
+        <label htmlFor="learn-search" className="sr-only">
+          Search for a course, lesson, etc.
+        </label>
+        <input
+          id="learn-search"
+          type="text"
+          value={query}
+          onChange={(e) => onQueryChange(e.target.value)}
+          placeholder="Search for a course, lesson, etc."
+          aria-controls="learn-lesson-list"
+          className="w-full bg-transparent py-2 pl-7 pr-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:pl-10 sm:pr-4"
+        />
+      </div>
+      <div className="flex shrink-0 items-center gap-3">
+        <XpStreakPill streak={streak} />
+        <div className="relative ml-1 h-8 w-8 overflow-hidden rounded-full border border-border">
+          <Avatar className="h-full w-full">
+            <AvatarImage src={user.avatarUrl ?? ""} alt={user.name} className="object-cover" />
             <AvatarFallback className="text-xs">{getInitials(user.name)}</AvatarFallback>
           </Avatar>
         </div>
@@ -227,75 +404,76 @@ function LearnHeader({
   );
 }
 
-/* ---------------- Hero: greeting + progress + topic cards ---------------- */
-
-type TopicVariant = "light" | "primary" | "dark";
+/* ------------------------------------------------------------------ */
+/* Hero                                                                */
+/* ------------------------------------------------------------------ */
 
 function TopicCard({
+  topic,
   index,
-  title,
-  slug,
-  icon: Icon,
-  variant,
+  href,
 }: {
+  topic: ReplicaTopic;
   index: number;
-  title: string;
-  slug: string;
-  icon: LucideIcon;
-  variant: TopicVariant;
+  href: string;
 }) {
+  const Icon = topic.icon;
   return (
     <Link
-      href={`/learn/${slug}`}
-      aria-label={`Open path: ${title}`}
+      href={href}
+      aria-label={`Open path ${topic.number}`}
       className={cn(
-        "group flex h-48 w-36 shrink-0 snap-start flex-col justify-between overflow-hidden rounded-2xl p-3.5 shadow-lg transition-transform hover:-translate-y-0.5",
-        variant === "primary" && "bg-primary text-primary-foreground",
-        variant === "light" && "bg-foreground text-background",
-        variant === "dark" && "border border-border bg-secondary text-foreground"
+        "group flex h-48 w-36 shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-3.5 shadow-lg transition-transform hover:-translate-y-0.5",
+        topic.variant === "light" && "bg-foreground text-background",
+        topic.variant === "primary" && "bg-primary text-primary-foreground",
+        topic.variant === "dark" && "border border-border bg-secondary text-foreground"
       )}
     >
       <div>
-        <span className="text-[10px] font-bold tracking-wider opacity-60">0{index + 1}</span>
-        <h4 className="mt-1 line-clamp-3 text-xs font-bold leading-snug">{title}</h4>
+        <span
+          className={cn(
+            "text-[10px] font-bold tracking-wider",
+            topic.variant === "light" && "text-background/50",
+            topic.variant === "primary" && "text-primary-foreground/60",
+            topic.variant === "dark" && "text-muted-foreground"
+          )}
+        >
+          {topic.number}
+        </span>
+        <h4 className="mt-1 text-xs font-bold leading-snug">{topic.title}</h4>
       </div>
-      <div className="flex justify-center pb-1">
-        <Icon className="h-16 w-16 opacity-90" strokeWidth={1.5} aria-hidden="true" />
+      <div className={topic.artClassName} aria-hidden="true">
+        <Icon className={topic.iconClassName} strokeWidth={2} />
       </div>
+      <span className="sr-only">Part {index + 1} of 3</span>
     </Link>
   );
 }
 
 function HeroBanner({
-  user,
-  greeting,
+  firstName,
   heroNumber,
   heroNoun,
   heroSuffix,
-  heroTracks,
+  topicHrefs,
 }: {
-  user: LearnDashboardProps["user"];
-  greeting: string;
+  firstName: string;
   heroNumber: number | null;
   heroNoun: string;
   heroSuffix: string | null;
-  heroTracks: TrackProgress[];
+  topicHrefs: string[];
 }) {
-  const variants: TopicVariant[] = ["light", "primary", "dark"];
-
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       aria-labelledby="learn-hero-heading"
-      className="relative flex flex-col gap-6 overflow-hidden rounded-[28px] border border-primary/20 bg-gradient-to-br from-primary/[0.12] via-card to-card p-6 sm:p-7 lg:flex-row lg:items-stretch lg:justify-between"
+      className="relative flex flex-col justify-between gap-6 overflow-hidden rounded-[28px] border border-primary/20 bg-gradient-to-br from-primary/[0.12] via-card to-card p-6 shadow-inner sm:p-7 lg:flex-row lg:items-stretch"
     >
       <div className="z-10 flex max-w-sm flex-col justify-between gap-6">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            {greeting}, {user.firstName}!
-          </p>
+          <span className="text-sm font-medium text-muted-foreground">Salut, {firstName}!</span>
           <h1
             id="learn-hero-heading"
             className="mt-3 font-heading text-3xl font-bold leading-snug tracking-tight text-foreground"
@@ -319,216 +497,151 @@ function HeroBanner({
             )}
           </h1>
         </div>
-        <div>
+        <div className="pt-6">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-md transition hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-md transition duration-200 hover:bg-primary-dark"
           >
-            View Progress
-            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>View Progress</span>
+            <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden="true" />
           </Link>
         </div>
       </div>
-      <div className="z-10 flex items-center gap-3.5 overflow-x-auto pb-2 lg:pb-0" aria-label="Your top paths">
-        {heroTracks.length > 0 ? (
-          heroTracks.map((track, i) => (
-            <TopicCard
-              key={track.id}
-              index={i}
-              title={track.title}
-              slug={track.slug}
-              icon={trackIconFor(track, i)}
-              variant={variants[i % variants.length]}
-            />
-          ))
-        ) : (
-          <Link
-            href="/dashboard"
-            aria-label="Explore learning paths"
-            className="flex h-48 w-36 shrink-0 snap-start flex-col justify-between overflow-hidden rounded-2xl bg-primary p-3.5 text-primary-foreground shadow-lg transition-transform hover:-translate-y-0.5"
-          >
-            <div>
-              <span className="text-[10px] font-bold tracking-wider opacity-60">01</span>
-              <h4 className="mt-1 text-xs font-bold leading-snug">
-                Explore
-                <br />
-                paths
-              </h4>
-            </div>
-            <div className="flex justify-center pb-1">
-              <BookOpen className="h-16 w-16 opacity-90" strokeWidth={1.5} aria-hidden="true" />
-            </div>
-          </Link>
-        )}
+      <div className="z-10 flex items-center gap-3.5 overflow-x-auto pb-2 lg:pb-0" aria-label="Featured topics">
+        {REPLICA_TOPICS.map((topic, i) => (
+          <TopicCard key={topic.number} topic={topic} index={i} href={topicHrefs[i] ?? "/dashboard"} />
+        ))}
       </div>
     </motion.section>
   );
 }
 
-/* ---------------- Module: focus path + lesson rows ---------------- */
+/* ------------------------------------------------------------------ */
+/* Module lessons                                                      */
+/* ------------------------------------------------------------------ */
 
-function LessonItem({
-  icon: Icon,
-  title,
-  description,
+function LessonRow({
+  lesson,
   href,
-  active,
 }: {
-  icon: LucideIcon;
-  title: string;
-  description: string;
+  lesson: ReplicaLesson;
   href: string;
-  active: boolean;
 }) {
+  const Icon = lesson.icon;
   return (
     <li>
       <Link
         href={href}
-        className="flex flex-col gap-1 rounded-2xl border border-transparent p-3.5 transition hover:border-border hover:bg-card sm:flex-row sm:items-center sm:justify-between"
+        className="flex flex-col gap-2 rounded-2xl border border-transparent bg-transparent p-3.5 transition hover:border-border hover:bg-card min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between"
       >
         <span className="flex min-w-0 items-center gap-3.5">
           <span
             className={cn(
               "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border",
-              active ? "border-primary/40 bg-primary/10 text-primary" : "border-border bg-secondary text-muted-foreground"
+              lesson.highlighted
+                ? "border-primary/40 bg-primary/10 text-primary"
+                : "border-border bg-secondary text-muted-foreground"
             )}
           >
-            <Icon className="h-4 w-4" aria-hidden="true" />
+            <Icon className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
           </span>
-          <span className="truncate text-sm font-semibold text-foreground">{title}</span>
+          <span className="truncate text-sm font-semibold text-foreground">{lesson.title}</span>
         </span>
-        <span className="max-w-full pl-[50px] text-xs font-normal text-muted-foreground sm:max-w-xs sm:pl-0 sm:text-right">
-          {description}
+        <span className="max-w-full pl-[50px] text-xs font-normal text-muted-foreground min-[480px]:max-w-xs min-[480px]:pl-0 min-[480px]:text-right">
+          {lesson.description}
         </span>
       </Link>
     </li>
   );
 }
 
-function ModuleSection({
-  focusTrack,
-  progressPct,
-  lessons,
-  query,
-  browseHref,
-}: {
-  focusTrack: TrackProgress | null;
-  progressPct: number;
-  lessons: { key: string; icon: LucideIcon; title: string; description: string; href: string }[];
-  query: string;
-  browseHref: string;
-}) {
+function ModuleSection({ lessonHref, query }: { lessonHref: string; query: string }) {
+  const normalizedQuery = query.trim().toLowerCase();
+  const visibleLessons = REPLICA_LESSONS.filter((lesson) => {
+    if (!normalizedQuery) return true;
+    return (
+      lesson.title.toLowerCase().includes(normalizedQuery) ||
+      lesson.description.toLowerCase().includes(normalizedQuery)
+    );
+  });
+
   return (
     <motion.div
       variants={fadeUp}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-40px" }}
+      id="module"
+      className="scroll-mt-4"
     >
       <div className="flex items-center justify-between gap-4 pb-1">
         <div className="min-w-0">
-          <p className="text-xs font-semibold text-muted-foreground">
-            {focusTrack ? (focusTrack.category ?? "Learning path") : "Learning paths"}
-          </p>
-          <h2 className="truncate font-heading text-lg font-bold text-foreground">
-            {focusTrack ? focusTrack.title : "Your lessons"}
-          </h2>
+          <span className="text-xs font-semibold text-muted-foreground">Module 6</span>
+          <h2 className="truncate font-heading text-lg font-bold text-foreground">Work and office</h2>
         </div>
-        {focusTrack && focusTrack.totalLessons > 0 ? (
-          <div className="flex w-36 shrink-0 items-center gap-3 sm:w-44">
-            <div
-              className="h-1.5 w-full overflow-hidden rounded-full bg-secondary"
-              role="progressbar"
-              aria-valuenow={progressPct}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`${focusTrack.title} progress`}
-            >
-              <div className="h-full rounded-full bg-primary" style={{ width: `${progressPct}%` }} />
-            </div>
-            <span className="text-xs font-bold text-muted-foreground">{progressPct}%</span>
-          </div>
-        ) : (
-          <Link
-            href={browseHref}
-            className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-primary hover:underline"
+        <div className="flex w-36 shrink-0 items-center gap-3 sm:w-44">
+          <div
+            className="h-1.5 w-full overflow-hidden rounded-full bg-secondary"
+            role="progressbar"
+            aria-valuenow={75}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Module 6 progress"
           >
-            Browse paths <ArrowRight className="h-3 w-3" aria-hidden="true" />
-          </Link>
-        )}
+            <div className="h-full w-3/4 rounded-full bg-primary" />
+          </div>
+          <span className="text-xs font-bold text-muted-foreground">75%</span>
+        </div>
       </div>
       <p className="sr-only" aria-live="polite">
-        {lessons.length} {lessons.length === 1 ? "lesson" : "lessons"} shown
+        {visibleLessons.length} {visibleLessons.length === 1 ? "lesson" : "lessons"} shown
       </p>
-      {lessons.length > 0 ? (
-        <ul id="learn-lesson-list" className="mt-2 space-y-2">
-          {lessons.map((lesson) => (
-            <LessonItem
-              key={lesson.key}
-              icon={lesson.icon}
-              title={lesson.title}
-              description={lesson.description}
-              href={lesson.href}
-              active
-            />
+      {visibleLessons.length > 0 ? (
+        <ul id="learn-lesson-list" className="mt-2 space-y-3">
+          {visibleLessons.map((lesson) => (
+            <LessonRow key={lesson.title} lesson={lesson} href={lessonHref} />
           ))}
         </ul>
       ) : (
         <div className="mt-2 flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-12 text-center">
-          <Zap className="mb-3 h-8 w-8 text-muted-foreground/30" aria-hidden="true" />
-          <p className="text-sm text-muted-foreground">
-            {query ? `No lessons match "${query}".` : "No lessons completed yet."}
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground/70">
-            {query ? "Try a different search." : "Start learning to see your progress here."}
-          </p>
+          <p className="text-sm text-muted-foreground">No lessons match &ldquo;{query.trim()}&rdquo;.</p>
+          <p className="mt-1 text-xs text-muted-foreground/70">Try a different search.</p>
         </div>
       )}
     </motion.div>
   );
 }
 
-/* ---------------- Scheduled: resume today + up next tomorrow ---------------- */
+/* ------------------------------------------------------------------ */
+/* Scheduled                                                           */
+/* ------------------------------------------------------------------ */
 
 function ScheduleCard({
   title,
   meta,
   tag,
   dotClassName,
-  href,
 }: {
   title: string;
   meta: string;
   tag: string;
   dotClassName: string;
-  href: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 transition hover:bg-card-hover"
-    >
-      <span className="min-w-0">
-        <span className="block truncate text-sm font-bold text-foreground">{title}</span>
-        <span className="mt-0.5 block text-[11px] font-medium text-muted-foreground">{meta}</span>
-      </span>
-      <span className="flex shrink-0 items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 transition hover:bg-card-hover">
+      <div className="min-w-0">
+        <h4 className="truncate text-sm font-bold text-foreground">{title}</h4>
+        <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">{meta}</p>
+      </div>
+      <div className="flex shrink-0 items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
         <span className={cn("h-1.5 w-1.5 rounded-full", dotClassName)} aria-hidden="true" />
-        {tag}
-      </span>
-    </Link>
+        <span>{tag}</span>
+      </div>
+    </div>
   );
 }
 
-function ScheduledSection({
-  resume,
-  upNext,
-  mentors,
-}: {
-  resume: { title: string; subtitle: string; href: string; tag: string };
-  upNext: { title: string; meta: string; href: string } | null;
-  mentors: Mentor[];
-}) {
+function ScheduledSection({ mentors }: { mentors: Mentor[] }) {
   const avatars = mentors.slice(0, 3);
 
   return (
@@ -537,6 +650,8 @@ function ScheduledSection({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-40px" }}
+      id="scheduled"
+      className="scroll-mt-4"
     >
       <div className="flex items-center justify-between pb-1">
         <h2 className="font-heading text-base font-bold text-foreground">Scheduled</h2>
@@ -547,13 +662,10 @@ function ScheduledSection({
 
       <div className="mt-2 space-y-2.5">
         <span className="block text-xs font-semibold text-muted-foreground">Today</span>
-        <Link
-          href={resume.href}
-          className="block space-y-3.5 rounded-2xl border border-border bg-card p-4 transition hover:bg-card-hover"
-        >
+        <div className="space-y-3.5 rounded-2xl border border-border bg-card p-4 transition hover:bg-card-hover">
           <div className="min-w-0">
-            <h4 className="line-clamp-1 text-sm font-bold text-foreground">{resume.title}</h4>
-            <p className="mt-0.5 truncate text-[11px] font-medium text-muted-foreground">{resume.subtitle}</p>
+            <h4 className="truncate text-sm font-bold text-foreground">Speaking Club (A2)</h4>
+            <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">Starts in 3 min</p>
           </div>
           <div className="flex items-center justify-between pt-1">
             {avatars.length > 0 ? (
@@ -566,60 +678,49 @@ function ScheduledSection({
                 ))}
               </div>
             ) : (
-              <span className="text-[11px] text-muted-foreground">Pick up where you left off</span>
+              <span className="text-[11px] text-muted-foreground">Group session</span>
             )}
-            <span className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
               <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
-              {resume.tag}
-            </span>
+              <span>Group</span>
+            </div>
           </div>
-        </Link>
+        </div>
       </div>
 
       <div className="space-y-2.5 pt-5">
         <span className="block text-xs font-semibold text-muted-foreground">Tomorrow</span>
-        {upNext ? (
-          <ScheduleCard
-            title={upNext.title}
-            meta={upNext.meta}
-            tag="Up next"
-            dotClassName="bg-amber-500"
-            href={upNext.href}
-          />
-        ) : (
-          <ScheduleCard
-            title="Browse all paths"
-            meta="Find your next challenge"
-            tag="Paths"
-            dotClassName="bg-amber-500"
-            href="/dashboard"
-          />
-        )}
-        <ScheduleCard
-          title="Practice Lab"
-          meta="JS · Python · Linux · SQL"
-          tag="Practice"
-          dotClassName="bg-purple-500"
-          href="/learn/practice"
-        />
+        <ScheduleCard title="1-on-1 Tutoring" meta="7:00-7:40 PM" tag="Personal" dotClassName="bg-amber-500" />
+        <ScheduleCard title="Paris: Virtual Tour" meta="7:00-7:40 PM" tag="Event" dotClassName="bg-purple-500" />
       </div>
     </motion.div>
   );
 }
 
-/* ---------------- Dashboard assembly ---------------- */
+/* ------------------------------------------------------------------ */
+/* Dashboard assembly                                                  */
+/* ------------------------------------------------------------------ */
 
 export function LearnDashboard({
   user,
   stats,
   trackProgress,
-  continueWatching,
   activityData,
-  recentLessons,
   mentors,
 }: LearnDashboardProps) {
-  const [greeting] = React.useState(getGreeting);
   const [query, setQuery] = React.useState("");
+
+  // The replica ships its own full app shell, so hide the global dashboard
+  // sidebar while this page is mounted (restored on unmount).
+  React.useEffect(() => {
+    const el = document.getElementById("techtribe-global-sidebar");
+    if (!el) return;
+    const previous = el.style.display;
+    el.style.display = "none";
+    return () => {
+      el.style.display = previous;
+    };
+  }, []);
 
   const focusTrack =
     trackProgress.find((t) => t.completedLessons > 0 && t.completedLessons < t.totalLessons) ??
@@ -627,171 +728,44 @@ export function LearnDashboard({
     trackProgress[0] ??
     null;
 
-  const progressPct =
-    focusTrack && focusTrack.totalLessons > 0
-      ? Math.round((focusTrack.completedLessons / focusTrack.totalLessons) * 100)
-      : 0;
+  const lessonHref = focusTrack ? `/learn/${focusTrack.slug}` : "/dashboard";
 
-  const heroTracks = React.useMemo(() => {
-    const inProgress = trackProgress.filter((t) => t.completedLessons > 0 && t.completedLessons < t.totalLessons);
-    const rest = trackProgress.filter((t) => !inProgress.includes(t));
-    return [...inProgress, ...rest].slice(0, 3);
-  }, [trackProgress]);
+  const topicHrefs = REPLICA_TOPICS.map((_, i) =>
+    trackProgress[i] ? `/learn/${trackProgress[i].slug}` : "/dashboard"
+  );
 
   const lessonsThisMonth = activityData.reduce((sum, d) => sum + d.count, 0);
-  const heroNumber = lessonsThisMonth > 0 ? lessonsThisMonth : stats.completedLessons > 0 ? stats.completedLessons : null;
+  const heroNumber =
+    lessonsThisMonth > 0 ? lessonsThisMonth : stats.completedLessons > 0 ? stats.completedLessons : null;
   const heroSuffix = lessonsThisMonth > 0 ? "this month" : stats.completedLessons > 0 ? "so far" : null;
   const heroNoun = heroNumber === 1 ? "lesson" : "lessons";
 
-  const normalizedQuery = query.trim().toLowerCase();
-  const focusLessons =
-    focusTrack && recentLessons.some((r) => r.lesson.track.id === focusTrack.id)
-      ? recentLessons.filter((r) => r.lesson.track.id === focusTrack.id)
-      : recentLessons;
-
-  const lessons = focusLessons
-    .filter((row) => {
-      if (!normalizedQuery) return true;
-      return (
-        row.lesson.title.toLowerCase().includes(normalizedQuery) ||
-        row.lesson.track.title.toLowerCase().includes(normalizedQuery)
-      );
-    })
-    .slice(0, 5)
-    .map((row, i) => {
-      const completed = formatShortDate(row.completedAt);
-      return {
-        key: row.id,
-        icon: lessonIconFor(row.lesson, i),
-        title: row.lesson.title,
-        description: completed ? `${row.lesson.track.title} · ${completed}` : row.lesson.track.title,
-        href: `/learn/${row.lesson.track.slug}`,
-      };
-    });
-
-  const resumeItem = continueWatching[0] ?? null;
-  const resume = resumeItem
-    ? {
-        title: `Continue · ${resumeItem.lessonTitle}`,
-        subtitle: resumeItem.trackTitle,
-        href: `/learn/${resumeItem.trackSlug}`,
-        tag: "Lesson",
-      }
-    : focusTrack
-      ? {
-          title: `Start · ${focusTrack.title}`,
-          subtitle:
-            focusTrack.totalLessons > 0
-              ? `${Math.max(focusTrack.totalLessons - focusTrack.completedLessons, 0)} of ${focusTrack.totalLessons} lessons left`
-              : (focusTrack.category ?? "Learning path"),
-          href: `/learn/${focusTrack.slug}`,
-          tag: "Path",
-        }
-      : {
-          title: "Explore learning paths",
-          subtitle: "Find a path to begin",
-          href: "/dashboard",
-          tag: "Path",
-        };
-
-  const upNextTrack =
-    trackProgress.find((t) => t.completedLessons === 0 && t.totalLessons > 0) ??
-    trackProgress.find((t) => focusTrack && t.id !== focusTrack.id && t.completedLessons < t.totalLessons) ??
-    null;
-
-  const upNext = upNextTrack
-    ? {
-        title: upNextTrack.title,
-        meta:
-          upNextTrack.completedLessons === 0
-            ? `${upNextTrack.totalLessons} ${upNextTrack.totalLessons === 1 ? "lesson" : "lessons"} · Not started`
-            : `${Math.max(upNextTrack.totalLessons - upNextTrack.completedLessons, 0)} lessons left`,
-        href: `/learn/${upNextTrack.slug}`,
-      }
-    : null;
-
   return (
-    <div className="min-h-screen bg-background">
-      <LearnHeader user={user} streak={stats.streak} query={query} onQueryChange={setQuery} />
-
-      <div className="mx-auto max-w-6xl space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-8">
-        <HeroBanner
-          user={user}
-          greeting={greeting}
-          heroNumber={heroNumber}
-          heroNoun={heroNoun}
-          heroSuffix={heroSuffix}
-          heroTracks={heroTracks}
-        />
-
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-40px" }}
-        >
-          <Link
-            href="/learn/practice"
-            className="group flex items-center gap-4 rounded-2xl border border-primary/30 bg-card p-4 transition hover:border-primary/60 sm:p-5"
+    <div className="flex min-h-screen w-full flex-col bg-background text-foreground md:flex-row">
+      <LearnSidebar />
+      <main className="flex min-w-0 flex-1 flex-col bg-background">
+        <LearnHeader user={user} streak={stats.streak} query={query} onQueryChange={setQuery} />
+        <div className="space-y-6 overflow-y-auto p-4 sm:space-y-8 sm:p-6 lg:p-8">
+          <HeroBanner
+            firstName={user.firstName}
+            heroNumber={heroNumber}
+            heroNoun={heroNoun}
+            heroSuffix={heroSuffix}
+            topicHrefs={topicHrefs}
+          />
+          <section
+            aria-label="Module lessons and schedule"
+            className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12 lg:gap-8"
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-              <Terminal className="h-5 w-5 text-primary" aria-hidden="true" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm font-semibold text-foreground">Practice real workloads</span>
-              <span className="block truncate text-xs text-muted-foreground">
-                Solve JS, Python, Linux &amp; SQL tasks in-browser and earn XP
-              </span>
-            </span>
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
-              <ArrowRight
-                className="h-4 w-4 text-primary-foreground transition-transform group-hover:translate-x-0.5"
-                aria-hidden="true"
-              />
-            </span>
-          </Link>
-        </motion.div>
-
-        <section
-          aria-label="Learning progress and schedule"
-          className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12 lg:gap-8"
-        >
-          <div className="lg:col-span-8">
-            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}>
-              <ModuleSection
-                focusTrack={focusTrack}
-                progressPct={progressPct}
-                lessons={lessons}
-                query={query.trim()}
-                browseHref="/dashboard"
-              />
-            </motion.div>
-          </div>
-          <div className="lg:col-span-4">
-            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}>
-              <ScheduledSection resume={resume} upNext={upNext} mentors={mentors} />
-            </motion.div>
-          </div>
-        </section>
-
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="flex items-center justify-center gap-4 pb-4 pt-2 text-xs text-muted-foreground"
-        >
-          <span className="flex items-center gap-1.5">
-            <Play className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-            {stats.completedLessons} {stats.completedLessons === 1 ? "lesson" : "lessons"} completed
-          </span>
-          <span className="h-3 w-px bg-border" aria-hidden="true" />
-          <span className="flex items-center gap-1.5">
-            <Flame className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-            {stats.streak} {stats.streak === 1 ? "day" : "days"} streak
-          </span>
-        </motion.div>
-      </div>
+            <div className="space-y-5 lg:col-span-8">
+              <ModuleSection lessonHref={lessonHref} query={query} />
+            </div>
+            <div className="space-y-5 lg:col-span-4">
+              <ScheduledSection mentors={mentors} />
+            </div>
+          </section>
+        </div>
+      </main>
     </div>
   );
 }
