@@ -109,6 +109,10 @@ body {
 .container-custom { @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8; }
 .text-balance { text-wrap: balance; }
 
+/* Hide scrollbars while keeping scrollability (e.g. sidebar nav) */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 .uppercase-label {
   text-transform: uppercase;
   letter-spacing: 0.05em;

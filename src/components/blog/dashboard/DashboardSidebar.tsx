@@ -161,12 +161,12 @@ export function DashboardSidebar({
         collapsed ? "w-[76px] px-3" : "w-[245px]"
       )}
     >
-      <div className="min-h-0 flex-1 space-y-8 overflow-y-auto">
+      <div className="min-h-0 flex-1 space-y-8 overflow-y-auto no-scrollbar">
         <div className={cn("flex items-center", collapsed && "justify-center")}>
-          <Link href="/dashboard" className="flex items-center gap-2.5">
-            <Image src="/ttlg.png" alt="TechTribe" width={28} height={28} className="h-7 w-auto" />
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <Image src="/ttlg.png" alt="TechTribe" width={24} height={24} className="h-6 w-auto" />
             <span
-              className={cn("font-heading text-lg font-bold", collapsed && "hidden")}
+              className={cn("font-heading text-base font-bold", collapsed && "hidden")}
               style={{ letterSpacing: "-0.02em", color: "#f5f5f7" }}
             >
               TechTribe
