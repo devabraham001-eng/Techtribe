@@ -78,6 +78,15 @@ export default function LearningAdmin() {
   const [editingChallenge, setEditingChallenge] = React.useState<{ lessonId: string; id: string } | null>(null);
   const [addingChallenge, setAddingChallenge] = React.useState<string | null>(null);
 
+  const existingCategories = React.useMemo(() => {
+    const set = new Set<string>();
+    for (const track of tracks) {
+      const category = track.category?.trim();
+      if (category) set.add(category);
+    }
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }, [tracks]);
+
   async function loadTracks() {
     setLoading(true);
     setError(null);
@@ -263,6 +272,7 @@ export default function LearningAdmin() {
 
           {addingTo === "track" && (
             <TrackForm
+              existingCategories={existingCategories}
               onSave={async (vals) => {
                 await saveItem("/api/admin/learning/tracks", vals, true);
                 setAddingTo("track");
@@ -446,6 +456,7 @@ export default function LearningAdmin() {
                               <div className="mb-2">
                                 <TrackForm
                                   initial={{ title: track.title, slug: track.slug, description: track.description ?? "", category: track.category ?? "" }}
+                                  existingCategories={existingCategories}
                                   onSave={async (vals) => {
                                     await saveItem(`/api/admin/learning/tracks/${track.id}`, vals);
                                     setEditing(null);
@@ -680,10 +691,12 @@ export default function LearningAdmin() {
 
 function TrackForm({
   initial,
+  existingCategories = [],
   onSave,
   onCancel,
 }: {
   initial?: { title: string; slug: string; description: string; category: string };
+  existingCategories?: string[];
   onSave: (vals: Record<string, string>) => Promise<void>;
   onCancel: () => void;
 }) {
@@ -748,7 +761,14 @@ function TrackForm({
             className="h-8 w-full rounded-md border border-border bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            list="track-category-suggestions"
+            placeholder="e.g. Web Development"
           />
+          <datalist id="track-category-suggestions">
+            {existingCategories.map((name) => (
+              <option key={name} value={name} />
+            ))}
+          </datalist>
         </div>
       </div>
       <div className="flex gap-1">

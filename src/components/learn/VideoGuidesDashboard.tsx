@@ -3,102 +3,49 @@
 import * as React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import * as Dialog from "@radix-ui/react-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getInitials } from "@/lib/utils";
+import { getInitials, slugify } from "@/lib/utils";
+import { resolveVideoEmbed } from "@/lib/video-embed";
+import type { CategoryVideoGroup } from "@/lib/learning-data";
 import { LearnShell } from "./LearnSidebar";
 import {
   Bell,
-  Briefcase,
+  Check,
   ChevronLeft,
   ChevronRight,
-  Languages,
+  Clapperboard,
+  Copy,
+  ExternalLink,
   Megaphone,
   Play,
   Plus,
-  Presentation,
-  Rocket,
   Search,
-  Sparkles,
-  Upload,
-  Users,
   X,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
 };
 
-/* ------------------------------------------------------------------ */
-/* Static replica content (mirrors video screen.txt 1:1)               */
-/* ------------------------------------------------------------------ */
+interface LibraryUser {
+  name: string;
+  avatarUrl: string | null;
+}
 
-interface QuickAction {
+interface WatchTarget {
+  lessonId: string;
   title: string;
-  description: string;
-  icon: LucideIcon;
+  videoUrl: string;
+  trackTitle: string;
+  trackSlug: string;
+  category: string;
 }
 
-const QUICK_ACTIONS: QuickAction[] = [
-  { title: "New Video", description: "Use template or blank canvas", icon: Plus },
-  { title: "AI Assistant", description: "Turn text and link into video", icon: Sparkles },
-  { title: "AI Dubbing", description: "Translate any video", icon: Languages },
-  { title: "Import", description: "Turn slides into video", icon: Upload },
-];
-
-interface VideoTemplate {
-  title: React.ReactNode;
-  plainTitle: string;
-  icon: LucideIcon;
+function watchUrl(lessonId: string): string {
+  return `/learn/video-guides/watch/${lessonId}`;
 }
-
-const VIDEO_TEMPLATES: VideoTemplate[] = [
-  {
-    title: (
-      <>
-        Modern
-        <br />
-        Startup Pitch
-      </>
-    ),
-    plainTitle: "Modern Startup Pitch",
-    icon: Presentation,
-  },
-  {
-    title: (
-      <>
-        Meet Our
-        <br />
-        New Avatars
-      </>
-    ),
-    plainTitle: "Meet Our New Avatars",
-    icon: Users,
-  },
-  {
-    title: (
-      <>
-        Stylish Corporate
-        <br />
-        Presentation
-      </>
-    ),
-    plainTitle: "Stylish Corporate Presentation",
-    icon: Briefcase,
-  },
-  {
-    title: (
-      <>
-        Futuristic Product
-        <br />
-        Demonstration
-      </>
-    ),
-    plainTitle: "Futuristic Product Demonstration",
-    icon: Rocket,
-  },
-];
 
 /* ------------------------------------------------------------------ */
 /* Header                                                              */
@@ -109,7 +56,7 @@ function VideoHeader({
   query,
   onQueryChange,
 }: {
-  user: { name: string; avatarUrl: string | null };
+  user: LibraryUser;
   query: string;
   onQueryChange: (value: string) => void;
 }) {
@@ -128,19 +75,19 @@ function VideoHeader({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder="Search videos, folders & templates"
-          aria-controls="video-template-grid"
+          aria-controls="video-library"
           className="w-full rounded-full border border-border bg-secondary py-2 pl-10 pr-4 text-xs text-foreground placeholder:text-muted-foreground transition focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/60 md:text-sm"
         />
       </div>
       <div className="flex shrink-0 items-center gap-3">
-        <button
-          type="button"
+        <Link
+          href="#video-library"
           className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-dark"
         >
           <Plus className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
           <span className="hidden sm:inline">New Video</span>
           <span className="sm:hidden">New</span>
-        </button>
+        </Link>
         <button
           type="button"
           aria-label="Announcements"
@@ -169,35 +116,38 @@ function VideoHeader({
 }
 
 /* ------------------------------------------------------------------ */
-/* Quick actions                                                       */
+/* Category shortcuts                                                  */
 /* ------------------------------------------------------------------ */
 
-function QuickActions() {
+function CategoryShortcuts({ groups }: { groups: CategoryVideoGroup[] }) {
+  const top = groups.slice(0, 4);
+  if (top.length === 0) return null;
+
   return (
     <motion.section
       variants={fadeUp}
       initial="hidden"
       animate="visible"
-      aria-label="Quick Actions"
+      aria-label="Video categories"
       className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
     >
-      {QUICK_ACTIONS.map((action) => {
-        const Icon = action.icon;
-        return (
-          <div
-            key={action.title}
-            className="group flex cursor-pointer items-center gap-3 rounded-2xl border border-border bg-card p-3 transition hover:bg-card-hover"
-          >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:scale-105">
-              <Icon className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
-            </div>
-            <div className="min-w-0">
-              <h4 className="truncate text-xs font-semibold text-foreground">{action.title}</h4>
-              <p className="truncate text-[11px] text-muted-foreground">{action.description}</p>
-            </div>
+      {top.map((group) => (
+        <Link
+          key={group.category}
+          href={`#category-${slugify(group.category)}`}
+          className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-3 transition hover:bg-card-hover"
+        >
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:scale-105">
+            <Clapperboard className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
           </div>
-        );
-      })}
+          <div className="min-w-0">
+            <h4 className="truncate text-xs font-semibold text-foreground">{group.category}</h4>
+            <p className="truncate text-[11px] text-muted-foreground">
+              {group.videoCount} {group.videoCount === 1 ? "video" : "videos"}
+            </p>
+          </div>
+        </Link>
+      ))}
     </motion.section>
   );
 }
@@ -261,12 +211,12 @@ function HeroBanner() {
             create your very first video.
           </p>
           <div className="pt-1">
-            <button
-              type="button"
-              className="rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md transition hover:bg-primary-dark"
+            <Link
+              href="#video-library"
+              className="inline-block rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md transition hover:bg-primary-dark"
             >
               Get Started
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -275,23 +225,226 @@ function HeroBanner() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Get inspired                                                        */
+/* Player (shared by modal + watch page)                               */
 /* ------------------------------------------------------------------ */
 
-function InspiredSection({ query }: { query: string }) {
+export function VideoPlayer({ title, videoUrl }: { title: string; videoUrl: string }) {
+  const resolved = resolveVideoEmbed(videoUrl);
+
+  if (resolved.kind === "file" && resolved.embedUrl) {
+    return (
+      <video controls playsInline preload="metadata" className="h-full w-full bg-black" aria-label={title}>
+        <source src={resolved.embedUrl} />
+        Your browser does not support the video tag.
+      </video>
+    );
+  }
+
+  if ((resolved.kind === "youtube" || resolved.kind === "vimeo" || resolved.kind === "loom") && resolved.embedUrl) {
+    return (
+      <iframe
+        src={resolved.embedUrl}
+        title={title}
+        className="h-full w-full border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    );
+  }
+
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-black p-6 text-center">
+      <p className="text-sm text-muted-foreground">This video can&apos;t be embedded here.</p>
+      <a
+        href={videoUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition hover:bg-primary-dark"
+      >
+        Open original <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+      </a>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Watch modal                                                         */
+/* ------------------------------------------------------------------ */
+
+function WatchModal({
+  target,
+  onClose,
+}: {
+  target: WatchTarget | null;
+  onClose: () => void;
+}) {
+  const [copied, setCopied] = React.useState(false);
+
+  async function copyLink() {
+    if (!target) return;
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}${watchUrl(target.lessonId)}`);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  return (
+    <Dialog.Root open={target !== null} onOpenChange={(open) => !open && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/70" />
+        <Dialog.Content
+          aria-describedby={undefined}
+          className="fixed left-1/2 top-1/2 z-50 max-h-[90vh] w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-border bg-card p-4 shadow-xl sm:p-6"
+        >
+          {target && (
+            <>
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <Dialog.Title className="truncate font-heading text-base font-bold text-foreground sm:text-lg">
+                    {target.title}
+                  </Dialog.Title>
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                    {target.category} ·{" "}
+                    <Link
+                      href={`/learn/${target.trackSlug}`}
+                      className="text-primary hover:underline"
+                      onClick={onClose}
+                    >
+                      {target.trackTitle}
+                    </Link>
+                  </p>
+                </div>
+                <Dialog.Close
+                  aria-label="Close player"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                </Dialog.Close>
+              </div>
+              <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
+                <VideoPlayer title={target.title} videoUrl={target.videoUrl} />
+              </div>
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <Link
+                  href={watchUrl(target.lessonId)}
+                  onClick={onClose}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition hover:bg-primary-dark"
+                >
+                  <Play className="h-3.5 w-3.5" aria-hidden="true" /> Open full page
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => void copyLink()}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground transition hover:bg-card-hover hover:text-foreground"
+                >
+                  {copied ? (
+                    <Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                  ) : (
+                    <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                  )}
+                  {copied ? "Copied" : "Copy link"}
+                </button>
+                <a
+                  href={target.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground transition hover:bg-card-hover hover:text-foreground"
+                >
+                  Open original <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+              </div>
+            </>
+          )}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Library                                                             */
+/* ------------------------------------------------------------------ */
+
+function VideoCard({
+  video,
+  trackTitle,
+  trackSlug,
+  category,
+  onWatch,
+}: {
+  video: { lessonId: string; title: string; videoUrl: string };
+  trackTitle: string;
+  trackSlug: string;
+  category: string;
+  onWatch: (target: WatchTarget) => void;
+}) {
+  const sourceLabel = resolveVideoEmbed(video.videoUrl).label;
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        onWatch({
+          lessonId: video.lessonId,
+          title: video.title,
+          videoUrl: video.videoUrl,
+          trackTitle,
+          trackSlug,
+          category,
+        })
+      }
+      className="group flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-3 text-left transition hover:bg-card-hover"
+    >
+      <span className="flex h-14 w-24 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:scale-[1.03]">
+        <Play className="h-5 w-5" fill="currentColor" aria-hidden="true" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-semibold text-foreground">{video.title}</span>
+        <span className="mt-0.5 block truncate text-[11px] text-muted-foreground">{trackTitle}</span>
+      </span>
+      <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+        {sourceLabel}
+      </span>
+    </button>
+  );
+}
+
+function LibrarySection({
+  groups,
+  query,
+  onWatch,
+}: {
+  groups: CategoryVideoGroup[];
+  query: string;
+  onWatch: (target: WatchTarget) => void;
+}) {
   const trackRef = React.useRef<HTMLDivElement>(null);
 
-  function scrollTemplates(direction: 1 | -1) {
-    const el = trackRef.current;
-    if (!el) return;
-    el.scrollBy({ left: direction * 300, behavior: "smooth" });
+  function scrollCategories(direction: 1 | -1) {
+    trackRef.current?.scrollBy({ left: direction * 300, behavior: "smooth" });
   }
 
   const normalizedQuery = query.trim().toLowerCase();
-  const visibleTemplates = VIDEO_TEMPLATES.filter((template) => {
-    if (!normalizedQuery) return true;
-    return template.plainTitle.toLowerCase().includes(normalizedQuery);
-  });
+  const searching = normalizedQuery.length > 0;
+
+  const searchResults = searching
+    ? groups.flatMap((group) =>
+        group.tracks.flatMap((track) =>
+          track.videos
+            .filter(
+              (video) =>
+                video.title.toLowerCase().includes(normalizedQuery) ||
+                track.trackTitle.toLowerCase().includes(normalizedQuery) ||
+                group.category.toLowerCase().includes(normalizedQuery)
+            )
+            .map((video) => ({ group, track, video }))
+        )
+      )
+    : [];
+
+  const totalVideos = groups.reduce((sum, g) => sum + g.videoCount, 0);
 
   return (
     <motion.section
@@ -299,74 +452,139 @@ function InspiredSection({ query }: { query: string }) {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-40px" }}
-      aria-labelledby="inspired-heading"
-      className="space-y-3.5"
+      aria-labelledby="video-library-heading"
+      id="video-library"
+      className="scroll-mt-4 space-y-3.5"
     >
       <div className="flex items-center justify-between">
-        <h3 id="inspired-heading" className="font-heading text-sm font-semibold text-foreground md:text-base">
-          Get Inspired
+        <h3 id="video-library-heading" className="font-heading text-sm font-semibold text-foreground md:text-base">
+          {searching ? `${searchResults.length} ${searchResults.length === 1 ? "result" : "results"}` : "Get Inspired"}
         </h3>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/learn/video-guides"
-            className="text-xs font-medium text-muted-foreground transition hover:text-foreground"
-          >
-            All Templates
-          </Link>
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <button
-              type="button"
-              aria-label="Previous template"
-              title="Previous template"
-              onClick={() => scrollTemplates(-1)}
-              className="flex h-6 w-6 items-center justify-center rounded-full transition hover:bg-card hover:text-foreground"
-            >
-              <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              aria-label="Next template"
-              title="Next template"
-              onClick={() => scrollTemplates(1)}
-              className="flex h-6 w-6 items-center justify-center rounded-full transition hover:bg-card hover:text-foreground"
-            >
-              <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden="true" />
-            </button>
+        {!searching && (
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-medium text-muted-foreground">
+              {totalVideos} {totalVideos === 1 ? "video" : "videos"}
+            </span>
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <button
+                type="button"
+                aria-label="Previous category"
+                title="Previous category"
+                onClick={() => scrollCategories(-1)}
+                className="flex h-6 w-6 items-center justify-center rounded-full transition hover:bg-card hover:text-foreground"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                aria-label="Next category"
+                title="Next category"
+                onClick={() => scrollCategories(1)}
+                className="flex h-6 w-6 items-center justify-center rounded-full transition hover:bg-card hover:text-foreground"
+              >
+                <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden="true" />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
-      <p className="sr-only" aria-live="polite">
-        {visibleTemplates.length} {visibleTemplates.length === 1 ? "template" : "templates"} shown
-      </p>
-      {visibleTemplates.length > 0 ? (
-        <div
-          ref={trackRef}
-          id="video-template-grid"
-          className="flex snap-x gap-3.5 overflow-x-auto pb-1 md:grid md:grid-cols-4 md:overflow-visible md:pb-0"
-        >
-          {visibleTemplates.map((template) => {
-            const Icon = template.icon;
-            return (
-              <div
-                key={template.plainTitle}
-                className="group relative aspect-[4/3] w-[70%] shrink-0 cursor-pointer snap-start overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/25 via-card to-secondary min-[480px]:w-[45%] md:w-auto"
+
+      {groups.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-12 text-center">
+          <Clapperboard className="mb-3 h-8 w-8 text-muted-foreground/30" aria-hidden="true" />
+          <p className="text-sm text-muted-foreground">No videos yet.</p>
+          <p className="mt-1 text-xs text-muted-foreground/70">
+            Video guides added to courses will appear here.
+          </p>
+        </div>
+      ) : searching ? (
+        <div>
+          <p className="sr-only" aria-live="polite">
+            {searchResults.length} {searchResults.length === 1 ? "result" : "results"} shown
+          </p>
+          {searchResults.length > 0 ? (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {searchResults.map(({ group, track, video }) => (
+                <VideoCard
+                  key={video.lessonId}
+                  video={video}
+                  trackTitle={track.trackTitle}
+                  trackSlug={track.trackSlug}
+                  category={group.category}
+                  onWatch={onWatch}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-12 text-center">
+              <p className="text-sm text-muted-foreground">No videos match &ldquo;{query.trim()}&rdquo;.</p>
+              <p className="mt-1 text-xs text-muted-foreground/70">Try a different search.</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-8">
+          <div
+            ref={trackRef}
+            className="flex snap-x gap-3.5 overflow-x-auto pb-1 md:grid md:grid-cols-4 md:overflow-visible md:pb-0"
+          >
+            {groups.map((group) => (
+              <Link
+                key={group.category}
+                href={`#category-${slugify(group.category)}`}
+                className="group relative aspect-[4/3] w-[70%] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/25 via-card to-secondary min-[480px]:w-[45%] md:w-auto"
               >
                 <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-                  <Icon className="h-16 w-16 text-primary/20 transition duration-300 group-hover:scale-105" strokeWidth={1.5} />
+                  <Clapperboard
+                    className="h-16 w-16 text-primary/20 transition duration-300 group-hover:scale-105"
+                    strokeWidth={1.5}
+                  />
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 text-center">
                   <p className="text-xs font-semibold leading-snug text-white drop-shadow-sm md:text-sm">
-                    {template.title}
+                    {group.category}
+                    <span className="mt-1 block text-[11px] font-medium text-white/70">
+                      {group.videoCount} {group.videoCount === 1 ? "video" : "videos"}
+                    </span>
                   </p>
                 </div>
+              </Link>
+            ))}
+          </div>
+
+          {groups.map((group) => (
+            <div key={group.category} id={`category-${slugify(group.category)}`} className="scroll-mt-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="font-heading text-base font-bold text-foreground">{group.category}</h4>
+                <span className="text-xs font-medium text-muted-foreground">
+                  {group.videoCount} {group.videoCount === 1 ? "video" : "videos"}
+                </span>
               </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-12 text-center">
-          <p className="text-sm text-muted-foreground">No templates match &ldquo;{query.trim()}&rdquo;.</p>
-          <p className="mt-1 text-xs text-muted-foreground/70">Try a different search.</p>
+              {group.tracks.map((track) => (
+                <div key={track.trackId} className="space-y-2.5">
+                  <Link
+                    href={`/learn/${track.trackSlug}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground transition hover:text-primary"
+                  >
+                    {track.trackTitle}
+                    <ChevronRight className="h-3 w-3" aria-hidden="true" />
+                  </Link>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {track.videos.map((video) => (
+                      <VideoCard
+                        key={video.lessonId}
+                        video={video}
+                        trackTitle={track.trackTitle}
+                        trackSlug={track.trackSlug}
+                        category={group.category}
+                        onWatch={onWatch}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       )}
     </motion.section>
@@ -379,19 +597,27 @@ function InspiredSection({ query }: { query: string }) {
 
 export function VideoGuidesDashboard({
   user,
+  groups,
 }: {
-  user: { name: string; avatarUrl: string | null };
+  user: LibraryUser;
+  groups: CategoryVideoGroup[];
 }) {
   const [query, setQuery] = React.useState("");
+  const [activeVideo, setActiveVideo] = React.useState<WatchTarget | null>(null);
 
   return (
     <LearnShell activeId="videos">
       <VideoHeader user={user} query={query} onQueryChange={setQuery} />
       <div className="space-y-6 overflow-y-auto p-5 md:p-6">
-        <QuickActions />
+        <CategoryShortcuts groups={groups} />
         <HeroBanner />
-        <InspiredSection query={query} />
+        <LibrarySection groups={groups} query={query} onWatch={setActiveVideo} />
       </div>
+      <WatchModal
+        key={activeVideo?.lessonId ?? "closed"}
+        target={activeVideo}
+        onClose={() => setActiveVideo(null)}
+      />
     </LearnShell>
   );
 }

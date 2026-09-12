@@ -144,8 +144,7 @@ export async function getUserProgress(
 export async function getUserProgressByTrack(
   userId: string,
   trackId: string
-): Promise<UserLessonProgress[]> {
-  if (!isSupabaseConfigured()) return [];
+): Promise<UserLessonProgress[]> {  if (!isSupabaseConfigured()) return [];
 
   const supabase = await createServerSupabaseClient();
   const { data: modules } = await supabase
@@ -165,4 +164,149 @@ export async function getUserProgressByTrack(
 
   const lessonIds = lessons.map((l: { id: string }) => l.id);
   return getUserProgress(userId, lessonIds);
+}
+
+export interface VideoLessonItem {
+  lessonId: string;
+  title: string;
+  videoUrl: string;
+  sortOrder: number;
+}
+
+export interface TrackVideoGroup {
+  trackId: string;
+  trackTitle: string;
+  trackSlug: string;
+  coverImageUrl: string | null;
+  videos: VideoLessonItem[];
+}
+
+export interface CategoryVideoGroup {
+  category: string;
+  tracks: TrackVideoGroup[];
+  videoCount: number;
+}
+
+interface VideoLessonRow {
+  id: string;
+  title: string;
+  video_url: string;
+  sort_order: number;
+  module: {
+    id: string;
+    track: {
+      id: string;
+      title: string;
+      slug: string;
+      category: string | null;
+      cover_image_url: string | null;
+    } | null;
+  } | null;
+}
+
+/**
+ * All lessons that carry a video URL, grouped as
+ * categories -> tracks (courses) -> videos.
+ */
+export async function getVideoLessons(): Promise<CategoryVideoGroup[]> {
+  if (!isSupabaseConfigured()) return [];
+
+  const supabase = await createServerSupabaseClient();
+  const { data } = await supabase
+    .from("lessons")
+    .select(
+      "id, title, video_url, sort_order, module:track_modules!inner(id, track:learning_tracks!inner(id, title, slug, category, cover_image_url))"
+    )
+    .not("video_url", "is", null)
+    .neq("video_url", "")
+    .order("sort_order");
+
+  const rows = (data ?? []) as unknown as VideoLessonRow[];
+
+  const categories = new Map<string, Map<string, TrackVideoGroup>>();
+  for (const row of rows) {
+    const track = row.module?.track;
+    if (!track) continue;
+    const category = track.category?.trim() || "General";
+    let tracks = categories.get(category);
+    if (!tracks) {
+      tracks = new Map();
+      categories.set(category, tracks);
+    }
+    let group = tracks.get(track.id);
+    if (!group) {
+      group = {
+        trackId: track.id,
+        trackTitle: track.title,
+        trackSlug: track.slug,
+        coverImageUrl: track.cover_image_url,
+        videos: [],
+      };
+      tracks.set(track.id, group);
+    }
+    group.videos.push({
+      lessonId: row.id,
+      title: row.title,
+      videoUrl: row.video_url,
+      sortOrder: row.sort_order,
+    });
+  }
+
+  return [...categories.entries()].map(([category, tracks]) => {
+    const trackList = [...tracks.values()];
+    return {
+      category,
+      tracks: trackList,
+      videoCount: trackList.reduce((sum, t) => sum + t.videos.length, 0),
+    };
+  });
+}
+
+export interface VideoWatchTarget {
+  lessonId: string;
+  title: string;
+  videoUrl: string;
+  trackId: string;
+  trackTitle: string;
+  trackSlug: string;
+  category: string;
+}
+
+export interface VideoWatchData {
+  current: VideoWatchTarget;
+  prev: { lessonId: string; title: string } | null;
+  next: { lessonId: string; title: string } | null;
+}
+
+/**
+ * Single video plus its prev/next siblings within the same track,
+ * for the shareable watch page.
+ */
+export async function getVideoWatchData(lessonId: string): Promise<VideoWatchData | null> {
+  const groups = await getVideoLessons();
+  for (const group of groups) {
+    for (const track of group.tracks) {
+      const idx = track.videos.findIndex((v) => v.lessonId === lessonId);
+      if (idx !== -1) {
+        const video = track.videos[idx];
+        return {
+          current: {
+            lessonId: video.lessonId,
+            title: video.title,
+            videoUrl: video.videoUrl,
+            trackId: track.trackId,
+            trackTitle: track.trackTitle,
+            trackSlug: track.trackSlug,
+            category: group.category,
+          },
+          prev: idx > 0 ? { lessonId: track.videos[idx - 1].lessonId, title: track.videos[idx - 1].title } : null,
+          next:
+            idx < track.videos.length - 1
+              ? { lessonId: track.videos[idx + 1].lessonId, title: track.videos[idx + 1].title }
+              : null,
+        };
+      }
+    }
+  }
+  return null;
 }
