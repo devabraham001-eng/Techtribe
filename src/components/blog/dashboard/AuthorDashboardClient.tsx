@@ -354,7 +354,7 @@ function RecentArticleCards({
           ))}
         </div>
       ) : (
-        <div ref={trackRef} className="flex snap-x gap-4 overflow-x-auto pb-1">
+        <div ref={trackRef} className="flex snap-x gap-4 overflow-x-auto no-scrollbar -mx-5 px-5 pb-1 md:mx-0 md:px-0">
           {posts.map((post) => {
             const viewsPct = maxViews > 0 ? Math.max(Math.round(((post.viewCount ?? 0) / maxViews) * 100), post.viewCount > 0 ? 4 : 0) : 0;
             return (
