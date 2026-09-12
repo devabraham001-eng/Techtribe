@@ -7,8 +7,6 @@ import { usePathname } from "next/navigation";
 import { useWriteModal } from "./WriteModalContext";
 import { cn } from "@/lib/utils";
 import {
-  ArrowUp,
-  ArrowUpRight,
   BarChart3,
   BookOpen,
   ChevronDown,
@@ -94,30 +92,6 @@ const MENU_ITEMS: MenuItem[] = [
   },
   { id: "settings", label: "Settings", href: "/settings", icon: Settings },
 ];
-
-function PromoAvatar() {
-  // Decorative character illustration (no icon equivalent).
-  return (
-    <svg className="mt-2 h-14 w-14" fill="none" viewBox="0 0 100 100" aria-hidden="true">
-      <path d="M20 70C20 53.4315 33.4315 40 50 40C66.5685 40 80 53.4315 80 70V100H20V70Z" fill="#F4D3BD" />
-      <path
-        d="M22 36C22 36 34 22 55 24C68 25 76 34 76 34L86 38L64 45L40 44L22 36Z"
-        fill="#D0F201"
-        stroke="#10180B"
-        strokeWidth="3"
-      />
-      <circle cx="43" cy="56" fill="#10180B" r="3" />
-      <circle cx="63" cy="56" fill="#10180B" r="3" />
-      <path d="M50 63C53 67 59 67 62 63" stroke="#10180B" strokeLinecap="round" strokeWidth="2.5" />
-      <path
-        d="M20 40C20 40 32 30 52 32C66 33.5 73 42 73 42"
-        stroke="#10180B"
-        strokeLinecap="round"
-        strokeWidth="3"
-      />
-    </svg>
-  );
-}
 
 function isPathActive(pathname: string, href: string): boolean {
   return pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
@@ -279,44 +253,6 @@ export function DashboardSidebar({
       </div>
 
       <div className="mt-6 shrink-0">
-        {collapsed ? (
-          <div className="flex justify-center">
-            <Link
-              href="/settings"
-              title="Upgrade to Plus"
-              aria-label="Upgrade to Plus"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow transition hover:bg-primary-dark"
-            >
-              <ArrowUp className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
-            </Link>
-          </div>
-        ) : (
-          <div className="relative mt-8 pt-8">
-            <div className="relative flex flex-col items-center overflow-hidden rounded-2xl bg-primary p-4 text-center">
-              <div className="absolute -top-7 left-1/2 flex h-16 w-16 -translate-x-1/2 items-center justify-center overflow-hidden rounded-full border-4 border-secondary bg-white shadow-lg">
-                <PromoAvatar />
-              </div>
-              <div className="mb-3 mt-6">
-                <h3 className="flex items-center justify-center gap-1.5 text-base font-extrabold leading-tight tracking-tight text-primary-foreground">
-                  Level
-                  <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-foreground text-[10px] font-black text-primary">
-                    <ArrowUp className="h-2.5 w-2.5" strokeWidth={3} aria-hidden="true" />
-                  </span>
-                  Up
-                </h3>
-                <p className="text-base font-extrabold leading-tight text-primary-foreground">with Plus</p>
-              </div>
-              <Link
-                href="/settings"
-                className="flex w-full items-center justify-center gap-1.5 rounded-full bg-primary-foreground px-3 py-2 text-xs font-semibold text-primary shadow transition hover:opacity-90"
-              >
-                <span>Upgrade Now</span>
-                <ArrowUpRight className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
-              </Link>
-            </div>
-          </div>
-        )}
-
         {isAuthenticated ? (
           <div className="mt-4 space-y-1.5 border-t border-border pt-4">
             <div className={cn("flex items-center gap-3 px-4 py-1", collapsed && "justify-center px-0")}>
