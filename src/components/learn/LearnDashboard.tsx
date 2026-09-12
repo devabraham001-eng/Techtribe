@@ -22,6 +22,9 @@ import {
   Play,
   Search,
   Settings,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
   ShoppingBag,
   Trophy,
   Video,
@@ -247,19 +250,61 @@ function PromoAvatar() {
   );
 }
 
+const LEARN_SIDEBAR_STORAGE_KEY = "techtribe_sidebar_collapsed";
+
 function LearnSidebar() {
+  const [collapsed, setCollapsed] = React.useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(LEARN_SIDEBAR_STORAGE_KEY) === "true";
+    }
+    return false;
+  });
+
+  function toggleCollapse() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(LEARN_SIDEBAR_STORAGE_KEY, String(next));
+      } catch {
+        /* storage unavailable */
+      }
+      return next;
+    });
+  }
+
+  const rowClass = (active: boolean) =>
+    cn(
+      "flex items-center gap-3.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors",
+      collapsed && "md:mx-auto md:h-10 md:w-10 md:justify-center md:gap-0 md:px-0",
+      active
+        ? "bg-card text-foreground"
+        : "text-muted-foreground hover:bg-card/60 hover:text-foreground"
+    );
+
   return (
     <aside
       aria-label="Learn navigation"
-      className="flex w-full shrink-0 flex-col justify-between border-b border-border bg-secondary p-6 md:min-h-screen md:w-64 md:border-b-0 md:border-r"
+      className={cn(
+        "flex w-full shrink-0 flex-col justify-between border-b border-border bg-secondary p-6 transition-all duration-200 md:min-h-screen md:border-b-0 md:border-r",
+        collapsed ? "md:w-[76px] md:px-3" : "md:w-64"
+      )}
     >
       <div className="space-y-8">
-        <div className="flex items-center gap-2">
+        <div className={cn("flex items-center gap-2", collapsed && "md:justify-center")}>
           <Link
             href="/dashboard"
+            title="TechTribe"
+            aria-label="TechTribe home"
             className="font-heading text-2xl font-bold lowercase tracking-tight text-primary"
           >
-            techtribe
+            <span aria-hidden="true" className={cn(collapsed && "md:hidden")}>
+              techtribe
+            </span>
+            {collapsed && (
+              <span aria-hidden="true" className="hidden md:inline">
+                t
+              </span>
+            )}
           </Link>
         </div>
         <nav aria-label="Main Navigation" className="space-y-1.5">
@@ -270,46 +315,88 @@ function LearnSidebar() {
                 key={item.label}
                 href={item.href}
                 aria-current={item.active ? "page" : undefined}
-                className={cn(
-                  "flex items-center gap-3.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors",
-                  item.active
-                    ? "bg-card text-foreground"
-                    : "text-muted-foreground hover:bg-card/60 hover:text-foreground"
-                )}
+                title={collapsed ? item.label : undefined}
+                aria-label={collapsed ? item.label : undefined}
+                className={rowClass(item.active)}
               >
                 <Icon
                   className={cn("h-4 w-4 shrink-0", item.active && "text-foreground")}
                   strokeWidth={item.active ? 2.2 : 2}
                   aria-hidden="true"
                 />
-                <span>{item.label}</span>
+                <span className={cn(collapsed && "md:hidden")}>{item.label}</span>
               </Link>
             );
           })}
         </nav>
       </div>
-      <div className="relative mt-8 pt-8">
-        <div className="relative flex flex-col items-center overflow-hidden rounded-2xl bg-primary p-4 text-center">
-          <div className="absolute -top-7 left-1/2 flex h-16 w-16 -translate-x-1/2 items-center justify-center overflow-hidden rounded-full border-4 border-secondary bg-white shadow-lg">
-            <PromoAvatar />
+      <div className="mt-6">
+        {collapsed ? (
+          <div className="hidden justify-center md:flex">
+            <Link
+              href="/settings"
+              title="Upgrade to Plus"
+              aria-label="Upgrade to Plus"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow transition hover:bg-primary-dark"
+            >
+              <ArrowUp className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
+            </Link>
           </div>
-          <div className="mb-3 mt-6">
-            <h3 className="flex items-center justify-center gap-1.5 text-base font-extrabold leading-tight tracking-tight text-primary-foreground">
-              Level
-              <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-foreground text-[10px] font-black text-primary">
-                <ArrowUp className="h-2.5 w-2.5" strokeWidth={3} aria-hidden="true" />
-              </span>
-              Up
-            </h3>
-            <p className="text-base font-extrabold leading-tight text-primary-foreground">with Plus</p>
+        ) : (
+          <div className="relative mt-8 pt-8">
+            <div className="relative flex flex-col items-center overflow-hidden rounded-2xl bg-primary p-4 text-center">
+              <div className="absolute -top-7 left-1/2 flex h-16 w-16 -translate-x-1/2 items-center justify-center overflow-hidden rounded-full border-4 border-secondary bg-white shadow-lg">
+                <PromoAvatar />
+              </div>
+              <div className="mb-3 mt-6">
+                <h3 className="flex items-center justify-center gap-1.5 text-base font-extrabold leading-tight tracking-tight text-primary-foreground">
+                  Level
+                  <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-foreground text-[10px] font-black text-primary">
+                    <ArrowUp className="h-2.5 w-2.5" strokeWidth={3} aria-hidden="true" />
+                  </span>
+                  Up
+                </h3>
+                <p className="text-base font-extrabold leading-tight text-primary-foreground">with Plus</p>
+              </div>
+              <Link
+                href="/settings"
+                className="flex w-full items-center justify-center gap-1.5 rounded-full bg-primary-foreground px-3 py-2 text-xs font-semibold text-primary shadow transition hover:opacity-90"
+              >
+                <span>Upgrade Now</span>
+                <ArrowUpRight className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
+              </Link>
+            </div>
           </div>
-          <Link
-            href="/settings"
-            className="flex w-full items-center justify-center gap-1.5 rounded-full bg-primary-foreground px-3 py-2 text-xs font-semibold text-primary shadow transition hover:opacity-90"
+        )}
+        <div className="mt-4 space-y-1.5 border-t border-border pt-4">
+          <form action="/auth/signout" method="post">
+            <button
+              type="submit"
+              title="Sign out"
+              aria-label="Sign out"
+              className={cn(rowClass(false), "w-full")}
+            >
+              <LogOut className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden="true" />
+              <span className={cn(collapsed && "md:hidden")}>Sign out</span>
+            </button>
+          </form>
+          <button
+            type="button"
+            onClick={toggleCollapse}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-expanded={!collapsed}
+            className={cn(rowClass(false), "hidden w-full md:flex")}
           >
-            <span>Upgrade Now</span>
-            <ArrowUpRight className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
-          </Link>
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+            ) : (
+              <>
+                <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>Collapse</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </aside>
