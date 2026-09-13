@@ -16,7 +16,6 @@ import {
   History,
   Loader2,
   Maximize2,
-  MoreVertical,
   NotebookPen,
   PanelLeft,
   LayoutGrid,
@@ -444,9 +443,6 @@ export function WorkspaceShell({
           <button type="button" onClick={() => void copyWorkloadLink()} aria-label="Share workload" title="Share workload" className="hidden rounded p-1.5 text-muted-foreground transition hover:bg-card-hover hover:text-foreground min-[480px]:block">
             <Share2 className="h-3.5 w-3.5" />
           </button>
-          <button type="button" onClick={() => setPanelOpen((v) => !v)} aria-label="Toggle panel" title="Toggle panel" className="rounded p-1.5 text-muted-foreground transition hover:bg-card-hover hover:text-foreground">
-            <MoreVertical className="h-3.5 w-3.5" />
-          </button>
           <div className="relative ml-1 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-tr from-primary/60 to-primary/20 text-[10px] font-bold text-primary-foreground" title="Signed in">
             <Terminal className="h-3 w-3" />
             <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-secondary" />
@@ -596,9 +592,6 @@ export function WorkspaceShell({
               </button>
               <button type="button" onClick={toggleFullscreen} aria-label="Fullscreen" title="Fullscreen" className="hidden p-1 text-muted-foreground hover:text-foreground min-[480px]:block">
                 <Maximize2 className="h-3 w-3" />
-              </button>
-              <button type="button" onClick={() => setPanelOpen((v) => !v)} aria-label="Toggle panel" title="Toggle panel" className="p-1 text-muted-foreground hover:text-foreground">
-                <MoreVertical className="h-3 w-3" />
               </button>
             </div>
           </div>
@@ -792,9 +785,6 @@ export function WorkspaceShell({
                 <button type="button" onClick={toggleFullscreen} aria-label="Fullscreen" title="Fullscreen" className="p-1 hover:text-foreground">
                   <Expand className="h-3 w-3" />
                 </button>
-                <button type="button" onClick={() => setPanelOpen((v) => !v)} aria-label="More actions" title="More actions" className="p-1 hover:text-foreground">
-                  <MoreVertical className="h-3 w-3" />
-                </button>
               </div>
             </div>
             <div className="flex shrink-0 items-center justify-between border-b border-border px-3 py-2 text-muted-foreground">
@@ -802,9 +792,6 @@ export function WorkspaceShell({
                 <span className="truncate">{workload.title} Explanation</span>
                 <ChevronDown className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
               </div>
-              <button type="button" aria-label="Chat options" title="Chat options" className="shrink-0 transition-colors hover:text-foreground">
-                <MoreVertical className="h-3 w-3" />
-              </button>
             </div>
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3">
               {messages.map((message, i) =>
