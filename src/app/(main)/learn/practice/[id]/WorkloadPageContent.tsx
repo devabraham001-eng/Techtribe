@@ -21,14 +21,12 @@ export function WorkloadPageContent({ workload }: { workload: Workload }) {
 
   if (started) {
     return (
-      <div className="flex min-h-screen items-stretch justify-center bg-black p-0 sm:items-center sm:p-2 lg:p-4">
-        <div className="flex max-h-none w-full max-w-[1720px] flex-1 flex-col overflow-hidden border-border sm:max-h-[960px] sm:rounded-xl sm:border sm:shadow-2xl">
-          <WorkspaceShell
-            workload={workload}
-            onComplete={() => setPassed(true)}
-            onExit={() => setStarted(false)}
-          />
-        </div>
+      <div className="flex h-full min-h-0 flex-col bg-background pb-16 md:pb-0">
+        <WorkspaceShell
+          workload={workload}
+          onComplete={() => setPassed(true)}
+          onExit={() => setStarted(false)}
+        />
       </div>
     );
   }
