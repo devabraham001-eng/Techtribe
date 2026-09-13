@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  poweredByHeader: false,
 
   images: {
     formats: ["image/avif", "image/webp"],
@@ -37,10 +38,24 @@ const nextConfig: NextConfig = {
     optimizePackageImports: [
       "lucide-react",
       "date-fns",
+      "framer-motion",
+      "recharts",
+      "react-markdown",
+      "next-mdx-remote",
+      "@supabase/supabase-js",
+      "@supabase/ssr",
       "@radix-ui/react-avatar",
       "@radix-ui/react-dropdown-menu",
       "@radix-ui/react-tooltip",
+      "@radix-ui/react-dialog",
+      "@monaco-editor/react",
     ],
+    // Cache client-router RSC payloads briefly so repeat visits and
+    // back/forward navigations resolve instantly.
+    staleTimes: {
+      dynamic: 30,
+      static: 180,
+    },
   },
 
   async headers() {

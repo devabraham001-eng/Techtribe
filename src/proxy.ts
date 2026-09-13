@@ -4,6 +4,14 @@ import { createServerClient } from "@supabase/ssr";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Only these routes depend on auth state in middleware. Everything else
+  // (blog, dashboard, API routes, …) authorizes in its own server code, so
+  // skip the Supabase round-trip here to keep navigations fast.
+  const needsAuth = pathname === "/" || pathname.startsWith("/learn/");
+  if (!needsAuth) {
+    return NextResponse.next();
+  }
+
   let supabaseResponse = NextResponse.next({ request });
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
