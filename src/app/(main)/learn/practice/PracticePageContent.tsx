@@ -254,7 +254,7 @@ export function PracticePageContent() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+      <div className="px-4 pt-6 sm:px-6 lg:px-8 lg:pt-8">
         <div className="flex gap-8">
           <div className="hidden w-64 shrink-0 space-y-3 lg:block">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -279,37 +279,39 @@ export function PracticePageContent() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 lg:px-8 lg:pt-8">
-      <Link
-        href="/learn"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-opacity hover:opacity-70"
-      >
-        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-        Back to Learn
-      </Link>
+    <div className="pt-6 lg:pt-8">
+      <div className="px-4 sm:px-6 lg:px-8">
+        <Link
+          href="/learn"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-opacity hover:opacity-70"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          Back to Learn
+        </Link>
 
-      <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="mb-2 font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-            Practice
-          </h1>
-          <p className="max-w-lg text-sm text-muted-foreground sm:text-base">
-            Real-world workloads. Solve them in-browser. Earn XP and build your proof of work.
-          </p>
-        </div>
-        {isStaff && (
-          <Link
-            href="/admin/practice"
-            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold text-primary transition-all hover:opacity-90"
-          >
-            <Settings className="h-3.5 w-3.5" aria-hidden="true" />
-            Manage workloads
-          </Link>
-        )}
-      </header>
+        <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="mb-2 font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+              Practice
+            </h1>
+            <p className="max-w-lg text-sm text-muted-foreground sm:text-base">
+              Real-world workloads. Solve them in-browser. Earn XP and build your proof of work.
+            </p>
+          </div>
+          {isStaff && (
+            <Link
+              href="/admin/practice"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold text-primary transition-all hover:opacity-90"
+            >
+              <Settings className="h-3.5 w-3.5" aria-hidden="true" />
+              Manage workloads
+            </Link>
+          )}
+        </header>
+      </div>
 
-      <div className="flex flex-col gap-8 lg:flex-row">
-        <aside aria-label="Workload filters" className={cn(filtersOpen ? "block" : "hidden", "w-full shrink-0 lg:block lg:w-64")}>
+      <div className="flex flex-col gap-8 px-4 sm:px-6 lg:flex-row lg:gap-0 lg:px-0">
+        <aside aria-label="Workload filters" className={cn(filtersOpen ? "block" : "hidden", "w-full shrink-0 lg:block lg:w-64 lg:shrink-0 lg:self-start lg:overflow-y-auto lg:border-r lg:border-border lg:px-6 lg:py-2 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)]")}>
           <div className="relative mb-3">
             <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5">
               <Search className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
@@ -404,7 +406,7 @@ export function PracticePageContent() {
           </div>
         </aside>
 
-        <section aria-label="Workloads" className="min-w-0 flex-1">
+        <section aria-label="Workloads" className="min-w-0 flex-1 pb-4 lg:px-8 lg:py-2">
           <p className="sr-only" aria-live="polite">
             {filtered.length} {filtered.length === 1 ? "workload" : "workloads"} shown
           </p>
@@ -436,7 +438,8 @@ export function PracticePageContent() {
         </section>
       </div>
 
-      <div className="mt-10 grid gap-6 pb-16 md:grid-cols-2">
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="mt-10 grid gap-6 pb-16 md:grid-cols-2">
         <div>
           <h2 className="mb-4 font-heading text-lg font-semibold text-foreground">
             Your Rank
@@ -451,6 +454,7 @@ export function PracticePageContent() {
         </div>
         <div>
           <Leaderboard entries={leaders} />
+        </div>
         </div>
       </div>
 
