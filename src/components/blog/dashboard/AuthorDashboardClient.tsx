@@ -187,12 +187,6 @@ function DashboardHero({ onWrite }: { onWrite: () => void }) {
         className="pointer-events-none absolute right-12 top-6 h-24 w-24 rounded-full bg-primary/[0.07] blur-xl"
         aria-hidden="true"
       />
-      <div className="pointer-events-none absolute right-28 top-6 opacity-20" aria-hidden="true">
-        <div className="h-14 w-14 bg-gradient-to-tr from-primary to-primary/20 [clip-path:polygon(50%_0%,61%_35%,98%_35%,68%_57%,79%_91%,50%_70%,21%_91%,32%_57%,2%_35%,39%_35%)]" />
-      </div>
-      <div className="pointer-events-none absolute bottom-6 right-12 opacity-15" aria-hidden="true">
-        <div className="h-20 w-20 bg-gradient-to-tr from-primary to-primary/20 [clip-path:polygon(50%_0%,61%_35%,98%_35%,68%_57%,79%_91%,50%_70%,21%_91%,32%_57%,2%_35%,39%_35%)]" />
-      </div>
       <div className="relative z-10 max-w-md">
         <span className="mb-2.5 inline-block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
           Author Dashboard
