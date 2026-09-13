@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowLeft, Zap, Clock, CheckCircle2, Terminal, Code2, Database, Globe } from "lucide-react";
+import { ArrowLeft, Zap, Clock, Terminal, Code2, Database, Globe } from "lucide-react";
 import { WorkspaceShell } from "@/components/practice/WorkspaceShell";
 import type { Workload } from "@/types/blog";
 
@@ -16,51 +16,18 @@ const categoryIcons: Record<string, typeof Code2> = {
 
 export function WorkloadPageContent({ workload }: { workload: Workload }) {
   const [started, setStarted] = React.useState(false);
-  const [passed, setPassed] = React.useState(false);
+  const [, setPassed] = React.useState(false);
   const Icon = categoryIcons[workload.category] || Code2;
 
   if (started) {
     return (
-      <div className="flex flex-col h-screen" style={{ background: "#0a0a0a" }}>
-        {/* Header */}
-        <div
-          className="flex items-center justify-between px-4 py-3 border-b flex-shrink-0"
-          style={{ borderColor: "#38383a", background: "#141416" }}
-        >
-          <div className="flex items-center gap-3">
-            <Link
-              href={`/learn/practice/${workload.id}`}
-              className="flex items-center gap-1.5 text-xs hover:opacity-70 transition-opacity"
-              style={{ color: "#98989d" }}
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              Brief
-            </Link>
-            <div className="h-4 w-px" style={{ background: "#38383a" }} />
-            <div className="flex items-center gap-1.5">
-              <Icon className="h-3.5 w-3.5" style={{ color: "#D0F201" }} />
-              <span className="text-xs font-medium" style={{ color: "#f5f5f7" }}>
-                {workload.title}
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 text-[10px]" style={{ color: "#636366" }}>
-            <span className="flex items-center gap-1">
-              <Zap className="h-3 w-3" style={{ color: "#D0F201" }} />
-              {workload.xpReward} XP
-            </span>
-            {passed && (
-              <span className="flex items-center gap-1" style={{ color: "#30d158" }}>
-                <CheckCircle2 className="h-3 w-3" />
-                Passed
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Workspace */}
-        <div className="flex-1 min-h-0">
-          <WorkspaceShell workload={workload} onComplete={() => setPassed(true)} />
+      <div className="flex min-h-screen items-stretch justify-center bg-black p-0 sm:items-center sm:p-2 lg:p-4">
+        <div className="flex max-h-none w-full max-w-[1720px] flex-1 flex-col overflow-hidden border-border sm:max-h-[960px] sm:rounded-xl sm:border sm:shadow-2xl">
+          <WorkspaceShell
+            workload={workload}
+            onComplete={() => setPassed(true)}
+            onExit={() => setStarted(false)}
+          />
         </div>
       </div>
     );
